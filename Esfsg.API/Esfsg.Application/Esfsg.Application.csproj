@@ -9,9 +9,7 @@
   <ItemGroup>
     <Folder Include="DTOs\Response\" />
     <Folder Include="DTOs\Request\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Validation\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>

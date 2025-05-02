@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Esfsg.Application.Interfaces;
+using Esfsg.Application.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Esfsg.Infra.CrossCutting.IoC
@@ -10,15 +12,16 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddHttpClient();
 
             DatabaseConfiguration.ConfigureDatabase(services, configuration);
-            ConfigureServices(services);
             CORSConfiguration.ConfigureCORS(services);
+            JobsInjection.AddJobs(services);
+            ConfigureServices(services);
 
             return services;
         }
 
         private static void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddScoped<IEmailService, EmailService>();
         }
 
     }
