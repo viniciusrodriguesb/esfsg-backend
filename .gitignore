@@ -7,48 +7,102 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
+## .NET
 [Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-
-# .NET Core
+artifacts/
 project.lock.json
 project.fragment.lock.json
-artifacts/
+*.dotCover
+*.tgz
+
+# Build Folders (you may not need all of these)
+[Dd]ebug*/
+[Rr]elease*/
+x64/
+x86/
+[Aa][Rr][Mm]*/
+[Ww][Ii][Nn]32/
+bld/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider-specific
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
-# NuGet Packages
+# NuGet
 *.nupkg
-# NuGet Symbol Packages
 *.snupkg
+packages/
+.nuget/
+**/packages/*
 
-# Others
-~$*
-*~
+# Cache
+*.cache
+*.dbmdl
+*.pdb
+*.pidb
+*.log
+*.tlog
+*.svclog
+
+# Coverage
+*.coverage
+*.coveragexml
+*.codecoverage
 CodeCoverage/
 
-# MSBuild Binary and Structured Log
-*.binlog
-
-# MSTest test Results
+# Test results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
-# NUnit
-*.VisualState.xml
+*.trx
+*.vsmdi
 TestResult.xml
 nunit-*.xml
+*.VisualState.xml
+
+# Logs
+*.log
+
+# Temporary files
+~$*
+*~
+*.tmp
+*.bak
+
+# MSBuild logs
+*.binlog
+
+# Azure Pipelines
+.azure-pipelines/
+
+# VS-related
+.vs/
+.vsconfig
+ServiceFabricBackup/
+
+# Docker
+**/Dockerfile.*
+**/docker-compose*.yml
+docker-compose.override.yml
+.docker/
+
+# Local settings
+secrets.json
+appsettings.*.local.json
+
+# EF Migrations snapshot (optional)
+*MigrationsSnapshot.cs
