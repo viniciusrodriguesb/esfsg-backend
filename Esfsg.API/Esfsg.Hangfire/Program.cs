@@ -1,36 +1,28 @@
+using Esfsg.Hangfire.Configurations;
+using Esfsg.Hangfire.Jobs;
 using Esfsg.Infra.CrossCutting.IoC;
-using FluentValidation.AspNetCore;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Add Log
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-//Add FluentValidation
 builder.Services.AddValidators();
 
-//Add Services
 builder.Services.AddServices(builder.Configuration);
+builder.Services.AddScoped<ExampleJob>();
 
-//Add Controllers
-builder.Services.AddControllers().AddFluentValidation();
-
-builder.Services.AddSwaggerConfiguration();
+builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
+app.UseRouting();
 app.UseCors("AllowAll");
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
+
+JobsConfiguration.ConfigureJobs(app.Services);
+
+app.UseHangfireDashboard("/hangfire");
 app.Run();

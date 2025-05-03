@@ -6,7 +6,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
     {
         public static void AddJobs(IServiceCollection services)
         {
-            //services.AddScoped<>();
+            //services.AddScoped<ExampleJob>();
         }
     }
 }

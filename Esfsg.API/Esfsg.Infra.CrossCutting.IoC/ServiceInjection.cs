@@ -12,6 +12,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddHttpClient();
 
             DatabaseConfiguration.ConfigureDatabase(services, configuration);
+            DatabaseConfiguration.ConfigureDatabaseHangfire(services, configuration);
             CORSConfiguration.ConfigureCORS(services);
             JobsInjection.AddJobs(services);
             ConfigureServices(services);
