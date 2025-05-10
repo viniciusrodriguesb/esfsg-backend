@@ -15,13 +15,13 @@ namespace Esfsg.Infra.CrossCutting.IoC
             var connectionString = configuration.GetConnectionString("databaseConnection");
 
             services.AddDbContext<DbContextBase>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+                options.UseNpgsql(connectionString)
                 );
         }
 
         public static void ConfigureDatabaseHangfire(IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("databaseTesteConnection");
+            var connectionString = configuration.GetConnectionString("databaseConnection");
 
             services.AddHangfire(options =>
             {

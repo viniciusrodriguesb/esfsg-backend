@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Esfsg.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Esfsg.Infra.Data
 {
@@ -7,6 +8,25 @@ namespace Esfsg.Infra.Data
         public DbContextBase(DbContextOptions<DbContextBase> options) : base(options) { }
 
         #region Modelos
+
+        public virtual DbSet<CHECK_IN> CHECK_IN { get; set; }
+        public virtual DbSet<CLASSE> CLASSE { get; set; }
+        public virtual DbSet<CONDICAO_MEDICA> CONDICAO_MEDICA { get; set; }
+        public virtual DbSet<EVENTO> EVENTO { get; set; }
+        public virtual DbSet<FUNCAO_EVENTO> FUNCAO_EVENTO { get; set; }
+        public virtual DbSet<FUNCAO_IGREJA> FUNCAO_IGREJA { get; set; }
+        public virtual DbSet<IGREJA> IGREJA { get; set; }
+        public virtual DbSet<INSCRICAO> INSCRICAO { get; set; }
+        public virtual DbSet<INSTRUMENTO> INSTRUMENTO { get; set; }
+        public virtual DbSet<PAGAMENTO> PAGAMENTO { get; set; }
+        public virtual DbSet<PASTOR> PASTOR { get; set; }
+        public virtual DbSet<REGIAO> REGIAO { get; set; }
+        public virtual DbSet<ROLE_SISTEMA> ROLE_SISTEMA { get; set; }
+        public virtual DbSet<STATUS> STATUS { get; set; }
+        public virtual DbSet<USUARIO> USUARIO { get; set; }
+        public virtual DbSet<USUARIO_INSTRUMENTO> USUARIO_INSTRUMENTO { get; set; }
+        public virtual DbSet<VISITA> VISITA { get; set; }
+        public virtual DbSet<VISITA_PARTICIPANTE> VISITA_PARTICIPANTE { get; set; }
 
         #endregion
 
