@@ -10,6 +10,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpClient();
+            services.AddMemoryCache();
 
             DatabaseConfiguration.ConfigureDatabase(services, configuration);
             DatabaseConfiguration.ConfigureDatabaseHangfire(services, configuration);
@@ -23,6 +24,11 @@ namespace Esfsg.Infra.CrossCutting.IoC
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IMemoryCacheService, MemoryCacheService>();
+
+
+            services.AddScoped<IClasseService, ClassesService>();
+            services.AddScoped<IFuncoesService, FuncoesService>();
         }
 
     }

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\Response\" />
     <Folder Include="DTOs\Request\" />
     <Folder Include="Validation\" />
   </ItemGroup>
@@ -35,6 +34,11 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esfsg.Domain\Esfsg.Domain.csproj" />
+    <ProjectReference Include="..\Esfsg.Infra.CrossCutting.Data\Esfsg.Infra.Data.csproj" />
   </ItemGroup>
 
 </Project>
