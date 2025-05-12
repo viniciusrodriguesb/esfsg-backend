@@ -1,6 +1,6 @@
 ﻿namespace Esfsg.Application.Interfaces
 {
-    public interface IUserService
+    public interface IUsuarioService
     {
         Task GetUser();
         Task GetAdministrator();

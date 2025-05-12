@@ -3,14 +3,16 @@ using Esfsg.Infra.Data;
 
 namespace Esfsg.Application.Services
 {
-    public class UserService : IUserService
+    public class UsuarioService : IUsuarioService
     {
 
+        #region Construtor
         private readonly DbContextBase _context;
-        public UserService(DbContextBase context)
+        public UsuarioService(DbContextBase context)
         {
             _context = context;
-        }
+        } 
+        #endregion
 
         public Task GetAdministrator()
         {
