@@ -32,6 +32,9 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddScoped<IInstrumentoService, InstrumentoService>();
             services.AddScoped<ICondicaoMedicaService, CondicaoMedicaService>();
             services.AddScoped<IEventoService, EventoService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IInscricaoService, InscricaoService>();
+            services.AddScoped<IPixService, PixService>();
         }
 
     }

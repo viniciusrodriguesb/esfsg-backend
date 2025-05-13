@@ -38,8 +38,6 @@ public partial class USUARIO
 
     public virtual CLASSE? IdClasseNavigation { get; set; }
 
-    public virtual FUNCAO_IGREJA? IdFuncaoIgrejaNavigation { get; set; }
-
     public virtual IGREJA? IdIgrejaNavigation { get; set; }
 
     public virtual ROLE_SISTEMA? IdTipoUsuarioNavigation { get; set; }
