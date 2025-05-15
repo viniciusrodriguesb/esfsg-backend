@@ -45,7 +45,6 @@ namespace Esfsg.Application.Services
                 Cpf = request.Cpf,
                 Email = request.Email,
                 Telefone = request.Telefone,
-                Nascimento = request.Nascimento,
                 Pcd = request.Pcd,
                 Dons = request.Dons,
                 PossuiFilhos = request.PossuiFilhos,
@@ -53,7 +52,6 @@ namespace Esfsg.Application.Services
                 DhInscricao = DateTime.Now,
                 IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
                 IdIgreja = request.IdIgreja,
-                IdFuncaoIgreja = request.IdFuncaoIgreja,
                 IdClasse = request.IdClasse
             };
 

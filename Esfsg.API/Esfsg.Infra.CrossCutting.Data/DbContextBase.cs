@@ -27,6 +27,9 @@ namespace Esfsg.Infra.Data
         public virtual DbSet<USUARIO_INSTRUMENTO> USUARIO_INSTRUMENTO { get; set; }
         public virtual DbSet<VISITA> VISITA { get; set; }
         public virtual DbSet<VISITA_PARTICIPANTE> VISITA_PARTICIPANTE { get; set; }
+        public virtual DbSet<INSCRICAO_STATUS> INSCRICAO_STATUS { get; set; }
+        public virtual DbSet<USUARIO_CONDICAO_MEDICA> USUARIO_CONDICAO_MEDICA { get; set; }
+        public virtual DbSet<USUARIO_FUNCAO_IGREJA> USUARIO_FUNCAO_IGREJA { get; set; }
 
         #endregion
 

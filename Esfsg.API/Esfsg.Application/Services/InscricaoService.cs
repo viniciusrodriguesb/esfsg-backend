@@ -42,7 +42,7 @@ namespace Esfsg.Application.Services
                 //Enviar para API Pagamentos
                 //await _pixService.GerarPixInscricao();
 
-                inscricao.IdStatus = (int)StatusEnum.AGUARDANDO_PAGAMENTO;
+                //inscricao.IdStatus = (int)StatusEnum.AGUARDANDO_PAGAMENTO;
 
                 await _context.SaveChangesAsync();
 
@@ -83,7 +83,6 @@ namespace Esfsg.Application.Services
                 DhInscricao = DateTime.Now,
                 Periodo = request.Periodo,
                 Visita = request.Visita,
-                IdStatus = (int)StatusEnum.ENVIADA,
                 IdUsuario = usuario.Id,
                 IdEvento = request.IdEvento,
                 IdFuncaoEvento = request.IdFuncaoEvento

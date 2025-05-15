@@ -20,9 +20,9 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
-        public async Task<IActionResult> ConsultarClasses()
+        public async Task<IActionResult> ConsultarInstrumentos()
         {
-            const string key = "classes-key";
+            const string key = "instrumentos-key";
 
             try
             {

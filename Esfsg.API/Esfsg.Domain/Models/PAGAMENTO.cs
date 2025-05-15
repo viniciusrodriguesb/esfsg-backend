@@ -12,7 +12,7 @@ public partial class PAGAMENTO
 
     public DateTime DhExpiracao { get; set; }
 
-    public int IdUsuario { get; set; }
+    public int IdInscricao { get; set; }
 
-    public virtual USUARIO IdUsuarioNavigation { get; set; } = null!;
+    public virtual INSCRICAO InscricaoNavigation { get; set; } 
 }

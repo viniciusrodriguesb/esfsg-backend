@@ -1,5 +1,4 @@
 using Esfsg.Infra.CrossCutting.IoC;
-using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +7,11 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-//Add FluentValidation
-builder.Services.AddValidators();
-
 //Add Services
 builder.Services.AddServices(builder.Configuration);
 
 //Add Controllers
-builder.Services.AddControllers().AddFluentValidation();
+builder.Services.AddControllers();
 
 builder.Services.AddSwaggerConfiguration();
 

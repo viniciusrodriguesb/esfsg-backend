@@ -9,8 +9,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-builder.Services.AddValidators();
-
 builder.Services.AddServices(builder.Configuration);
 builder.Services.AddScoped<ExampleJob>();
 

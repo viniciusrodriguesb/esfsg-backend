@@ -8,7 +8,7 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<CLASSE> builder)
         {
-            builder.HasKey(e => e.Id).HasName("classe_pkey");
+            builder.HasKey(e => e.Id);
             builder.ToTable("classe");
 
             builder.Property(e => e.Id).HasColumnName("id");

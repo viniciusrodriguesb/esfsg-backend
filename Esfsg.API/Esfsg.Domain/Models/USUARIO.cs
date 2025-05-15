@@ -4,17 +4,17 @@ public partial class USUARIO
 {
     public int Id { get; set; }
 
-    public string? NomeCompleto { get; set; }
+    public string NomeCompleto { get; set; }
 
-    public string? Cpf { get; set; }
+    public string Cpf { get; set; }
 
-    public string? Email { get; set; }
+    public string Email { get; set; }
 
     public string? Senha { get; set; }
 
     public string? Telefone { get; set; }
 
-    public int Nascimento { get; set; }
+    public DateTime Nascimento { get; set; }
 
     public string Pcd { get; set; } = null!;
 
@@ -32,23 +32,22 @@ public partial class USUARIO
 
     public int? IdIgreja { get; set; }
 
-    public int? IdFuncaoIgreja { get; set; }
-
     public int? IdClasse { get; set; }
 
+    #region Navigations
     public virtual CLASSE? IdClasseNavigation { get; set; }
 
     public virtual IGREJA? IdIgrejaNavigation { get; set; }
 
     public virtual ROLE_SISTEMA? IdTipoUsuarioNavigation { get; set; }
 
-    public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>();
+    public virtual ICollection<INSCRICAO> Inscricaos { get; set; }   
 
-    public virtual ICollection<PAGAMENTO> Pagamentos { get; set; } = new List<PAGAMENTO>();
+    public virtual ICollection<USUARIO_INSTRUMENTO> UsuarioInstrumentos { get; set; }
 
-    public virtual ICollection<USUARIO_INSTRUMENTO> UsuarioInstrumentos { get; set; } = new List<USUARIO_INSTRUMENTO>();
+    public ICollection<USUARIO_CONDICAO_MEDICA> UsuarioCondicoesMedicas { get; set; }
 
-    public virtual ICollection<CONDICAO_MEDICA> IdCondicaoMedicas { get; set; } = new List<CONDICAO_MEDICA>();
+    public virtual ICollection<USUARIO_FUNCAO_IGREJA> IdFuncaoIgrejas { get; set; }
+    #endregion
 
-    public virtual ICollection<FUNCAO_IGREJA> IdFuncaoIgrejas { get; set; } = new List<FUNCAO_IGREJA>();
 }

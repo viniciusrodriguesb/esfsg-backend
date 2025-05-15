@@ -22,12 +22,10 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.Vagas).HasColumnName("vagas");
 
             builder.HasOne(d => d.IdInscricaoNavigation).WithMany(p => p.VisitaParticipantes)
-                .HasForeignKey(d => d.IdInscricao)
-                .HasConstraintName("visita_participante_id_inscricao_fkey");
+                .HasForeignKey(d => d.IdInscricao);
 
             builder.HasOne(d => d.IdVisitaNavigation).WithMany(p => p.VisitaParticipantes)
-                .HasForeignKey(d => d.IdVisita)
-                .HasConstraintName("visita_participante_id_visita_fkey");
+                .HasForeignKey(d => d.IdVisita);
         }
     }
 }

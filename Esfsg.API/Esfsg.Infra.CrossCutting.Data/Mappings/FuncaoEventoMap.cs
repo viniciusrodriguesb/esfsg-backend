@@ -13,9 +13,7 @@ namespace Esfsg.Infra.Data.Mappings
             builder.ToTable("funcao_evento");
 
             builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.Descricao)
-                .HasMaxLength(50)
-                .HasColumnName("descricao");
+            builder.Property(e => e.Descricao).HasColumnName("descricao");
         }
     }
 }

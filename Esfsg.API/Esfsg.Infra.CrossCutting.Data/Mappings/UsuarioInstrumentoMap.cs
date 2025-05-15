@@ -8,7 +8,7 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<USUARIO_INSTRUMENTO> builder)
         {
-            builder.HasKey(e => e.Id).HasName("usuario_instrumento_pkey");
+            builder.HasKey(e => e.Id);
 
             builder.ToTable("usuario_instrumento");
 
@@ -17,14 +17,10 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
             builder.HasOne(d => d.IdInstrumentoNavigation).WithMany(p => p.UsuarioInstrumentos)
-                .HasForeignKey(d => d.IdInstrumento)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("usuario_instrumento_id_instrumento_fkey");
+                .HasForeignKey(d => d.IdInstrumento);
 
             builder.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.UsuarioInstrumentos)
-                .HasForeignKey(d => d.IdUsuario)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("usuario_instrumento_id_usuario_fkey");
+                .HasForeignKey(d => d.IdUsuario);
         }
     }
 }

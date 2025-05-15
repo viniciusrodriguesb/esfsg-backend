@@ -8,13 +8,11 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<REGIAO> builder)
         {
-            builder.HasKey(e => e.Id).HasName("regiao_pkey");
+            builder.HasKey(e => e.Id);
             builder.ToTable("regiao");
 
             builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.Nome)
-                .HasMaxLength(100)
-                .HasColumnName("nome");
+            builder.Property(e => e.Nome).HasColumnName("nome");
         }
     }
 }

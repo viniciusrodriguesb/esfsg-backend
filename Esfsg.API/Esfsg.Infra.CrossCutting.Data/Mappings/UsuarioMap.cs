@@ -8,25 +8,28 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<USUARIO> builder)
         {
-            builder.HasKey(e => e.Id).HasName("usuario_pkey");
+            builder.HasKey(e => e.Id);
             builder.ToTable("usuario");
 
             builder.Property(e => e.Id).HasColumnName("id");
             builder.Property(e => e.Cpf)
-                .HasMaxLength(14)
-                .HasColumnName("cpf");
+                   .HasMaxLength(14)
+                   .HasColumnName("cpf");
+
             builder.Property(e => e.DhExclusao)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("dh_exclusao");
+
             builder.Property(e => e.DhInscricao)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("dh_inscricao");
+
             builder.Property(e => e.Dons).HasColumnName("dons");
             builder.Property(e => e.Email)
                 .HasMaxLength(100)
                 .HasColumnName("email");
+
             builder.Property(e => e.IdClasse).HasColumnName("id_classe");
-            builder.Property(e => e.IdFuncaoIgreja).HasColumnName("id_funcao_igreja");
             builder.Property(e => e.IdIgreja).HasColumnName("id_igreja");
             builder.Property(e => e.IdTipoUsuario).HasColumnName("id_tipo_usuario");
             builder.Property(e => e.Nascimento).HasColumnName("nascimento");

@@ -4,5 +4,7 @@ public partial class FUNCAO_IGREJA
 {
     public int Id { get; set; }
 
-    public string Descricao { get; set; } = null!;
+    public string Descricao { get; set; }
+
+    public virtual ICollection<USUARIO_FUNCAO_IGREJA> IdFuncaoIgrejas { get; set; }
 }

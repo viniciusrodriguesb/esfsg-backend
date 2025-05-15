@@ -8,7 +8,7 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<CHECK_IN> builder)
         {
-            builder.HasKey(e => e.Id).HasName("check_in_pkey");
+            builder.HasKey(e => e.Id);
             builder.ToTable("check_in");
 
             builder.Property(e => e.Id).HasColumnName("id");
@@ -16,8 +16,8 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.Presente).HasColumnName("presente");
 
             builder.HasOne(d => d.IdInscricaoNavigation).WithMany(p => p.CheckIns)
-                   .HasForeignKey(d => d.IdInscricao)
-                   .HasConstraintName("check_in_id_inscricao_fkey");
+                   .HasForeignKey(d => d.IdInscricao);
+
         }
     }
 }

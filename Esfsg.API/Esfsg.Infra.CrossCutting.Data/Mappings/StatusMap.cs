@@ -12,9 +12,7 @@ namespace Esfsg.Infra.Data.Mappings
             builder.ToTable("status");
 
             builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.Descricao)
-                .HasMaxLength(100)
-                .HasColumnName("descricao");
+            builder.Property(e => e.Descricao).HasColumnName("descricao");
         }
     }
 }

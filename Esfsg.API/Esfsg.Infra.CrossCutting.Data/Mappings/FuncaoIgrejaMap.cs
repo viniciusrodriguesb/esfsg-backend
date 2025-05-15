@@ -8,14 +8,11 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<FUNCAO_IGREJA> builder)
         {
-            builder.HasKey(e => e.Id).HasName("funcao_igreja_pkey");
-
+            builder.HasKey(e => e.Id);
             builder.ToTable("funcao_igreja");
 
             builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.Descricao)
-                .HasMaxLength(50)
-                .HasColumnName("descricao");
+            builder.Property(e => e.Descricao).HasColumnName("descricao");
         }
     }
 }

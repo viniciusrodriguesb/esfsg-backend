@@ -6,5 +6,5 @@ public partial class STATUS
 
     public string Descricao { get; set; } = null!;
 
-    public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>();
+    public ICollection<INSCRICAO_STATUS> InscricaoStatus { get; set; }
 }

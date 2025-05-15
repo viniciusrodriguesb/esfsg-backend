@@ -8,14 +8,11 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<CONDICAO_MEDICA> builder)
         {
-            builder.HasKey(e => e.Id).HasName("condicao_medica_pkey");
-
+            builder.HasKey(e => e.Id);
             builder.ToTable("condicao_medica");
 
             builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.Descricao)
-                .HasMaxLength(100)
-                .HasColumnName("descricao");
+            builder.Property(e => e.Descricao).HasColumnName("descricao");
         }
     }
 }
