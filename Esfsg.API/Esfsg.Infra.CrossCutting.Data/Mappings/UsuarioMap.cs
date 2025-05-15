@@ -32,7 +32,7 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.IdClasse).HasColumnName("id_classe");
             builder.Property(e => e.IdIgreja).HasColumnName("id_igreja");
             builder.Property(e => e.IdTipoUsuario).HasColumnName("id_tipo_usuario");
-            builder.Property(e => e.Nascimento).HasColumnName("nascimento");
+            builder.Property(e => e.Nascimento).HasColumnType("date").HasColumnName("nascimento");
             builder.Property(e => e.NomeCompleto)
                 .HasMaxLength(150)
                 .HasColumnName("nome_completo");

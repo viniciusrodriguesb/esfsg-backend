@@ -32,31 +32,85 @@ namespace Esfsg.Application.Services
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
-            {    
+            {
                 var usuario = await ValidarUsuario(request.Usuario);
 
                 await ValidarInscricao(request, usuario);
 
                 var inscricao = await PersistirNovaInscricao(request, usuario);
 
-                //Enviar para API Pagamentos
-                //await _pixService.GerarPixInscricao();
+                var verificaoStatus = ValidarStatusUsuario(usuario);
 
-                //inscricao.IdStatus = (int)StatusEnum.AGUARDANDO_PAGAMENTO;
+                var status = await PersistirStatusInscricao(inscricao.Id, verificaoStatus);
+
+                await PersistirVisitaParticipante(inscricao.Id, request.Visita.Visita, request);
+
+                await PersistirCheckIn(inscricao.Id);
 
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 throw;
             }
-           
+
         }
 
-       private async Task<USUARIO> ValidarUsuario(UsuarioRequest request)
+        #region Métodos Privados
+        private async Task<INSCRICAO_STATUS> PersistirStatusInscricao(int IdInscricao, StatusEnum statusEnum)
+        {
+            var status = new INSCRICAO_STATUS()
+            {
+                InscricaoId = IdInscricao,
+                StatusId = (int)statusEnum,
+                DhInclusao = DateTime.Now,
+                DhExclusao = null
+            };
+
+            await _context.INSCRICAO_STATUS.AddAsync(status);
+            await _context.SaveChangesAsync();
+
+            return status;
+        }
+        private static StatusEnum ValidarStatusUsuario(USUARIO usuario)
+        {
+            if (usuario.DhExclusao != null)
+                return StatusEnum.AGUARDANDO_LIBERACAO;
+
+            return StatusEnum.ENVIADA;
+        }
+        private async Task PersistirVisitaParticipante(int IdInscricao, bool icVisita, InscricaoRequest request)
+        {
+            if (icVisita && request.Visita is null)
+                return;
+
+            var visitaParticipante = new VISITA_PARTICIPANTE()
+            {
+                Carro = (bool)request.Visita.Carro,
+                Vagas = (int)request.Visita.Vagas,
+                Funcao = "Default",
+                IdInscricao = IdInscricao
+            };
+
+            await _context.VISITA_PARTICIPANTE.AddAsync(visitaParticipante);
+            await _context.SaveChangesAsync();
+        }
+        private async Task PersistirCheckIn(int IdInscricao)
+        {
+            var checkin = new CHECK_IN()
+            {
+                IdInscricao = IdInscricao,
+                Presente = false
+            };
+
+            await _context.CHECK_IN.AddAsync(checkin);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<USUARIO> ValidarUsuario(UsuarioRequest request)
         {
             var usuario = await _usuarioService.ConsultarUsuario(request.Cpf);
 
@@ -82,7 +136,7 @@ namespace Esfsg.Application.Services
             {
                 DhInscricao = DateTime.Now,
                 Periodo = request.Periodo,
-                Visita = request.Visita,
+                Visita = request.Visita.Visita,
                 IdUsuario = usuario.Id,
                 IdEvento = request.IdEvento,
                 IdFuncaoEvento = request.IdFuncaoEvento
@@ -93,6 +147,7 @@ namespace Esfsg.Application.Services
 
             return inscricao;
         }
+        #endregion
 
     }
 }

@@ -15,6 +15,14 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.InscricaoId).HasColumnName("id_inscricao");
             builder.Property(e => e.StatusId).HasColumnName("id_status");
 
+            builder.Property(e => e.DhInclusao)
+                  .HasColumnType("timestamp without time zone")
+                  .HasColumnName("dh_inclusao");
+
+            builder.Property(e => e.DhExclusao)
+                  .HasColumnType("timestamp without time zone")
+                  .HasColumnName("dh_exclusao");
+
             builder.HasOne(d => d.InscricaoNavigation).WithMany(p => p.InscricaoStatus)
                 .HasForeignKey(d => d.InscricaoId);
 
