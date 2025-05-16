@@ -1,4 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Enum;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
@@ -18,6 +19,46 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
+        public async Task<UsuarioResponse?> ConsultarUsuarioLogin(string CPF)
+        {
+            return await _context.USUARIO
+                                       .AsNoTracking()
+                                       .Where(x => x.Cpf.Trim() == CPF.Trim())
+                                       .Include(u => u.IdTipoUsuarioNavigation)
+                                       .Include(u => u.IdClasseNavigation)
+                                       .Include(u => u.UsuarioCondicoesMedicas)
+                                            .ThenInclude(c => c.CondicaoMedicaNavigation)
+                                       .Include(u => u.IdFuncaoIgrejas)
+                                            .ThenInclude(c => c.FuncaoIgrejaNavigation)
+                                       .Include(u => u.UsuarioInstrumentos)
+                                            .ThenInclude(c => c.IdInstrumentoNavigation)
+                                       .Select(x => new UsuarioResponse()
+                                       {
+                                           Id = x.Id,
+                                           NomeCompleto = x.NomeCompleto,
+                                           CPF = x.Cpf,
+                                           Email = x.Email,
+                                           Telefone = x.Telefone,
+                                           Nascimento = x.Nascimento.ToString("dd/MM/yyyy"),
+                                           Pcd = x.Pcd,
+                                           PossuiDons = x.Dons,
+                                           PossuiFilhos = x.PossuiFilhos,
+                                           Filhos = x.QntFilhos,
+                                           TipoUsuario = new TabelaDominioResponse()
+                                           {
+                                               Id = x.IdTipoUsuarioNavigation.Id,
+                                               Descricao = x.IdTipoUsuarioNavigation.Descricao
+                                           },
+                                           Classe = new TabelaDominioResponse()
+                                           {
+                                               Id = x.IdClasseNavigation.Id,
+                                               Descricao = x.IdClasseNavigation.Descricao
+                                           },
+                                           CondicoesMedica = x.UsuarioCondicoesMedicas.Select(x => x.CondicaoMedicaNavigation.Descricao).ToList(),
+                                           FuncoesIgreja = x.IdFuncaoIgrejas.Select(x => x.FuncaoIgrejaNavigation.Descricao).ToList(),
+                                           Instrumentos = x.UsuarioInstrumentos.Select(x => x.IdInstrumentoNavigation.Descricao).ToList()
+                                       }).FirstOrDefaultAsync();
+        }
 
         public async Task<USUARIO?> ConsultarUsuario(string CPF)
         {
