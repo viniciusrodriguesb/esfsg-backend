@@ -6,5 +6,7 @@ public partial class FUNCAO_EVENTO
 
     public string Descricao { get; set; } = null!;
 
+    public string Cor { get; set; } = null!;
+
     public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>();
 }

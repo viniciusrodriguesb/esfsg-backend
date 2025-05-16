@@ -28,6 +28,8 @@ public partial class USUARIO
 
     public DateTime? DhExclusao { get; set; }
 
+    public string MotivoExclusao { get; set; } = null!;
+
     public int? IdTipoUsuario { get; set; }
 
     public int? IdIgreja { get; set; }

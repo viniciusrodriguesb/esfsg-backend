@@ -33,17 +33,25 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.IdIgreja).HasColumnName("id_igreja");
             builder.Property(e => e.IdTipoUsuario).HasColumnName("id_tipo_usuario");
             builder.Property(e => e.Nascimento).HasColumnType("date").HasColumnName("nascimento");
+
             builder.Property(e => e.NomeCompleto)
                 .HasMaxLength(150)
                 .HasColumnName("nome_completo");
+
             builder.Property(e => e.Pcd)
                 .HasMaxLength(100)
                 .HasColumnName("pcd");
+
             builder.Property(e => e.PossuiFilhos).HasColumnName("possui_filhos");
+
             builder.Property(e => e.QntFilhos).HasColumnName("qnt_filhos");
+
+            builder.Property(e => e.MotivoExclusao).HasColumnName("motivo_exclusao");
+
             builder.Property(e => e.Senha)
                 .HasMaxLength(100)
                 .HasColumnName("senha");
+
             builder.Property(e => e.Telefone)
                 .HasMaxLength(20)
                 .HasColumnName("telefone");
