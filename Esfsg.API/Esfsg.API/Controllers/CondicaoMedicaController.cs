@@ -10,13 +10,16 @@ namespace Esfsg.API.Controllers
     {
 
         #region Construtor
+        private readonly IWebHostEnvironment _env;
         private readonly ICondicaoMedicaService _condicaoMedicaService;
         private readonly IMemoryCacheService _memoryCacheService;
         public CondicaoMedicaController(ICondicaoMedicaService condicaoMedicaService,
-                                     IMemoryCacheService memoryCacheService)
+                                        IMemoryCacheService memoryCacheService,
+                                        IWebHostEnvironment env)
         {
             _condicaoMedicaService = condicaoMedicaService;
             _memoryCacheService = memoryCacheService;
+            _env = env;
         }
         #endregion
 
@@ -29,7 +32,7 @@ namespace Esfsg.API.Controllers
             {
                 var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
 
-                if (response is null)
+                if (response is null || _env.IsDevelopment())
                 {
                     response = await _condicaoMedicaService.ConsultarCondicoesMedicas();
 

@@ -10,11 +10,14 @@ namespace Esfsg.API.Controllers
     {
 
         #region Construtor
+        private readonly IWebHostEnvironment _env;
         private readonly IClasseService _classeService;
         private readonly IMemoryCacheService _memoryCacheService;
         public ClasseController(IClasseService classeService,
-                                IMemoryCacheService memoryCacheService)
+                                IMemoryCacheService memoryCacheService,
+                                IWebHostEnvironment env)
         {
+            _env = env;
             _classeService = classeService;
             _memoryCacheService = memoryCacheService;
         } 
@@ -29,7 +32,7 @@ namespace Esfsg.API.Controllers
             {
                 var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
 
-                if (response is null)
+                if (response is null || _env.IsDevelopment())
                 {
                     response = await _classeService.ConsultarClasses();
 

@@ -18,15 +18,6 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public Task GetAdministrator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetUser()
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<USUARIO?> ConsultarUsuario(string CPF)
         {
@@ -39,26 +30,72 @@ namespace Esfsg.Application.Services
 
         public async Task<USUARIO> IncluirUsuario(UsuarioRequest request)
         {
-            var usuario = new USUARIO()
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                NomeCompleto = request.NomeCompleto,
-                Cpf = request.Cpf,
-                Email = request.Email,
-                Telefone = request.Telefone,
-                Pcd = request.Pcd,
-                Dons = request.Dons,
-                PossuiFilhos = request.PossuiFilhos,
-                QntFilhos = request.QntFilhos,
-                DhInscricao = DateTime.Now,
-                IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
-                IdIgreja = request.IdIgreja,
-                IdClasse = request.IdClasse
-            };
+                var usuario = new USUARIO()
+                {
+                    NomeCompleto = request.NomeCompleto,
+                    Cpf = request.Cpf,
+                    Email = request.Email,
+                    Telefone = request.Telefone,
+                    Pcd = request.Pcd,
+                    Dons = request.Dons,
+                    PossuiFilhos = request.PossuiFilhos,
+                    QntFilhos = request.QntFilhos,
+                    DhInscricao = DateTime.Now,
+                    IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
+                    IdIgreja = request.IdIgreja,
+                    IdClasse = request.IdClasse
+                };
 
-            await _context.USUARIO.AddAsync(usuario);
-            await _context.SaveChangesAsync();
+                await _context.USUARIO.AddAsync(usuario);
+                await _context.SaveChangesAsync();
 
-            return usuario;
+                if (request.CondicoesMedicas.Any())
+                {
+                    var condicoes = request.CondicoesMedicas.Select(item => new USUARIO_CONDICAO_MEDICA
+                    {
+                        UsuarioId = usuario.Id,
+                        CondicaoMedicaId = item
+                    });
+
+                    await _context.USUARIO_CONDICAO_MEDICA.AddRangeAsync(condicoes);
+                }
+
+                if (request.Instrumentos.Any())
+                {
+                    var instrumentos = request.Instrumentos.Select(item => new USUARIO_INSTRUMENTO
+                    {
+                        IdUsuario = usuario.Id,
+                        IdInstrumento = item
+                    });
+
+                    await _context.USUARIO_INSTRUMENTO.AddRangeAsync(instrumentos);
+                }
+
+                if (request.FuncoesIgreja.Any())
+                {
+                    var funcoes = request.FuncoesIgreja.Select(item => new USUARIO_FUNCAO_IGREJA
+                    {
+                        UsuarioId = usuario.Id,
+                        FuncaoIgrejaId = item
+                    });
+
+                    await _context.USUARIO_FUNCAO_IGREJA.AddRangeAsync(funcoes);
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return usuario;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

@@ -9,13 +9,16 @@ namespace Esfsg.API.Controllers
     public class InstrumentoController : ControllerBase
     {
         #region Construtor
+        private readonly IWebHostEnvironment _env;
         private readonly IInstrumentoService _instrumentoService;
         private readonly IMemoryCacheService _memoryCacheService;
         public InstrumentoController(IInstrumentoService instrumentoService,
-                                     IMemoryCacheService memoryCacheService)
+                                     IMemoryCacheService memoryCacheService,
+                                     IWebHostEnvironment env)
         {
             _instrumentoService = instrumentoService;
             _memoryCacheService = memoryCacheService;
+            _env = env;
         }
         #endregion
 
@@ -28,7 +31,7 @@ namespace Esfsg.API.Controllers
             {
                 var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
 
-                if (response is null)
+                if (response is null || _env.IsDevelopment())
                 {
                     response = await _instrumentoService.ConsultarInstrumentos();
 

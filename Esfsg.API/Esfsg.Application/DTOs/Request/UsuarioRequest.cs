@@ -31,8 +31,10 @@ namespace Esfsg.Application.DTOs.Request
 
         public int IdIgreja { get; set; }
 
-        public int IdFuncaoIgreja { get; set; }
-
         public int IdClasse { get; set; }
+
+        public List<int> CondicoesMedicas { get; set; }
+        public List<int> Instrumentos { get; set; }
+        public List<int> FuncoesIgreja { get; set; }
     }
 }

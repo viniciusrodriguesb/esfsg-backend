@@ -2,8 +2,6 @@
 
 public partial class USUARIO_INSTRUMENTO
 {
-    public int Id { get; set; }
-
     public int IdUsuario { get; set; }
 
     public int IdInstrumento { get; set; }

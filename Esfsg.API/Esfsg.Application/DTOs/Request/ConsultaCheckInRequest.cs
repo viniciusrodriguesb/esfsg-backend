@@ -1,0 +1,9 @@
+﻿namespace Esfsg.Application.DTOs.Request
+{
+    public class ConsultaCheckInRequest
+    {
+        public string? Nome { get; set; }
+        public string? Periodo { get; set; }
+        public List<int?>? FuncaoEvento { get; set; }
+    }
+}

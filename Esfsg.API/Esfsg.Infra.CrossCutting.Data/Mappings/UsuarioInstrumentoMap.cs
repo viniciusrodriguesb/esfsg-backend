@@ -8,11 +8,9 @@ namespace Esfsg.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<USUARIO_INSTRUMENTO> builder)
         {
-            builder.HasKey(e => e.Id);
-
+            builder.HasKey(e => new { e.IdInstrumento, e.IdUsuario });
             builder.ToTable("usuario_instrumento");
 
-            builder.Property(e => e.Id).HasColumnName("id");
             builder.Property(e => e.IdInstrumento).HasColumnName("id_instrumento");
             builder.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
