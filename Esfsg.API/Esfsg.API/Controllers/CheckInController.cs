@@ -23,25 +23,29 @@ namespace Esfsg.API.Controllers
             try
             {
                 var response = await _checkInService.Consultar(request);
-                return StatusCode(200, response);
+                return StatusCode(StatusCodes.Status200OK, response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmarPresenta([FromBody] ValidaPresencaRequest request)
+        public async Task<IActionResult> ConfirmarPresenca([FromBody] ValidaPresencaRequest request)
         {
             try
             {
                 await _checkInService.ConfirmarPresenca(request);
-                return StatusCode(200);
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

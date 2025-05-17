@@ -19,6 +19,20 @@ namespace Esfsg.API.Controllers
         }
         #endregion
 
+        [HttpGet]
+        public async Task<IActionResult> ConsultarEventos([FromQuery] int RegiaoId)
+        {
+            try
+            {
+                var result = await _eventoService.ConsultarEvento(RegiaoId);
+                return StatusCode(StatusCodes.Status200OK, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> IncluirCondicaoMedica([FromBody] EventoRequest request)
         {

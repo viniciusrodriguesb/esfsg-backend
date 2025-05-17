@@ -1,4 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
@@ -15,6 +16,25 @@ namespace Esfsg.Application.Services
             _context = context;
         }
         #endregion
+
+        public async Task<List<EventoResponse>> ConsultarEvento(int RegiaoId)
+        {
+            return await _context.EVENTO
+                                       .AsNoTracking()
+                                       .Where(x => x.IdIgrejaEventoNavigation.RegiaoId == RegiaoId)
+                                       .Select(e => new EventoResponse()
+                                       {
+                                           Nome = e.Nome,
+                                           DataEvento = e.DhEvento.ToString("dd/MM/yyyy"),
+                                           LimiteIntegral = e.LimiteIntegral,
+                                           LimiteParcial = e.LimiteParcial,
+                                           LinkGrupoWpp = new Uri(e.LinkWpp),
+                                           ValorIntegral = e.ValorIntegral,
+                                           ValorParcial = e.ValorParcial,
+                                           IgrejaEvento = e.IdIgrejaEventoNavigation.Nome,
+                                           IgrejaVigilia = e.IdIgrejaVigiliaNavigation.Nome,
+                                       }).ToListAsync();
+        }
 
         public async Task IncluirEvento(EventoRequest request)
         {

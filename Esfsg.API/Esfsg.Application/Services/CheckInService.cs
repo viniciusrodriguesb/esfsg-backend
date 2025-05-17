@@ -4,10 +4,11 @@ using Esfsg.Application.Filtros;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Esfsg.Application.Services
 {
-    public class CheckInService: ICheckInService
+    public class CheckInService : ICheckInService
     {
 
         #region Construtor
@@ -15,7 +16,7 @@ namespace Esfsg.Application.Services
         public CheckInService(DbContextBase context)
         {
             _context = context;
-        } 
+        }
         #endregion
 
         public async Task<List<CheckInListaResponse>> Consultar(ConsultaCheckInRequest request)
@@ -53,12 +54,24 @@ namespace Esfsg.Application.Services
 
         public async Task ConfirmarPresenca(ValidaPresencaRequest request)
         {
-            await _context.CHECK_IN
-                         .Where(x => x.Id == request.IdCheckIn)
-                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.Presente, request.Presenca));
+            int Id = 0;
+
+            if (request.IdCheckIn.HasValue)
+                Id = request.IdCheckIn.Value;
+            else if (!string.IsNullOrEmpty(request.QrCode))
+            {
+                var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(request.QrCode));
+                Id = int.Parse(decoded);
+            }
+            else
+                throw new ArgumentException("Para validar é necessário o ID ou o QRCode.");
+
+            var result = await _context.CHECK_IN.Where(x => x.Id == Id)
+                                               .ExecuteUpdateAsync(s => s.SetProperty(p => p.Presente, request.Presenca));
+
+            if (result == 0)
+                throw new ArgumentException("Check-in não encontrado.");
         }
 
-
-        
     }
 }

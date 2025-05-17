@@ -44,6 +44,7 @@ namespace Esfsg.Application.Services
                                            PossuiDons = x.Dons,
                                            PossuiFilhos = x.PossuiFilhos,
                                            Filhos = x.QntFilhos,
+                                           QrCodePagamento = string.Empty,
                                            TipoUsuario = new TabelaDominioResponse()
                                            {
                                                Id = x.IdTipoUsuarioNavigation.Id,
