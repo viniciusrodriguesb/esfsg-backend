@@ -23,5 +23,5 @@ public partial class INSCRICAO
     public virtual FUNCAO_EVENTO? IdFuncaoEventoNavigation { get; set; }
     public virtual USUARIO IdUsuarioNavigation { get; set; } 
     public virtual ICollection<VISITA_PARTICIPANTE> VisitaParticipantes { get; set; }
-    public virtual ICollection<PAGAMENTO> Pagamentos { get; set; }
+    public virtual ICollection<PAGAMENTO> Pagamentos { get; set; }  
 }

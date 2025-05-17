@@ -16,6 +16,11 @@ namespace Esfsg.Hangfire.Configurations
                 job => job.Execute(),
                 Cron.Minutely);
 
+            jobManager.AddOrUpdate<EmailQrCodeJob>(
+               "email-qrcode",
+               job => job.Execute(),
+               Cron.Yearly);
+
         }
     }
 }

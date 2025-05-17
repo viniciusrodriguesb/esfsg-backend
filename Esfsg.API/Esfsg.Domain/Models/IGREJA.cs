@@ -13,13 +13,13 @@ public partial class IGREJA
     public int PastorId { get; set; }
 
 
-    public virtual ICollection<EVENTO> EventoIdIgrejaEventoNavigations { get; set; } = new List<EVENTO>();
+    public virtual ICollection<EVENTO> EventoIdIgrejaEventoNavigations { get; set; }
 
-    public virtual ICollection<EVENTO> EventoIdIgrejaVigiliaNavigations { get; set; } = new List<EVENTO>();
+    public virtual ICollection<EVENTO> EventoIdIgrejaVigiliaNavigations { get; set; } 
 
-    public virtual PASTOR Pastor { get; set; } = null!;
+    public virtual PASTOR PastorNavigation { get; set; }
 
-    public virtual REGIAO Regiao { get; set; } = null!;
+    public virtual REGIAO RegiaoNavigation { get; set; }
 
-    public virtual ICollection<USUARIO> Usuarios { get; set; } = new List<USUARIO>();
+    public virtual ICollection<USUARIO> Usuarios { get; set; }
 }

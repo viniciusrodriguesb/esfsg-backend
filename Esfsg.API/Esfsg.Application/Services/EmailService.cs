@@ -23,6 +23,7 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
+       
         public async Task SendEmailAsync(string to, string subject, string body)
         {
             try

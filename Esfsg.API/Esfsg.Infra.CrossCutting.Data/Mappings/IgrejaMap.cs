@@ -17,10 +17,10 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.PastorId).HasColumnName("pastor_id");
             builder.Property(e => e.RegiaoId).HasColumnName("regiao_id");
 
-            builder.HasOne(d => d.Pastor).WithMany(p => p.Igrejas)
+            builder.HasOne(d => d.PastorNavigation).WithMany(p => p.Igrejas)
                 .HasForeignKey(d => d.PastorId);
 
-            builder.HasOne(d => d.Regiao).WithMany(p => p.Igrejas)
+            builder.HasOne(d => d.RegiaoNavigation).WithMany(p => p.Igrejas)
                 .HasForeignKey(d => d.RegiaoId);
         }
     }

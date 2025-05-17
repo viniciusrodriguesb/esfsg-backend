@@ -20,8 +20,8 @@ namespace Esfsg.Hangfire.Jobs
         {
             try
             {
-                var sql = @"UPDATE usuarios SET ano_nascimento = 2000 WHERE id=1";
-                await _context.Database.ExecuteSqlRawAsync(sql);
+                //var sql = @"UPDATE usuarios SET ano_nascimento = 2000 WHERE id=1";
+                //await _context.Database.ExecuteSqlRawAsync(sql);
             }
             catch (Exception)
             {

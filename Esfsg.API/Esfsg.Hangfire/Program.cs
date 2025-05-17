@@ -11,6 +11,7 @@ builder.Logging.AddDebug();
 
 builder.Services.AddServices(builder.Configuration);
 builder.Services.AddScoped<ExampleJob>();
+builder.Services.AddScoped<EmailQrCodeJob>();
 
 builder.Services.AddHangfireServer();
 
