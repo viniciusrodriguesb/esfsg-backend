@@ -11,5 +11,6 @@
         public string ClasseUsuario { get; set; }
         public string EmailUsuario { get; set; }
         public int IdInscricao { get; set; }
+        public List<int> IdsStatusInscricao { get; set; }
     }
 }

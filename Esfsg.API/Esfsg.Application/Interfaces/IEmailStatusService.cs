@@ -3,5 +3,6 @@
     public interface IEmailStatusService
     {
         Task EnviarEmailQrCode();
+        Task EnviarEmailInscricaoRealizada();
     }
 }

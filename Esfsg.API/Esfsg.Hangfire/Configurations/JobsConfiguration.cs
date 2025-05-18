@@ -11,13 +11,13 @@ namespace Esfsg.Hangfire.Configurations
             using var scope = services.CreateScope();
             var jobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
 
-            jobManager.AddOrUpdate<ExampleJob>(
-                "job-exemplo",
-                job => job.Execute(),
-                Cron.Minutely);
-
             jobManager.AddOrUpdate<EmailQrCodeJob>(
                "email-qrcode",
+               job => job.Execute(),
+               Cron.Yearly);
+
+            jobManager.AddOrUpdate<EmailInscricaoConfirmadaJob>(
+               "email-inscricao-confirmada",
                job => job.Execute(),
                Cron.Yearly);
 

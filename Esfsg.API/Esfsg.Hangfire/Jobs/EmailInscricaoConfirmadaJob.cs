@@ -4,15 +4,15 @@ using Hangfire;
 
 namespace Esfsg.Hangfire.Jobs
 {
-    public class EmailQrCodeJob : IJob
+    public class EmailInscricaoConfirmadaJob : IJob
     {
 
         #region Construtor
         private readonly IEmailStatusService _emailStatusService;
-        public EmailQrCodeJob(IEmailStatusService emailStatusService)
+        public EmailInscricaoConfirmadaJob(IEmailStatusService emailStatusService)
         {
             _emailStatusService = emailStatusService;
-        }
+        } 
         #endregion
 
         [AutomaticRetry(Attempts = 1)]
@@ -21,7 +21,7 @@ namespace Esfsg.Hangfire.Jobs
         {
             try
             {
-                await _emailStatusService.EnviarEmailQrCode();
+                await _emailStatusService.EnviarEmailInscricaoRealizada();
             }
             catch (Exception)
             {

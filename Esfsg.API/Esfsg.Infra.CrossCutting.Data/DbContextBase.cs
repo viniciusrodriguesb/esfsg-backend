@@ -31,6 +31,7 @@ namespace Esfsg.Infra.Data
         public virtual DbSet<USUARIO_CONDICAO_MEDICA> USUARIO_CONDICAO_MEDICA { get; set; }
         public virtual DbSet<USUARIO_FUNCAO_IGREJA> USUARIO_FUNCAO_IGREJA { get; set; }
         public virtual DbSet<EMAIL_BODY> EMAIL_BODY { get; set; }
+        public virtual DbSet<EMAIL_LOG> EMAIL_LOG { get; set; }
 
         #endregion
 
