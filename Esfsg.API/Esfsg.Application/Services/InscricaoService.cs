@@ -1,4 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Enum;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
@@ -57,6 +58,25 @@ namespace Esfsg.Application.Services
                 throw;
             }
 
+        }
+
+        public async Task<InscricaoResponse?> ConsultarInscricao(InscricaoEventoResquest request)
+        {
+            var inscricao = await _context.INSCRICAO
+                                          .AsNoTracking()
+                                          .Where(x => x.IdUsuario == request.IdUsuario &&
+                                                      x.IdEvento == request.IdEvento)
+                                          .Include(s => s.InscricaoStatus)
+                                               .ThenInclude(s => s.StatusNavigation)
+                                          .Select(x => new InscricaoResponse()
+                                          {
+                                              Periodo = x.Periodo,
+                                              DhInscricao = x.DhInscricao.ToString("dd/MM/yyyy"),
+                                              Visita = x.Visita,
+                                              Status = x.InscricaoStatus.Where(x => x.DhExclusao == null).FirstOrDefault().StatusNavigation.Descricao
+                                          }).FirstOrDefaultAsync();
+
+            return inscricao;
         }
 
         #region Métodos Privados

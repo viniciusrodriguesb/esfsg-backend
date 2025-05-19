@@ -45,6 +45,7 @@ namespace Esfsg.Application.Services
                                            PossuiFilhos = x.PossuiFilhos,
                                            Filhos = x.QntFilhos,
                                            QrCodePagamento = string.Empty,
+                                           DhExclusao = x.DhExclusao,
                                            TipoUsuario = new TabelaDominioResponse()
                                            {
                                                Id = x.IdTipoUsuarioNavigation.Id,

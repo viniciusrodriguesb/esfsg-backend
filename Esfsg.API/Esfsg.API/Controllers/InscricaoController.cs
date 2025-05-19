@@ -38,5 +38,23 @@ namespace Esfsg.API.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ConsultarInscricao([FromQuery] InscricaoEventoResquest request)
+        {
+            try
+            {
+                var result = await _inscricaoService.ConsultarInscricao(request);
+                return StatusCode(StatusCodes.Status200OK, result);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
     }
 }

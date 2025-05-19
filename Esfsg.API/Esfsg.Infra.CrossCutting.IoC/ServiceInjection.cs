@@ -15,7 +15,6 @@ namespace Esfsg.Infra.CrossCutting.IoC
             DatabaseConfiguration.ConfigureDatabase(services, configuration);
             DatabaseConfiguration.ConfigureDatabaseHangfire(services, configuration);
             CORSConfiguration.ConfigureCORS(services);
-            JobsInjection.AddJobs(services);
             ConfigureServices(services);
 
             return services;
@@ -25,7 +24,6 @@ namespace Esfsg.Infra.CrossCutting.IoC
         {
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMemoryCacheService, MemoryCacheService>();
-
 
             services.AddScoped<IClasseService, ClassesService>();
             services.AddScoped<IFuncoesService, FuncoesService>();
@@ -38,6 +36,8 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddScoped<IQrCodeService, QRCodeService>();
             services.AddScoped<IEmailStatusService, EmailStatusService>();
             services.AddScoped<IPixService, PixService>();
+            services.AddScoped<IPastorService, PastorService>();
+            services.AddScoped<IRegiaoService, RegiaoService>();
         }
 
     }
