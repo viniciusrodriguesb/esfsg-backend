@@ -79,7 +79,42 @@ namespace Esfsg.Application.Services
             return inscricao;
         }
 
+        public async Task CancelarInscricao(int Id)
+        {
+            await VerificarExistenciaInscricao(Id);
+
+            var inscricao = await _context.INSCRICAO
+                                          .Where(x => x.Id == Id)
+                                          .Include(s => s.InscricaoStatus)
+                                          .FirstOrDefaultAsync();
+
+            var statusAnterior = inscricao.InscricaoStatus.FirstOrDefault(x => x.DhExclusao == null);
+            statusAnterior.DhExclusao = DateTime.Now;
+
+            _context.Update(statusAnterior);
+            await _context.SaveChangesAsync();
+
+            var statusCancelado = new INSCRICAO_STATUS()
+            {
+                InscricaoId = inscricao.Id,
+                StatusId = (int)StatusEnum.CANCELADA,
+                DhInclusao = DateTime.Now
+            };
+
+            await _context.INSCRICAO_STATUS.AddAsync(statusCancelado);
+            await _context.SaveChangesAsync();
+        }
+
         #region Métodos Privados
+        private async Task VerificarExistenciaInscricao(int Id)
+        {
+            var existe = await _context.INSCRICAO.AsNoTracking()
+                                                 .AnyAsync(x => x.Id == Id);
+
+            if (!existe)
+                throw new KeyNotFoundException("Não foi possivel encontrar a inscrição.");
+        }
+
         private async Task<INSCRICAO_STATUS> PersistirStatusInscricao(int IdInscricao, StatusEnum statusEnum)
         {
             var status = new INSCRICAO_STATUS()
@@ -167,6 +202,7 @@ namespace Esfsg.Application.Services
 
             return inscricao;
         }
+
         #endregion
 
     }

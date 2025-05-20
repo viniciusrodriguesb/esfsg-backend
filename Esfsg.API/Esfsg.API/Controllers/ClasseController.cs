@@ -20,10 +20,10 @@ namespace Esfsg.API.Controllers
             _env = env;
             _classeService = classeService;
             _memoryCacheService = memoryCacheService;
-        } 
+        }
         #endregion
 
-        [HttpGet("obter-todas")]
+        [HttpGet]
         public async Task<IActionResult> ConsultarClasses()
         {
             const string key = "classes-key";
@@ -43,6 +43,48 @@ namespace Esfsg.API.Controllers
                 }
 
                 return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IncluirClasse([FromBody] string Nome)
+        {
+            try
+            {
+                await _classeService.IncluirClasse(Nome);
+                return StatusCode(StatusCodes.Status201Created);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> ExcluirClasse([FromQuery] int Id)
+        {
+            try
+            {
+                await _classeService.ExcluirClasse(Id);
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditarClasse([FromQuery] int Id, [FromBody] string NovoNome)
+        {
+            try
+            {
+                await _classeService.EditarClasse(Id, NovoNome);
+                return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception ex)
             {

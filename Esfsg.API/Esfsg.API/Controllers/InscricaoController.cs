@@ -38,6 +38,24 @@ namespace Esfsg.API.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> CancelarInscricao(int Id)
+        {
+            try
+            {
+                await _inscricaoService.CancelarInscricao(Id);
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> ConsultarInscricao([FromQuery] InscricaoEventoResquest request)
         {

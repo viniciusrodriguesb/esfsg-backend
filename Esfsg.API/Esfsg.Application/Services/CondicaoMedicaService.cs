@@ -37,13 +37,21 @@ namespace Esfsg.Application.Services
 
         public async Task EditarCondicaoMedica(int Id, string NovoNome)
         {
-            await _context.CONDICAO_MEDICA
-                          .Where(x => x.Id == Id)
-                          .ExecuteUpdateAsync(s => s.SetProperty(p => p.Descricao, NovoNome));
+            await VerificarExistencia(Id);
+
+            await VerificarNome(NovoNome);
+
+            var row = await _context.CONDICAO_MEDICA.Where(x => x.Id == Id)
+                     .ExecuteUpdateAsync(s => s.SetProperty(p => p.Descricao, NovoNome));
+
+            if (row == 0)
+                throw new Exception("Erro ao atualizar a condição médica.");
         }
 
         public async Task IncluirCondicaoMedica(string Nome)
         {
+            await VerificarNome(Nome);
+
             var condicaoMedica = new CONDICAO_MEDICA()
             {
                 Descricao = Nome
@@ -52,6 +60,28 @@ namespace Esfsg.Application.Services
             await _context.CONDICAO_MEDICA.AddAsync(condicaoMedica);
             await _context.SaveChangesAsync();
         }
+
+        #region Métodos Privados
+        private async Task VerificarNome(string NovoNome)
+        {
+            var nome = NovoNome.Trim().ToLowerInvariant();
+
+            var existe = await _context.CONDICAO_MEDICA.AsNoTracking()
+                                                       .AnyAsync(x => x.Descricao.ToLower() == nome);
+
+            if (existe)
+                throw new InvalidOperationException("Condição médica já existente.");
+        }
+
+        private async Task VerificarExistencia(int Id)
+        {
+            var existe = await _context.CONDICAO_MEDICA.AsNoTracking()
+                                                        .AnyAsync(x => x.Id == Id);
+
+            if (!existe)
+                throw new KeyNotFoundException("Não foi possivel atualizar. Condição médica não existe.");
+        } 
+        #endregion
 
     }
 }

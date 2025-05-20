@@ -50,5 +50,47 @@ namespace Esfsg.API.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> IncluirRegiao([FromBody] string Nome)
+        {
+            try
+            {
+                await _regiaoService.ConsultarRegioes();
+                return StatusCode(StatusCodes.Status201Created);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> ExcluirRegiao([FromQuery] int Id)
+        {
+            try
+            {
+                await _regiaoService.ConsultarRegioes();
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditarRegiao([FromQuery] int Id, [FromBody] string NovoNome)
+        {
+            try
+            {
+                await _regiaoService.ConsultarRegioes();
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }
