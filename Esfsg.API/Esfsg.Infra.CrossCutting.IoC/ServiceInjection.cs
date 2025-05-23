@@ -1,5 +1,6 @@
 ﻿using Esfsg.Application.Interfaces;
 using Esfsg.Application.Services;
+using Hangfire;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
         {
             services.AddHttpClient();
             services.AddMemoryCache();
+            services.AddHangfireServer();
 
             DatabaseConfiguration.ConfigureDatabase(services, configuration);
             DatabaseConfiguration.ConfigureDatabaseHangfire(services, configuration);
