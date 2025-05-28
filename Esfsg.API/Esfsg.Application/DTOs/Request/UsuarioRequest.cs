@@ -25,10 +25,6 @@ namespace Esfsg.Application.DTOs.Request
 
         public bool Dons { get; set; }
 
-        public bool PossuiFilhos { get; set; }
-
-        public int QntFilhos { get; set; }
-
         public int IdIgreja { get; set; }
 
         public int IdClasse { get; set; }
