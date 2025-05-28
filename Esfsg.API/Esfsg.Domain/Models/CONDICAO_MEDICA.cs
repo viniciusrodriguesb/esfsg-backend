@@ -6,5 +6,11 @@ public partial class CONDICAO_MEDICA
 
     public string Descricao { get; set; }
 
+    #region Navigations
+
     public ICollection<USUARIO_CONDICAO_MEDICA> UsuarioCondicoesMedicas { get; set; }
+    public ICollection<MENOR_INSCRICAO> MenorInscricoes { get; set; } 
+
+    #endregion
+
 }

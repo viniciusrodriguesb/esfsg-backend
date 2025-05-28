@@ -27,22 +27,24 @@ namespace Esfsg.Application.Services
 
         public async Task RealizarInscricao(InscricaoRequest request)
         {
-            if (string.IsNullOrEmpty(request.Usuario.Cpf))
+            if (string.IsNullOrEmpty(request.Cpf))
                 throw new ArgumentException("É necessário enviar o CPF para prosseguir com a inscrição.");
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var usuario = await ValidarUsuario(request.Usuario);
+                var usuario = await ValidarUsuario(request.Usuario, request.Cpf);
 
                 await ValidarInscricao(request, usuario);
 
                 var inscricao = await PersistirNovaInscricao(request, usuario);
 
-                var verificaoStatus = ValidarStatusUsuario(usuario);
+                await ValidarInscricaoMenor(request.InscricaoMenor, inscricao.Id);
 
-                var status = await PersistirStatusInscricao(inscricao.Id, verificaoStatus);
+                await PersistirIgrejaInexistente(request.Igreja);
+
+                await PersistirStatusInscricao(inscricao.Id);
 
                 await PersistirVisitaParticipante(inscricao.Id, request.Visita.Visita, request);
 
@@ -57,7 +59,6 @@ namespace Esfsg.Application.Services
                 await transaction.RollbackAsync();
                 throw;
             }
-
         }
 
         public async Task<InscricaoResponse?> ConsultarInscricao(InscricaoEventoResquest request)
@@ -106,6 +107,67 @@ namespace Esfsg.Application.Services
         }
 
         #region Métodos Privados
+
+        private async Task PersistirIgrejaInexistente(IgrejaInscricaoRequest? igreja)
+        {
+            if (igreja is null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(igreja.Nome) || string.IsNullOrWhiteSpace(igreja.Pastor))
+                throw new ArgumentException("O nome da igreja e pastor são obrigatório.");
+
+            var existeIgreja = await _context.IGREJA
+                                             .AsNoTracking()
+                                             .AnyAsync(x => EF.Functions.Like(x.Nome, igreja.Nome));
+
+            if (existeIgreja)
+                throw new ArgumentException("Não foi possivel adicionar igreja pois ela já existe.");
+
+
+            var pastor = await _context.PASTOR.FirstOrDefaultAsync(x => EF.Functions.Like(x.Nome, igreja.Pastor));
+
+            if (pastor == null)
+            {
+                pastor = new PASTOR()
+                {
+                    Nome = igreja.Pastor
+                };
+
+                await _context.PASTOR.AddAsync(pastor);
+            }
+
+            var novaIgreja = new IGREJA()
+            {
+                Nome = igreja.Nome,
+                RegiaoId = igreja.IdRegiao,
+                PastorId = pastor.Id
+            };
+
+            await _context.IGREJA.AddAsync(novaIgreja);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task ValidarInscricaoMenor(List<MenorRequest>? menores, int IdInscricao)
+        {
+            if (menores is null || menores.Count <= 0)
+                return;
+
+            var idadeInvalida = menores.Where(x => x.Idade > 7).Any();
+
+            if (idadeInvalida)
+                throw new ArgumentException("Um ou mais menores adicionados contém idade maior que 7, com isso é necessário realizar inscrição separadamente");
+
+            var addMenores = menores.Select(x => new MENOR_INSCRICAO()
+            {
+                Idade = x.Idade,
+                IdCondicaoMedica = x.IdCondicaoMedica,
+                IdInscricao = IdInscricao
+            }).ToList();
+
+            await _context.MENOR_INSCRICAO.AddRangeAsync(addMenores);
+            await _context.SaveChangesAsync();
+        }
+
         private async Task VerificarExistenciaInscricao(int Id)
         {
             var existe = await _context.INSCRICAO.AsNoTracking()
@@ -115,28 +177,31 @@ namespace Esfsg.Application.Services
                 throw new KeyNotFoundException("Não foi possivel encontrar a inscrição.");
         }
 
-        private async Task<INSCRICAO_STATUS> PersistirStatusInscricao(int IdInscricao, StatusEnum statusEnum)
+        private async Task PersistirStatusInscricao(int IdInscricao)
         {
-            var status = new INSCRICAO_STATUS()
+            var enviada = new INSCRICAO_STATUS()
             {
                 InscricaoId = IdInscricao,
-                StatusId = (int)statusEnum,
+                StatusId = (int)StatusEnum.ENVIADA,
                 DhInclusao = DateTime.Now,
                 DhExclusao = null
             };
 
-            await _context.INSCRICAO_STATUS.AddAsync(status);
+            await _context.INSCRICAO_STATUS.AddAsync(enviada);
             await _context.SaveChangesAsync();
 
-            return status;
-        }
-        private static StatusEnum ValidarStatusUsuario(USUARIO usuario)
-        {
-            if (usuario.DhExclusao != null)
-                return StatusEnum.AGUARDANDO_LIBERACAO;
+            var liberacao = new INSCRICAO_STATUS()
+            {
+                InscricaoId = IdInscricao,
+                StatusId = (int)StatusEnum.AGUARDANDO_LIBERACAO,
+                DhInclusao = DateTime.Now,
+                DhExclusao = null
+            };
 
-            return StatusEnum.ENVIADA;
+            await _context.INSCRICAO_STATUS.AddAsync(liberacao);
+            await _context.SaveChangesAsync();
         }
+
         private async Task PersistirVisitaParticipante(int IdInscricao, bool icVisita, InscricaoRequest request)
         {
             if (icVisita && request.Visita is null)
@@ -153,6 +218,7 @@ namespace Esfsg.Application.Services
             await _context.VISITA_PARTICIPANTE.AddAsync(visitaParticipante);
             await _context.SaveChangesAsync();
         }
+
         private async Task PersistirCheckIn(int IdInscricao)
         {
             var checkin = new CHECK_IN()
@@ -165,11 +231,11 @@ namespace Esfsg.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<USUARIO> ValidarUsuario(UsuarioRequest request)
+        private async Task<USUARIO> ValidarUsuario(UsuarioRequest? request, string CPF)
         {
-            var usuario = await _usuarioService.ConsultarUsuario(request.Cpf);
+            var usuario = await _usuarioService.ConsultarUsuario(CPF);
 
-            if (usuario == null)
+            if (usuario == null && request != null)
                 usuario = await _usuarioService.IncluirUsuario(request);
 
             return usuario;
@@ -183,7 +249,7 @@ namespace Esfsg.Application.Services
                                                   .AnyAsync();
 
             if (verificaInscricao)
-                return;
+                throw new ArgumentException("Usuário já cadastrado no evento selecionado");
         }
         private async Task<INSCRICAO> PersistirNovaInscricao(InscricaoRequest request, USUARIO usuario)
         {

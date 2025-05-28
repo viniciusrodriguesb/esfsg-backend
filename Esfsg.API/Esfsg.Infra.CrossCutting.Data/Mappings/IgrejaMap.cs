@@ -12,7 +12,6 @@ namespace Esfsg.Infra.Data.Mappings
             builder.ToTable("igreja");
 
             builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.Area).HasColumnName("area");
             builder.Property(e => e.Nome).HasColumnName("nome");
             builder.Property(e => e.PastorId).HasColumnName("pastor_id");
             builder.Property(e => e.RegiaoId).HasColumnName("regiao_id");

@@ -42,10 +42,6 @@ namespace Esfsg.Infra.Data.Mappings
                 .HasMaxLength(100)
                 .HasColumnName("pcd");
 
-            builder.Property(e => e.PossuiFilhos).HasColumnName("possui_filhos");
-
-            builder.Property(e => e.QntFilhos).HasColumnName("qnt_filhos");
-
             builder.Property(e => e.MotivoExclusao).HasColumnName("motivo_exclusao");
 
             builder.Property(e => e.Senha)

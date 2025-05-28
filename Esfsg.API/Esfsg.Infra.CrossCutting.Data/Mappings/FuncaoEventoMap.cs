@@ -15,6 +15,7 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.Id).HasColumnName("id");
             builder.Property(e => e.Descricao).HasColumnName("descricao");
             builder.Property(e => e.Cor).HasColumnName("cor");
+            builder.Property(e => e.Quantidade).HasColumnName("qntd");
         }
     }
 }

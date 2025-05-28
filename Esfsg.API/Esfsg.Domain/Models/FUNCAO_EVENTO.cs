@@ -8,5 +8,8 @@ public partial class FUNCAO_EVENTO
 
     public string Cor { get; set; } = null!;
 
+    public int Quantidade { get; set; }
+
     public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>();
+
 }

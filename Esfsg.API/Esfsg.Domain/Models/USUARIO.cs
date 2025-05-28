@@ -20,10 +20,6 @@ public partial class USUARIO
 
     public bool Dons { get; set; }
 
-    public bool PossuiFilhos { get; set; }
-
-    public int QntFilhos { get; set; }
-
     public DateTime DhInscricao { get; set; }
 
     public DateTime? DhExclusao { get; set; }
@@ -35,6 +31,7 @@ public partial class USUARIO
     public int? IdIgreja { get; set; }
 
     public int? IdClasse { get; set; }
+
 
     #region Navigations
     public virtual CLASSE? IdClasseNavigation { get; set; }

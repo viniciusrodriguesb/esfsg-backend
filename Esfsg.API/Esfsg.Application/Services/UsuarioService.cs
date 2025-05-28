@@ -42,8 +42,6 @@ namespace Esfsg.Application.Services
                                            Nascimento = x.Nascimento.ToString("dd/MM/yyyy"),
                                            Pcd = x.Pcd,
                                            PossuiDons = x.Dons,
-                                           PossuiFilhos = x.PossuiFilhos,
-                                           Filhos = x.QntFilhos,
                                            QrCodePagamento = string.Empty,
                                            DhExclusao = x.DhExclusao,
                                            TipoUsuario = new TabelaDominioResponse()
@@ -85,8 +83,6 @@ namespace Esfsg.Application.Services
                     Telefone = request.Telefone,
                     Pcd = request.Pcd,
                     Dons = request.Dons,
-                    PossuiFilhos = request.PossuiFilhos,
-                    QntFilhos = request.QntFilhos,
                     DhInscricao = DateTime.Now,
                     IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
                     IdIgreja = request.IdIgreja,
