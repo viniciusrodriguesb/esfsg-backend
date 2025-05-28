@@ -71,8 +71,6 @@ namespace Esfsg.Application.Services
 
         public async Task<USUARIO> IncluirUsuario(UsuarioRequest request)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
                 var usuario = new USUARIO()
@@ -92,7 +90,7 @@ namespace Esfsg.Application.Services
                 await _context.USUARIO.AddAsync(usuario);
                 await _context.SaveChangesAsync();
 
-                if (request.CondicoesMedicas.Any())
+                if (request.CondicoesMedicas is not null)
                 {
                     var condicoes = request.CondicoesMedicas.Select(item => new USUARIO_CONDICAO_MEDICA
                     {
@@ -103,7 +101,7 @@ namespace Esfsg.Application.Services
                     await _context.USUARIO_CONDICAO_MEDICA.AddRangeAsync(condicoes);
                 }
 
-                if (request.Instrumentos.Any())
+                if (request.Instrumentos is not null)
                 {
                     var instrumentos = request.Instrumentos.Select(item => new USUARIO_INSTRUMENTO
                     {
@@ -114,7 +112,7 @@ namespace Esfsg.Application.Services
                     await _context.USUARIO_INSTRUMENTO.AddRangeAsync(instrumentos);
                 }
 
-                if (request.FuncoesIgreja.Any())
+                if (request.FuncoesIgreja is not null)
                 {
                     var funcoes = request.FuncoesIgreja.Select(item => new USUARIO_FUNCAO_IGREJA
                     {
@@ -126,13 +124,11 @@ namespace Esfsg.Application.Services
                 }
 
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
 
                 return usuario;
             }
             catch (Exception)
             {
-                await transaction.RollbackAsync();
                 throw;
             }
         }

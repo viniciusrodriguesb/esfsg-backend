@@ -34,6 +34,8 @@ namespace Esfsg.Application.Services
 
             try
             {
+                await PersistirIgrejaInexistente(request);
+
                 var usuario = await ValidarUsuario(request.Usuario, request.Cpf);
 
                 await ValidarInscricao(request, usuario);
@@ -42,11 +44,9 @@ namespace Esfsg.Application.Services
 
                 await ValidarInscricaoMenor(request.InscricaoMenor, inscricao.Id);
 
-                await PersistirIgrejaInexistente(request.Igreja);
-
                 await PersistirStatusInscricao(inscricao.Id);
 
-                await PersistirVisitaParticipante(inscricao.Id, request.Visita.Visita, request);
+                await PersistirVisitaParticipante(inscricao.Id, request.Visita);
 
                 await PersistirCheckIn(inscricao.Id);
 
@@ -108,43 +108,46 @@ namespace Esfsg.Application.Services
 
         #region Métodos Privados
 
-        private async Task PersistirIgrejaInexistente(IgrejaInscricaoRequest? igreja)
+        private async Task PersistirIgrejaInexistente(InscricaoRequest request)
         {
-            if (igreja is null)
+            if (request.Igreja is null)
                 return;
 
-            if (string.IsNullOrWhiteSpace(igreja.Nome) || string.IsNullOrWhiteSpace(igreja.Pastor))
+            if (string.IsNullOrWhiteSpace(request.Igreja.Nome) || string.IsNullOrWhiteSpace(request.Igreja.Pastor))
                 throw new ArgumentException("O nome da igreja e pastor são obrigatório.");
 
             var existeIgreja = await _context.IGREJA
                                              .AsNoTracking()
-                                             .AnyAsync(x => EF.Functions.Like(x.Nome, igreja.Nome));
+                                             .AnyAsync(x => EF.Functions.Like(x.Nome, request.Igreja.Nome));
 
             if (existeIgreja)
                 throw new ArgumentException("Não foi possivel adicionar igreja pois ela já existe.");
 
-
-            var pastor = await _context.PASTOR.FirstOrDefaultAsync(x => EF.Functions.Like(x.Nome, igreja.Pastor));
+            var pastor = await _context.PASTOR.FirstOrDefaultAsync(x => EF.Functions.Like(x.Nome, request.Igreja.Pastor));
 
             if (pastor == null)
             {
                 pastor = new PASTOR()
                 {
-                    Nome = igreja.Pastor
+                    Nome = request.Igreja.Pastor
                 };
 
                 await _context.PASTOR.AddAsync(pastor);
+                await _context.SaveChangesAsync();
             }
 
             var novaIgreja = new IGREJA()
             {
-                Nome = igreja.Nome,
-                RegiaoId = igreja.IdRegiao,
+                Nome = request.Igreja.Nome,
+                RegiaoId = request.Igreja.IdRegiao,
                 PastorId = pastor.Id
             };
 
             await _context.IGREJA.AddAsync(novaIgreja);
             await _context.SaveChangesAsync();
+
+            if (request.Usuario is not null)
+                request.Usuario.IdIgreja = novaIgreja.Id;
         }
 
         private async Task ValidarInscricaoMenor(List<MenorRequest>? menores, int IdInscricao)
@@ -190,6 +193,10 @@ namespace Esfsg.Application.Services
             await _context.INSCRICAO_STATUS.AddAsync(enviada);
             await _context.SaveChangesAsync();
 
+            enviada.DhExclusao = DateTime.Now;
+            _context.INSCRICAO_STATUS.Update(enviada);
+            await _context.SaveChangesAsync();
+
             var liberacao = new INSCRICAO_STATUS()
             {
                 InscricaoId = IdInscricao,
@@ -202,15 +209,15 @@ namespace Esfsg.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task PersistirVisitaParticipante(int IdInscricao, bool icVisita, InscricaoRequest request)
+        private async Task PersistirVisitaParticipante(int IdInscricao, VisitaInscricaoRequest request)
         {
-            if (icVisita && request.Visita is null)
+            if (!request.Visita)
                 return;
 
             var visitaParticipante = new VISITA_PARTICIPANTE()
             {
-                Carro = (bool)request.Visita.Carro,
-                Vagas = (int)request.Visita.Vagas,
+                Carro = (bool)request.Carro,
+                Vagas = (int)request.Vagas,
                 Funcao = "Default",
                 IdInscricao = IdInscricao
             };

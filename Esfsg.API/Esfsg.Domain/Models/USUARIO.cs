@@ -16,7 +16,7 @@ public partial class USUARIO
 
     public DateTime Nascimento { get; set; }
 
-    public string Pcd { get; set; } = null!;
+    public string? Pcd { get; set; }
 
     public bool Dons { get; set; }
 

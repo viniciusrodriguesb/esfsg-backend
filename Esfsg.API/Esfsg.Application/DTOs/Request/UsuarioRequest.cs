@@ -20,7 +20,6 @@ namespace Esfsg.Application.DTOs.Request
 
         public DateTime Nascimento { get; set; }
 
-        [StringLength(100)]
         public string? Pcd { get; set; }
 
         public bool Dons { get; set; }
@@ -29,8 +28,8 @@ namespace Esfsg.Application.DTOs.Request
 
         public int IdClasse { get; set; }
 
-        public List<int> CondicoesMedicas { get; set; }
-        public List<int> Instrumentos { get; set; }
-        public List<int> FuncoesIgreja { get; set; }
+        public List<int>? CondicoesMedicas { get; set; }
+        public List<int>? Instrumentos { get; set; }
+        public List<int>? FuncoesIgreja { get; set; }
     }
 }
