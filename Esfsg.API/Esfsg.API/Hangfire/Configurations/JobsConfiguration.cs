@@ -21,6 +21,16 @@ namespace Esfsg.API.Hangfire.Configurations
                job => job.Execute(),
                Cron.Yearly);
 
+            jobManager.AddOrUpdate<GerarPagamentoJob>(
+              "gerar-pagamento",
+              job => job.Execute(),
+              Cron.Hourly);
+
+            jobManager.AddOrUpdate<AlteraStatusInscricaoPagamentoJob>(
+              "gerar-pagamento",
+              job => job.Execute(),
+              Cron.Daily);
+
         }
     }
 }

@@ -40,6 +40,8 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddScoped<IPixService, PixService>();
             services.AddScoped<IPastorService, PastorService>();
             services.AddScoped<IRegiaoService, RegiaoService>();
+            services.AddScoped<IPagamentoService, PagamentoService>();
+            services.AddScoped<IStatusService, StatusService>();
         }
 
     }

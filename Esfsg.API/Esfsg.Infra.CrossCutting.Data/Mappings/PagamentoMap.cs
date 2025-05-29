@@ -14,6 +14,9 @@ namespace Esfsg.Infra.Data.Mappings
 
             builder.Property(e => e.Id).HasColumnName("id");
             builder.Property(e => e.CodigoPix).HasColumnName("codigo_pix");
+            builder.Property(e => e.QrCodeBase64).HasColumnName("qr_code");
+            builder.Property(e => e.StatusRetornoApi).HasColumnName("status_retorno_api");
+            builder.Property(e => e.MensagemResposta).HasColumnName("mensagem_resposta");
             builder.Property(e => e.DhExpiracao)
                    .HasColumnType("timestamp without time zone")
                    .HasColumnName("dh_expiracao");

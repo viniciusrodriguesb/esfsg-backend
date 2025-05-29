@@ -80,33 +80,7 @@ namespace Esfsg.Application.Services
             return inscricao;
         }
 
-        public async Task CancelarInscricao(int Id)
-        {
-            await VerificarExistenciaInscricao(Id);
-
-            var inscricao = await _context.INSCRICAO
-                                          .Where(x => x.Id == Id)
-                                          .Include(s => s.InscricaoStatus)
-                                          .FirstOrDefaultAsync();
-
-            var statusAnterior = inscricao.InscricaoStatus.FirstOrDefault(x => x.DhExclusao == null);
-            statusAnterior.DhExclusao = DateTime.Now;
-
-            _context.Update(statusAnterior);
-            await _context.SaveChangesAsync();
-
-            var statusCancelado = new INSCRICAO_STATUS()
-            {
-                InscricaoId = inscricao.Id,
-                StatusId = (int)StatusEnum.CANCELADA,
-                DhInclusao = DateTime.Now
-            };
-
-            await _context.INSCRICAO_STATUS.AddAsync(statusCancelado);
-            await _context.SaveChangesAsync();
-        }
-
-        #region Métodos Privados
+        #region Métodos Privados - RealizarInscricao
 
         private async Task PersistirIgrejaInexistente(InscricaoRequest request)
         {
@@ -169,15 +143,6 @@ namespace Esfsg.Application.Services
 
             await _context.MENOR_INSCRICAO.AddRangeAsync(addMenores);
             await _context.SaveChangesAsync();
-        }
-
-        private async Task VerificarExistenciaInscricao(int Id)
-        {
-            var existe = await _context.INSCRICAO.AsNoTracking()
-                                                 .AnyAsync(x => x.Id == Id);
-
-            if (!existe)
-                throw new KeyNotFoundException("Não foi possivel encontrar a inscrição.");
         }
 
         private async Task PersistirStatusInscricao(int IdInscricao)
@@ -247,6 +212,7 @@ namespace Esfsg.Application.Services
 
             return usuario;
         }
+
         private async Task ValidarInscricao(InscricaoRequest request, USUARIO usuario)
         {
             var verificaInscricao = await _context.INSCRICAO
@@ -258,6 +224,7 @@ namespace Esfsg.Application.Services
             if (verificaInscricao)
                 throw new ArgumentException("Usuário já cadastrado no evento selecionado");
         }
+
         private async Task<INSCRICAO> PersistirNovaInscricao(InscricaoRequest request, USUARIO usuario)
         {
             var inscricao = new INSCRICAO()

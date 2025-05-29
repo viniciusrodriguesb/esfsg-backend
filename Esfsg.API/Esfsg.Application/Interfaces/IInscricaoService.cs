@@ -7,6 +7,5 @@ namespace Esfsg.Application.Interfaces
     {
         Task RealizarInscricao(InscricaoRequest request);
         Task<InscricaoResponse?> ConsultarInscricao(InscricaoEventoResquest request);
-        Task CancelarInscricao(int Id);
     }
 }
