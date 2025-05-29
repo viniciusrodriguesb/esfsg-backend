@@ -20,10 +20,10 @@ namespace Esfsg.API.Controllers
         }
         #endregion
 
-        [HttpGet]
+        [HttpGet("acesso")]
         public async Task<IActionResult> GerarQRCodeAcesso([FromQuery] int IdInscricao)
         {
-            string key = $"qr-code-{IdInscricao}";
+            string key = $"qrcode-acesso-{IdInscricao}";
 
             try
             {
@@ -32,6 +32,33 @@ namespace Esfsg.API.Controllers
                 if (response is null)
                 {
                     response = await _qrCodeService.GerarQRCodeAcesso(IdInscricao);
+
+                    if (response == null)
+                        return NotFound("Nenhum registro encontrado.");
+
+                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(30));
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("pagamento")]
+        public async Task<IActionResult> ObterQrCodePagamento([FromQuery] int IdInscricao)
+        {
+            string key = $"qrcode-pagamento-{IdInscricao}";
+
+            try
+            {
+                var response = _memoryCacheService.Get<QrCodePagamentoResponse>(key);
+
+                if (response is null)
+                {
+                    response = await _qrCodeService.ObterQrCodePagamento(IdInscricao);
 
                     if (response == null)
                         return NotFound("Nenhum registro encontrado.");

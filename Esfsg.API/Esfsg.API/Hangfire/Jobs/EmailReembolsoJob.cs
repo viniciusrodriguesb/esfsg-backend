@@ -1,15 +1,14 @@
-﻿using Esfsg.API.Hangfire.Configurations;
-using Esfsg.Application.Interfaces;
+﻿using Esfsg.Application.Interfaces;
 using Hangfire;
 
 namespace Esfsg.API.Hangfire.Jobs
 {
-    public class EmailQrCodeJob : IJob
+    public class EmailReembolsoJob
     {
 
         #region Construtor
         private readonly IEmailStatusService _emailStatusService;
-        public EmailQrCodeJob(IEmailStatusService emailStatusService)
+        public EmailReembolsoJob(IEmailStatusService emailStatusService)
         {
             _emailStatusService = emailStatusService;
         }
@@ -21,7 +20,7 @@ namespace Esfsg.API.Hangfire.Jobs
         {
             try
             {
-                await _emailStatusService.EnviarEmailQrCode();
+                await _emailStatusService.EnviarEmailReembolso();
             }
             catch (Exception)
             {

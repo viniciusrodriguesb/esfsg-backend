@@ -17,7 +17,7 @@ internal class Program
 
         #region Add Services
         builder.Services.AddServices(builder.Configuration);
-        builder.Services.AddScoped<EmailQrCodeJob>();
+        builder.Services.AddScoped<EmailQrCodeAcessoJob>();
         builder.Services.AddScoped<EmailInscricaoConfirmadaJob>();
         #endregion
 

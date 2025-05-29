@@ -36,6 +36,25 @@ namespace Esfsg.Application.Services
             };
         }
 
+        public async Task<QrCodePagamentoResponse> ObterQrCodePagamento(int IdInscricao)
+        {
+            var dadosPagamento = await _context.PAGAMENTO
+                                               .AsNoTracking()
+                                               .Where(x => x.IdInscricao == IdInscricao)
+                                               .Select(x => new QrCodePagamentoResponse()
+                                               {
+                                                   PixCopiaCola = x.CodigoPix,
+                                                   ImagemBase64 = x.QrCodeBase64,
+                                                   DataExpiracao = x.DhExpiracao.ToString("dd/MM/yyyy")
+                                               })
+                                               .FirstOrDefaultAsync();
+
+            if (dadosPagamento is null)
+                throw new ArgumentException("QrCode de pagamento ainda não foi gerado, aguarde um momento.");
+
+            return dadosPagamento;
+        }
+
 
     }
 }

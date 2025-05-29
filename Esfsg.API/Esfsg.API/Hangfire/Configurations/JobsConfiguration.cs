@@ -11,25 +11,44 @@ namespace Esfsg.API.Hangfire.Configurations
             using var scope = services.CreateScope();
             var jobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
 
-            jobManager.AddOrUpdate<EmailQrCodeJob>(
-               "email-qrcode",
-               job => job.Execute(),
-               Cron.Yearly);
-
+            #region Emails
             jobManager.AddOrUpdate<EmailInscricaoConfirmadaJob>(
-               "email-inscricao-confirmada",
+                  "email-inscricao-confirmada",
+                  job => job.Execute(),
+                  Cron.Yearly);
+
+            jobManager.AddOrUpdate<EmailQrCodeAcessoJob>(
+               "email-qrcode-pagamento",
                job => job.Execute(),
                Cron.Yearly);
 
+            jobManager.AddOrUpdate<EmailQrCodePagamentoJob>(
+               "email-qrcode-acesso",
+               job => job.Execute(),
+               Cron.Yearly);
+
+            jobManager.AddOrUpdate<EmailCancelamentoJob>(
+               "email-cancelamento",
+               job => job.Execute(),
+               Cron.Yearly);
+
+            jobManager.AddOrUpdate<EmailReembolsoJob>(
+               "email-reembolso",
+               job => job.Execute(),
+               Cron.Yearly);
+            #endregion
+
+            #region Pagamento
             jobManager.AddOrUpdate<GerarPagamentoJob>(
-              "gerar-pagamento",
-              job => job.Execute(),
-              Cron.Hourly);
+                 "gerar-pagamento",
+                 job => job.Execute(),
+                 Cron.Hourly);
 
             jobManager.AddOrUpdate<AlteraStatusInscricaoPagamentoJob>(
-              "gerar-pagamento",
+              "alterar-status-pagamento",
               job => job.Execute(),
-              Cron.Daily);
+              Cron.Daily); 
+            #endregion
 
         }
     }

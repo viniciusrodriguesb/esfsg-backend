@@ -2,7 +2,10 @@
 {
     public interface IEmailStatusService
     {
-        Task EnviarEmailQrCode();
         Task EnviarEmailInscricaoRealizada();
+        Task EnviarEmailQrCodePagamento();
+        Task EnviarEmailQrCodeAcesso();
+        Task EnviarEmailCancelamentoInscricao();
+        Task EnviarEmailReembolso();
     }
 }
