@@ -31,6 +31,7 @@ namespace Esfsg.Application.DTOs.Request
     public class MenorRequest
     {
         public int Idade { get; set; }
-        public int IdCondicaoMedica { get; set; }
+        public string Nome { get; set; }
+        public int? IdCondicaoMedica { get; set; }
     }
 }

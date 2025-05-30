@@ -24,7 +24,7 @@ public partial class USUARIO
 
     public DateTime? DhExclusao { get; set; }
 
-    public string MotivoExclusao { get; set; } = null!;
+    public string? MotivoExclusao { get; set; } 
 
     public int? IdTipoUsuario { get; set; }
 

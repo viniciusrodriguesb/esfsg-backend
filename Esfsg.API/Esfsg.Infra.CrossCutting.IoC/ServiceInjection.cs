@@ -42,6 +42,8 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddScoped<IRegiaoService, RegiaoService>();
             services.AddScoped<IPagamentoService, PagamentoService>();
             services.AddScoped<IStatusService, StatusService>();
+            services.AddScoped<IGestaoInscricaoService, GestaoInscricaoService>();
+            services.AddScoped<IGestaoPagamentoService, GestaoPagamentoService>();
         }
 
     }

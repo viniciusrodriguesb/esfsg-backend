@@ -34,7 +34,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> IncluirCondicaoMedica([FromBody] EventoRequest request)
+        public async Task<IActionResult> IncluirEvento([FromBody] EventoRequest request)
         {
             try
             {

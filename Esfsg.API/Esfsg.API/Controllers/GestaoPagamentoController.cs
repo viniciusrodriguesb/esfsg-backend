@@ -1,5 +1,4 @@
-﻿using Esfsg.Application.DTOs.Request;
-using Esfsg.Application.Enum;
+﻿using Esfsg.Application.Enum;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,29 +6,24 @@ namespace Esfsg.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/v1")]
-    public class InscricaoController : ControllerBase
+    public class GestaoPagamentoController : ControllerBase
     {
-
         #region Construtor
-        private readonly IInscricaoService _inscricaoService;
+        private readonly IGestaoPagamentoService _gestaoPagamentoService;
         private readonly IStatusService _statusService;
-        private readonly IMemoryCacheService _memoryCacheService;
-        public InscricaoController(IInscricaoService inscricaoService,
-                                IMemoryCacheService memoryCacheService,
-                                IStatusService statusService)
+        public GestaoPagamentoController(IGestaoPagamentoService gestaoPagamentoService, IStatusService statusService)
         {
-            _inscricaoService = inscricaoService;
-            _memoryCacheService = memoryCacheService;
+            _gestaoPagamentoService = gestaoPagamentoService;
             _statusService = statusService;
         }
         #endregion        
 
         [HttpGet]
-        public async Task<IActionResult> ConsultarInscricao([FromQuery] InscricaoEventoResquest request)
+        public async Task<IActionResult> ObterDadosPagamentoInscricao([FromQuery] string? Nome, int IdEvento)
         {
             try
             {
-                var result = await _inscricaoService.ConsultarInscricao(request);
+                var result = await _gestaoPagamentoService.ObterDadosPagamentoInscricao(Nome, IdEvento);
                 return StatusCode(StatusCodes.Status200OK, result);
             }
             catch (ArgumentException ex)
@@ -42,12 +36,12 @@ namespace Esfsg.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RealizarInscricao([FromBody] InscricaoRequest request)
+        [HttpPost("Pix/Gerar")]
+        public async Task<IActionResult> BuscarInscricaoPagamentoPorId([FromBody] int IdInscricao)
         {
             try
             {
-                await _inscricaoService.RealizarInscricao(request);
+                await _gestaoPagamentoService.GerarNovoCodigoPix(IdInscricao);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (ArgumentException ex)
@@ -60,12 +54,12 @@ namespace Esfsg.API.Controllers
             }
         }
 
-        [HttpPut("cancelar")]
-        public async Task<IActionResult> CancelarInscricao(int Id)
+        [HttpPut("confirmacao-manual")]
+        public async Task<IActionResult> ConfirmarPagamento(int Id)
         {
             try
             {
-                await _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, Id);
+                await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, Id);
                 return StatusCode(StatusCodes.Status200OK);
             }
             catch (ArgumentException ex)
@@ -76,7 +70,6 @@ namespace Esfsg.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }       
-
+        }
     }
 }

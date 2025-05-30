@@ -137,6 +137,7 @@ namespace Esfsg.Application.Services
             var addMenores = menores.Select(x => new MENOR_INSCRICAO()
             {
                 Idade = x.Idade,
+                Nome = x.Nome,
                 IdCondicaoMedica = x.IdCondicaoMedica,
                 IdInscricao = IdInscricao
             }).ToList();

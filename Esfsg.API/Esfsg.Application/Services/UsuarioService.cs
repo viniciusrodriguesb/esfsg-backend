@@ -64,8 +64,7 @@ namespace Esfsg.Application.Services
         {
             return await _context.USUARIO
                                         .AsNoTracking()
-                                        .Where(x => x.Cpf.Trim() == CPF.Trim() &&
-                                                    x.DhExclusao == null)
+                                        .Where(x => x.Cpf.Trim() == CPF.Trim())
                                         .FirstOrDefaultAsync();
         }
 
@@ -84,6 +83,7 @@ namespace Esfsg.Application.Services
                     DhInscricao = DateTime.Now,
                     IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
                     IdIgreja = request.IdIgreja,
+                    Nascimento = request.Nascimento,
                     IdClasse = request.IdClasse
                 };
 

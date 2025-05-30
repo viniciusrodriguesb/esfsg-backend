@@ -15,6 +15,7 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.IdInscricao).HasColumnName("id_inscricao");
             builder.Property(e => e.IdCondicaoMedica).HasColumnName("id_condicao_medica");
             builder.Property(e => e.Idade).HasColumnName("idade");
+            builder.Property(e => e.Nome).HasColumnName("nome");
 
             builder.HasOne(d => d.InscricaoNavigation).WithMany(p => p.MenorInscricoes)
                    .HasForeignKey(d => d.IdInscricao);

@@ -54,6 +54,28 @@ namespace Esfsg.Application.Services
             }
         }
 
+        public async Task BuscarInscricaoPagamentoPorId(int IdInscricao)
+        {
+            var inscricao = await _context.INSCRICAO
+                                    .AsNoTracking()
+                                    .Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_PAGAMENTO
+                                                                           && s.DhExclusao == null))
+                                    .Include(e => e.IdEventoNavigation)
+                                    .Include(u => u.IdUsuarioNavigation)
+                                    .Select(x => new PagamentoRequest()
+                                    {
+                                        IdInscricao = x.Id,
+                                        Valor = x.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase) ? x.IdEventoNavigation.ValorIntegral : x.IdEventoNavigation.ValorParcial,
+                                        CPF = x.IdUsuarioNavigation.Cpf,
+                                        Email = x.IdUsuarioNavigation.Email
+                                    }).FirstOrDefaultAsync();
+
+            if (inscricao == null)
+                throw new ArgumentException("Número de inscrição não encontrado.");
+
+            await CriarPagamentoPixAsync(inscricao);
+        }
+
         public async Task AlterarStatusInscricao()
         {
             var inscricoes = await _context.INSCRICAO
