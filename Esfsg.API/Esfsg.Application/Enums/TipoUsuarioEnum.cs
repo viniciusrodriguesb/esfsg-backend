@@ -1,4 +1,4 @@
-﻿namespace Esfsg.Application.Enum
+﻿namespace Esfsg.Application.Enums
 {
     public enum TipoUsuarioEnum
     {

@@ -36,6 +36,32 @@ namespace Esfsg.Application.Services
                                        }).ToListAsync();
         }
 
+        public async Task<List<string>?> ConsultarPeriodos(int IdEvento)
+        {
+            const int TotalIntegral = 50;
+            const int TotalTarde = 100;
+
+            var inscritosPorPeriodo = await _context.INSCRICAO
+                .AsNoTracking()
+                .Where(x => x.IdEvento == IdEvento &&
+                            (x.Periodo.ToLower() == "integral" || x.Periodo.ToLower() == "tarde"))
+                .GroupBy(x => x.Periodo)
+                .Select(g => new { Periodo = g.Key, Quantidade = g.Count() })
+                .ToListAsync();
+
+            var result = new List<string>();
+
+            var integral = inscritosPorPeriodo.FirstOrDefault(x => x.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase))?.Quantidade ?? 0;
+            if (integral < TotalIntegral)
+                result.Add("Integral");
+
+            var tarde = inscritosPorPeriodo.FirstOrDefault(x => x.Periodo.Equals("Tarde", StringComparison.OrdinalIgnoreCase))?.Quantidade ?? 0;
+            if (tarde < TotalTarde)
+                result.Add("Tarde");
+
+            return result;
+        }
+
         public async Task IncluirEvento(EventoRequest request)
         {
             await ValidarEvento(request);

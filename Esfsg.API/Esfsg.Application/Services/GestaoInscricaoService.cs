@@ -1,6 +1,6 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.DTOs.Response;
-using Esfsg.Application.Enum;
+using Esfsg.Application.Enums;
 using Esfsg.Application.Filtros;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;

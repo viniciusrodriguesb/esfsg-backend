@@ -1,4 +1,4 @@
-﻿using Esfsg.Application.Enum;
+﻿using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

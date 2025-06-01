@@ -1,6 +1,6 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.DTOs.Response;
-using Esfsg.Application.Enum;
+using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
@@ -184,7 +184,6 @@ namespace Esfsg.Application.Services
             {
                 Carro = (bool)request.Carro,
                 Vagas = (int)request.Vagas,
-                Funcao = "Default",
                 IdInscricao = IdInscricao
             };
 

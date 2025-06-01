@@ -1,4 +1,4 @@
-﻿using Esfsg.Application.Enum;
+﻿using Esfsg.Application.Enums;
 
 namespace Esfsg.Application.Interfaces
 {

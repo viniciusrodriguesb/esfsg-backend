@@ -8,7 +8,7 @@ public partial class VISITA_PARTICIPANTE
 
     public int Vagas { get; set; }
 
-    public string Funcao { get; set; } = null!;
+    public string? Funcao { get; set; }
 
     public int? IdVisita { get; set; }
 

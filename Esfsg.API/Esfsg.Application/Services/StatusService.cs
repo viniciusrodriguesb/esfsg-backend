@@ -1,4 +1,4 @@
-﻿using Esfsg.Application.Enum;
+﻿using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;

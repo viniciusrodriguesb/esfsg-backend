@@ -1,5 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Response;
-using Esfsg.Application.Enum;
+using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;

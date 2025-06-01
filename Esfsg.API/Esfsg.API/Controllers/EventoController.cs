@@ -33,6 +33,20 @@ namespace Esfsg.API.Controllers
             }
         }
 
+        [HttpGet("periodos")]
+        public async Task<IActionResult> ConsultarPeriodos([FromQuery] int IdEvento)
+        {
+            try
+            {
+                var result = await _eventoService.ConsultarPeriodos(IdEvento);
+                return StatusCode(StatusCodes.Status200OK, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> IncluirEvento([FromBody] EventoRequest request)
         {
