@@ -6,6 +6,9 @@ public partial class STATUS
 
     public string Descricao { get; set; } = null!;
 
+    #region Navigations
     public ICollection<INSCRICAO_STATUS> InscricaoStatus { get; set; }
-    public ICollection<EMAIL_BODY> EmailsBody { get; set; }
+    public ICollection<EMAIL_BODY> EmailsBody { get; set; } 
+    #endregion
+
 }

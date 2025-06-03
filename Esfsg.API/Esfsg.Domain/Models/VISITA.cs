@@ -12,5 +12,8 @@ public partial class VISITA
 
     public string CorVoluntario { get; set; } = null!;
 
-    public virtual ICollection<VISITA_PARTICIPANTE> VisitaParticipantes { get; set; } = new List<VISITA_PARTICIPANTE>();
+    #region Navigations
+    public virtual ICollection<VISITA_PARTICIPANTE> VisitaParticipantes { get; set; } = new List<VISITA_PARTICIPANTE>(); 
+    #endregion
+
 }

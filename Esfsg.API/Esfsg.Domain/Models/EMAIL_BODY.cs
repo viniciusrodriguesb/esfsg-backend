@@ -6,6 +6,9 @@
         public string Body { get; set; }
         public int? IdStatus { get; set; }
 
+        #region Navigations
         public STATUS? StatusNavigation { get; set; }
+        #endregion
+
     }
 }

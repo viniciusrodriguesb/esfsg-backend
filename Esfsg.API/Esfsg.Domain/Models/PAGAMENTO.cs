@@ -13,5 +13,8 @@ public partial class PAGAMENTO
     public int IdInscricao { get; set; }
 
 
-    public virtual INSCRICAO InscricaoNavigation { get; set; } 
+    #region Navigations
+    public virtual INSCRICAO InscricaoNavigation { get; set; }  
+    #endregion
+
 }

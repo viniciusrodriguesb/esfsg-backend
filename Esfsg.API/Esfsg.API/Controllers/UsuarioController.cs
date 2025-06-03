@@ -21,6 +21,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = await _usuarioService.ConsultarUsuarioLogin(CPF);
+
+                if (result == null)
+                    return NotFound("Nenhum registro encontrado.");
+
                 return Ok(result);
             }
             catch (Exception ex)

@@ -62,6 +62,9 @@ namespace Esfsg.Application.Services
                                                         .Where(x => x.IdInscricao == IdInscricao)
                                                         .FirstOrDefaultAsync();
 
+            if (dadoPagamento == null)
+                throw new ArgumentException("Não foi encontrada nenhuma informação de pagamento para esta inscrição");
+
             if (dadoPagamento.StatusRetornoApi == "approved")
                 throw new ArgumentException("Pagamento desta inscrição já foi realizado.");
 

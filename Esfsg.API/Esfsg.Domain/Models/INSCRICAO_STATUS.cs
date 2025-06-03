@@ -7,8 +7,10 @@
         public DateTime DhInclusao { get; set; }
         public DateTime? DhExclusao { get; set; }
 
+        #region Navigations
         public INSCRICAO InscricaoNavigation { get; set; }
-        public STATUS StatusNavigation { get; set; }
+        public STATUS StatusNavigation { get; set; } 
+        #endregion
 
     }
 }

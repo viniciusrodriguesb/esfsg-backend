@@ -6,5 +6,8 @@ public partial class CLASSE
 
     public string Descricao { get; set; } = null!;
 
+    #region Navigations
     public virtual ICollection<USUARIO> Usuarios { get; set; } = new List<USUARIO>();
+    #endregion
+
 }

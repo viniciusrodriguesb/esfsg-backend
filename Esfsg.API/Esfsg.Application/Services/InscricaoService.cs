@@ -182,8 +182,8 @@ namespace Esfsg.Application.Services
 
             var visitaParticipante = new VISITA_PARTICIPANTE()
             {
-                Carro = (bool)request.Carro,
-                Vagas = (int)request.Vagas,
+                Carro = request.Carro.HasValue ? (bool)request.Carro : false,
+                Vagas = request.Vagas.HasValue ? (int)request.Vagas : 0,
                 IdInscricao = IdInscricao
             };
 

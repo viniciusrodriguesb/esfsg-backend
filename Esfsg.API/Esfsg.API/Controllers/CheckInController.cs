@@ -23,6 +23,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var response = await _checkInService.Consultar(request);
+
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
+
                 return StatusCode(StatusCodes.Status200OK, response);
             }
             catch (Exception ex)

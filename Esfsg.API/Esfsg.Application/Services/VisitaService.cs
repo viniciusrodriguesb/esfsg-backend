@@ -53,9 +53,12 @@ namespace Esfsg.Application.Services
                                                              x.IdVisita == alocacao.IdVisita);
 
                 if (jaAlocado != null)
-                    throw new ArgumentException($"O participante {jaAlocado.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto} já está alocado nesta visita!");
+                    throw new ArgumentException($"O participante {jaAlocado.IdInscricaoNavigation?.IdUsuarioNavigation.NomeCompleto} já está alocado nesta visita!");
 
                 var participante = await _context.VISITA_PARTICIPANTE.FirstOrDefaultAsync(x => x.IdInscricao == alocacao.IdInscricao);
+
+                if (participante == null)
+                    continue;
 
                 participante.Funcao = alocacao.Funcao.ToString();
                 participante.IdVisita = alocacao.IdVisita;

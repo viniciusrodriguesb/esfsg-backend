@@ -30,6 +30,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = await _inscricaoService.ConsultarInscricao(request);
+
+                if (result == null)
+                    return NotFound("Nenhum registro encontrado.");
+
                 return StatusCode(StatusCodes.Status200OK, result);
             }
             catch (ArgumentException ex)
@@ -76,7 +80,7 @@ namespace Esfsg.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }       
+        }
 
     }
 }

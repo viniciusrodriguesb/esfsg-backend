@@ -6,5 +6,8 @@ public partial class INSTRUMENTO
 
     public string Descricao { get; set; } = null!;
 
-    public virtual ICollection<USUARIO_INSTRUMENTO> UsuarioInstrumentos { get; set; } = new List<USUARIO_INSTRUMENTO>();
+    #region Navigations
+    public virtual ICollection<USUARIO_INSTRUMENTO> UsuarioInstrumentos { get; set; } = new List<USUARIO_INSTRUMENTO>(); 
+    #endregion
+
 }

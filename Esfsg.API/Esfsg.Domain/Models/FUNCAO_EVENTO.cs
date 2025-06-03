@@ -10,6 +10,8 @@ public partial class FUNCAO_EVENTO
 
     public int Quantidade { get; set; }
 
-    public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>();
+    #region Navigations
+    public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>(); 
+    #endregion
 
 }

@@ -22,9 +22,12 @@ public partial class EVENTO
 
     public int IdIgrejaEvento { get; set; }
 
+    #region Navigations
     public virtual IGREJA IdIgrejaEventoNavigation { get; set; } = null!;
 
     public virtual IGREJA IdIgrejaVigiliaNavigation { get; set; } = null!;
 
-    public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>();
+    public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>(); 
+    #endregion
+
 }

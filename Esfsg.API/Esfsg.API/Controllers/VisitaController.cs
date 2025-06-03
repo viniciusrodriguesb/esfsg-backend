@@ -22,6 +22,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = await _visitaService.ConsultarInscritosVisita(IdEvento);
+
+                if (result == null || !result.Any())
+                    return NotFound("Nenhum registro encontrado.");
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -36,6 +40,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = _visitaService.ConsultarFuncoesVisita();
+
+                if (result == null || !result.Any())
+                    return NotFound("Nenhum registro encontrado.");
+
                 return Ok(result);
             }
             catch(Exception ex)

@@ -8,5 +8,8 @@ public partial class CHECK_IN
 
     public int? IdInscricao { get; set; }
 
+    #region Navigations
     public virtual INSCRICAO? IdInscricaoNavigation { get; set; }
+    #endregion
+
 }

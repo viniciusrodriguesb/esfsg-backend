@@ -6,5 +6,8 @@ public partial class ROLE_SISTEMA
 
     public string Descricao { get; set; } = null!;
 
-    public virtual ICollection<USUARIO> Usuarios { get; set; } = new List<USUARIO>();
+    #region Navigations
+    public virtual ICollection<USUARIO> Usuarios { get; set; } = new List<USUARIO>(); 
+    #endregion
+
 }

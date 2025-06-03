@@ -25,6 +25,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = await _eventoService.ConsultarEvento(RegiaoId);
+
+                if (result == null || !result.Any())
+                    return NotFound("Nenhum registro encontrado.");
+
                 return StatusCode(StatusCodes.Status200OK, result);
             }
             catch (Exception ex)

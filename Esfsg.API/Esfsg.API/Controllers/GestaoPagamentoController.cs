@@ -24,6 +24,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = await _gestaoPagamentoService.ObterDadosPagamentoInscricao(Nome, IdEvento);
+
+                if (result == null || !result.Any())
+                    return NotFound("Nenhum registro encontrado.");
+
                 return StatusCode(StatusCodes.Status200OK, result);
             }
             catch (ArgumentException ex)

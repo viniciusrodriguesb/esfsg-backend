@@ -6,5 +6,8 @@ public partial class PASTOR
 
     public string Nome { get; set; } = null!;
 
-    public virtual ICollection<IGREJA> Igrejas { get; set; } = new List<IGREJA>();
+    #region Navigations
+    public virtual ICollection<IGREJA> Igrejas { get; set; } = new List<IGREJA>(); 
+    #endregion
+
 }

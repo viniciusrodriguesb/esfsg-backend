@@ -22,6 +22,10 @@ namespace Esfsg.API.Controllers
             try
             {
                 var response = await _pastorService.Consultar();
+
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
+
                 return StatusCode(StatusCodes.Status200OK, response);
             }
             catch (Exception ex)
