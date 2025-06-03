@@ -13,7 +13,7 @@ namespace Esfsg.Application.Services
         public FuncoesService(DbContextBase context)
         {
             _context = context;
-        } 
+        }
         #endregion
 
         public async Task<List<TabelaDominioResponse>> ConsultarFuncoesIgreja()
@@ -29,17 +29,28 @@ namespace Esfsg.Application.Services
             return funcoes;
         }
 
-        public async Task<List<TabelaDominioResponse>> ConsultarFuncoesEvento()
+        public async Task<List<TabelaDominioResponse>> ConsultarFuncoesEvento(int IdEvento)
         {
-            var funcoes = await _context.FUNCAO_EVENTO
-                                        .AsNoTracking()
-                                        .Select(x => new TabelaDominioResponse()
-                                        {
-                                            Id = x.Id,
-                                            Descricao = x.Descricao,
-                                        }).ToListAsync();
+            var funcoesDisponiveis = await _context.FUNCAO_EVENTO
+                                                   .AsNoTracking()
+                                                   .GroupJoin(_context.INSCRICAO.Where(x => x.IdEvento == IdEvento),
+                                                               fe => fe.Id,
+                                                               i => i.IdFuncaoEvento,
+                                                               (fe, inscricoes) => new
+                                                               {
+                                                                   Funcao = fe,
+                                                                   Total = inscricoes.Count()
+                                                               })
+                                                   .Where(x => x.Total < x.Funcao.Quantidade)
+                                                   .Select(x => new TabelaDominioResponse()
+                                                   {
+                                                       Id = x.Funcao.Id,
+                                                       Descricao = x.Funcao.Descricao,
+                                                   })
+                                                   .OrderBy(x => x.Id)
+                                                   .ToListAsync();
 
-            return funcoes;
+            return funcoesDisponiveis;
         }
 
 

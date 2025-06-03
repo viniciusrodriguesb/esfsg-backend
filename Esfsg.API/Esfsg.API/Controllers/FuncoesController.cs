@@ -51,17 +51,17 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet("evento")]
-        public async Task<IActionResult> ConsultarFuncoesEvento()
+        public async Task<IActionResult> ConsultarFuncoesEvento(int IdEvento)
         {
-            const string key = "funcoes-evento-key";
+            string key = $"funcoes-evento-{IdEvento}";
 
             try
             {
                 var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
 
-                if (response is null)
+                if (response is null || _env.IsDevelopment())
                 {
-                    response = await _funcoesService.ConsultarFuncoesEvento();
+                    response = await _funcoesService.ConsultarFuncoesEvento(IdEvento);
 
                     if (response == null || !response.Any())
                         return NotFound("Nenhum registro encontrado.");
