@@ -1,4 +1,5 @@
-﻿using Esfsg.Application.Interfaces;
+﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esfsg.API.Controllers
@@ -26,6 +27,48 @@ namespace Esfsg.API.Controllers
                     return NotFound("Nenhum registro encontrado.");
 
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("administrativo")]
+        public async Task<IActionResult> ConsultarUsuarioAdmnistrativo([FromQuery] UsuarioAdministrativoRequest request)
+        {
+            try
+            {
+                var result = await _usuarioService.ConsultarUsuarioAdministrativo(request);
+                return result.Sucesso ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("administrativo/role")]
+        public async Task<IActionResult> AlterarRoleUsuario([FromBody] AlteraRoleRequest role)
+        {
+            try
+            {
+                var result = await _usuarioService.AlterarRoleUsuario(role);
+                return result.Sucesso ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("administrativo/senha")]
+        public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaRequest request)
+        {
+            try
+            {
+                var result = await _usuarioService.AlterarSenha(request);
+                return result.Sucesso ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
             {

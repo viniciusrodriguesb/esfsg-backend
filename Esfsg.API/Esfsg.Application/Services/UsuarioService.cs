@@ -4,6 +4,7 @@ using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Esfsg.Application.Services
@@ -60,6 +61,47 @@ namespace Esfsg.Application.Services
                                        }).FirstOrDefaultAsync();
         }
 
+        public async Task<ResultResponse<USUARIO>> ConsultarUsuarioAdministrativo(UsuarioAdministrativoRequest request)
+        {
+            var usuario = await ConsultarUsuario(request.CPF);
+
+            if (usuario == null)
+            {
+                return new ResultResponse<USUARIO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Usuário não encontrado, por favor contacte a secretaria."
+                };
+            }
+
+            if (usuario.IdTipoUsuario == (int)TipoUsuarioEnum.PARTICIPANTE)
+            {
+                return new ResultResponse<USUARIO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Usuário não tem permissão de acesso, por favor entre em contato com a secretaria."
+                };
+            }
+
+            var passwordHasher = new PasswordHasher<USUARIO>();
+            var result = passwordHasher.VerifyHashedPassword(usuario, usuario.Senha, request.Senha);
+
+            if (result != PasswordVerificationResult.Success)
+            {
+                return new ResultResponse<USUARIO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Senha incorreta. Tente novamente"
+                };
+            }
+
+            return new ResultResponse<USUARIO>()
+            {
+                Sucesso = true,
+                Mensagem = "Login realizado com sucesso."
+            };
+        }
+
         public async Task<USUARIO?> ConsultarUsuario(string CPF)
         {
             return await _context.USUARIO
@@ -72,6 +114,10 @@ namespace Esfsg.Application.Services
         {
             try
             {
+                var senhaCriptografada = string.IsNullOrEmpty(request.Senha)
+                                         ? null
+                                         : new PasswordHasher<USUARIO>().HashPassword(null!, request.Senha);
+
                 var usuario = new USUARIO()
                 {
                     NomeCompleto = request.NomeCompleto,
@@ -79,6 +125,7 @@ namespace Esfsg.Application.Services
                     Email = request.Email,
                     Telefone = request.Telefone,
                     Pcd = request.Pcd,
+                    Senha = senhaCriptografada,
                     Dons = request.Dons,
                     DhInscricao = DateTime.Now,
                     IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
@@ -131,6 +178,76 @@ namespace Esfsg.Application.Services
             {
                 throw;
             }
+        }
+
+        public async Task<ResultResponse<USUARIO>> AlterarRoleUsuario(AlteraRoleRequest role)
+        {
+
+            var usuario = await _context.USUARIO.FirstOrDefaultAsync(x => x.Id == role.IdUsuario);
+
+            if (usuario == null)
+            {
+                return new ResultResponse<USUARIO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Usuário não encontrado, por favor contacte a secretaria."
+                };
+            }
+
+            usuario.IdTipoUsuario = (int)role.TipoUsuario;
+
+            _context.Update(usuario);
+            var res = await _context.SaveChangesAsync();
+
+            if (res == 0)
+            {
+                return new ResultResponse<USUARIO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao atualizar o tipo de usuário. Entre em contato com a TI."
+                };
+            }
+
+            return new ResultResponse<USUARIO>()
+            {
+                Sucesso = true,
+                Mensagem = "Tipo de usuario atualizado com sucesso."
+            };
+        }
+
+        public async Task<ResultResponse<USUARIO>> AlterarSenha(AlterarSenhaRequest request)
+        {
+            var usuario = await _context.USUARIO.FirstOrDefaultAsync(x => x.Id == request.IdUsuario);
+
+            if (usuario == null)
+            {
+                return new ResultResponse<USUARIO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Usuário não encontrado, por favor contacte a secretaria."
+                };
+            }
+
+            var senhaCriptografada = new PasswordHasher<USUARIO>().HashPassword(usuario, request.Senha);
+            usuario.Senha = senhaCriptografada;
+
+            _context.Update(usuario);
+            var res = await _context.SaveChangesAsync();
+
+            if (res == 0)
+            {
+                return new ResultResponse<USUARIO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao atualizar a senha. Entre em contato com a TI."
+                };
+            }
+
+            return new ResultResponse<USUARIO>()
+            {
+                Sucesso = true,
+                Mensagem = "Senha atualizada com sucesso."
+            };
         }
     }
 }

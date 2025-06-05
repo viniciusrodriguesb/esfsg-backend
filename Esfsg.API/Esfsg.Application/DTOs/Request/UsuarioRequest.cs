@@ -10,6 +10,8 @@ namespace Esfsg.Application.DTOs.Request
         [StringLength(14)]
         public string Cpf { get; set; }
 
+        public string? Senha { get; set; }
+
         [EmailAddress]
         [StringLength(100)]
         public string? Email { get; set; }

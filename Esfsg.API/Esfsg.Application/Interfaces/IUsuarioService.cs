@@ -9,5 +9,8 @@ namespace Esfsg.Application.Interfaces
         Task<USUARIO?> ConsultarUsuario(string CPF);
         Task<USUARIO> IncluirUsuario(UsuarioRequest request);
         Task<UsuarioResponse?> ConsultarUsuarioLogin(string CPF);
+        Task<ResultResponse<USUARIO>> ConsultarUsuarioAdministrativo(UsuarioAdministrativoRequest request);
+        Task<ResultResponse<USUARIO>> AlterarRoleUsuario(AlteraRoleRequest role);
+        Task<ResultResponse<USUARIO>> AlterarSenha(AlterarSenhaRequest request);
     }
 }
