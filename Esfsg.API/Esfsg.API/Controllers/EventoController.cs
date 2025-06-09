@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -20,6 +21,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta todos os eventos de uma região.")]
         public async Task<IActionResult> ConsultarEventos([FromQuery] int RegiaoId)
         {
             try
@@ -38,6 +40,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet("periodos")]
+        [SwaggerOperation(Summary = "Consulta todos os períodos disponíveis.")]
         public async Task<IActionResult> ConsultarPeriodos([FromQuery] int IdEvento)
         {
             try
@@ -52,6 +55,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Inclui um novo evento no banco de dados.")]
         public async Task<IActionResult> IncluirEvento([FromBody] EventoRequest request)
         {
             try
@@ -70,6 +74,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpDelete]
+        [SwaggerOperation(Summary = "Exclui um evento no banco de dados.")]
         public async Task<IActionResult> ExcluirEvento([FromQuery] int Id)
         {
             try
@@ -88,6 +93,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut]
+        [SwaggerOperation(Summary = "Edita um evento no banco de dados.")]
         public async Task<IActionResult> EditarEvento([FromQuery] int Id, [FromBody] AlteraEventoRequest request)
         {
             try

@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -17,6 +18,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta dados do usuário para realizar LOGIN.")]
         public async Task<IActionResult> ConsultarUsuarioLogin([FromQuery] string CPF)
         {
             try
@@ -35,6 +37,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet("administrativo")]
+        [SwaggerOperation(Summary = "Consulta dados do usuário para realizar LOGIN ADMINISTRATIVO.")]
         public async Task<IActionResult> ConsultarUsuarioAdmnistrativo([FromQuery] UsuarioAdministrativoRequest request)
         {
             try
@@ -49,6 +52,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut("administrativo/role")]
+        [SwaggerOperation(Summary = "Alteração de role de um usuário.")]
         public async Task<IActionResult> AlterarRoleUsuario([FromBody] AlteraRoleRequest role)
         {
             try
@@ -63,6 +67,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut("administrativo/senha")]
+        [SwaggerOperation(Summary = "Redefinição de senha de um usuário.")]
         public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaRequest request)
         {
             try

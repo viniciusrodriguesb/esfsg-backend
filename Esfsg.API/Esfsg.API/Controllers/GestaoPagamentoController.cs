@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -19,6 +20,7 @@ namespace Esfsg.API.Controllers
         #endregion        
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta inscrições pendentes de pagamento e pagas.")]
         public async Task<IActionResult> ObterDadosPagamentoInscricao([FromQuery] string? Nome, int IdEvento)
         {
             try
@@ -41,6 +43,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost("Pix/Gerar")]
+        [SwaggerOperation(Summary = "Geração de novo código pix.")]
         public async Task<IActionResult> BuscarInscricaoPagamentoPorId([FromBody] int IdInscricao)
         {
             try
@@ -59,6 +62,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut("confirmacao-manual")]
+        [SwaggerOperation(Summary = "Confirmação manual do pagamento da inscrição.")]
         public async Task<IActionResult> ConfirmarPagamento(int Id)
         {
             try

@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -24,6 +25,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta a todas as regiões.")]
         public async Task<IActionResult> ConsultarRegioes()
         {
             const string key = "regioes-key";
@@ -51,6 +53,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Inclui uma nova região no banco de dados.")]
         public async Task<IActionResult> IncluirRegiao([FromBody] string Nome)
         {
             try
@@ -65,6 +68,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpDelete]
+        [SwaggerOperation(Summary = "Exclui uma região no banco de dados.")]
         public async Task<IActionResult> ExcluirRegiao([FromQuery] int Id)
         {
             try
@@ -79,6 +83,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut]
+        [SwaggerOperation(Summary = "Edita uma região no banco de dados.")]
         public async Task<IActionResult> EditarRegiao([FromQuery] int Id, [FromBody] string NovoNome)
         {
             try

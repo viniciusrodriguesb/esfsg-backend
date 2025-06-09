@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -18,6 +19,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta de inscrições para marcar presença.")]
         public async Task<IActionResult> Consultar([FromQuery] ConsultaCheckInRequest request)
         {
             try
@@ -36,6 +38,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Confirmação de presença no evento.")]
         public async Task<IActionResult> ConfirmarPresenca([FromBody] ValidaPresencaRequest request)
         {
             try

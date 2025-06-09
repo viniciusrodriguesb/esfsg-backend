@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -24,6 +25,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet("igreja")]
+        [SwaggerOperation(Summary = "Consulta todas as funções disponíveis na igreja.")]
         public async Task<IActionResult> ConsultarFuncoesIgreja()
         {
             const string key = "funcoes-igreja-key";
@@ -51,6 +53,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet("evento")]
+        [SwaggerOperation(Summary = "Consulta todas as funções disponíveis no evento.")]
         public async Task<IActionResult> ConsultarFuncoesEvento(int IdEvento)
         {
             string key = $"funcoes-evento-{IdEvento}";

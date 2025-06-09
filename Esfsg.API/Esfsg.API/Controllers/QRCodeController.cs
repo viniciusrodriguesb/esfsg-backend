@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -21,6 +22,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet("acesso")]
+        [SwaggerOperation(Summary = "Consulta ao QRCode de checkin.")]
         public async Task<IActionResult> GerarQRCodeAcesso([FromQuery] int IdInscricao)
         {
             string key = $"qrcode-acesso-{IdInscricao}";
@@ -48,6 +50,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet("pagamento")]
+        [SwaggerOperation(Summary = "Consulta ao QRCode de pagamento.")]
         public async Task<IActionResult> ObterQrCodePagamento([FromQuery] int IdInscricao)
         {
             string key = $"qrcode-pagamento-{IdInscricao}";

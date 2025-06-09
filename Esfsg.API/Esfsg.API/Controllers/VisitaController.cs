@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -17,6 +18,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet("inscritos-visitas")]
+        [SwaggerOperation(Summary = "Consulta todos os inscritos ativos para visita.")]
         public async Task<IActionResult> ConsultarInscritosVisita(int IdEvento)
         {
             try
@@ -35,6 +37,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet("funcoes")]
+        [SwaggerOperation(Summary = "Consulta todas as funções para realizar na visita.")]
         public IActionResult ConsultarFuncoesVisita()
         {
             try
@@ -53,6 +56,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost("alocar")]
+        [SwaggerOperation(Summary = "Alocar um inscrito na visita desejada.")]
         public async Task<IActionResult> AlocarInscritosVisita([FromBody] List<AlocarVisitaRequest> alocacoes)
         {
             try
@@ -71,6 +75,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost("criar")]
+        [SwaggerOperation(Summary = "Inclusão de uma nova visita")]
         public async Task<IActionResult> CriarVisita([FromBody] VisitaRequest visita)
         {
             try
@@ -89,6 +94,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpDelete]
+        [SwaggerOperation(Summary = "Exclusão de uma visita no banco de dados.")]
         public async Task<IActionResult> ExcluirVisita(int Id)
         {
             try

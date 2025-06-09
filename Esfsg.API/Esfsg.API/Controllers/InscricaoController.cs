@@ -2,6 +2,7 @@
 using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -25,6 +26,7 @@ namespace Esfsg.API.Controllers
         #endregion        
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta da inscrição do usuário no evento.")]
         public async Task<IActionResult> ConsultarInscricao([FromQuery] InscricaoEventoResquest request)
         {
             try
@@ -47,6 +49,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Realização da inscrição no evento solicitado.")]
         public async Task<IActionResult> RealizarInscricao([FromBody] InscricaoRequest request)
         {
             try
@@ -65,6 +68,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut("cancelar")]
+        [SwaggerOperation(Summary = "Cancelamento da inscrição no evento solicitado.")]
         public async Task<IActionResult> CancelarInscricao(int Id)
         {
             try

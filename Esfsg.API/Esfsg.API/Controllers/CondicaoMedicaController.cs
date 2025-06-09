@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -24,6 +25,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta condições médicas no banco de dados.")]
         public async Task<IActionResult> ConsultarCondicoesMedicas()
         {
             const string key = "condicoes-medicas-key";
@@ -51,6 +53,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Inclui uma nova condição médica no banco de dados.")]
         public async Task<IActionResult> IncluirCondicaoMedica([FromBody] string Nome)
         {
             try
@@ -65,7 +68,8 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> ExcluirInstrumento([FromQuery] int Id)
+        [SwaggerOperation(Summary = "Exclui uma condição médica no banco de dados.")]
+        public async Task<IActionResult> ExcluirCondicaoMedica([FromQuery] int Id)
         {
             try
             {
@@ -79,7 +83,8 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditarInstrumento([FromQuery] int Id, [FromBody] string NovoNome)
+        [SwaggerOperation(Summary = "Edita uma condição médica no banco de dados.")]
+        public async Task<IActionResult> EditarCondicaoMedica([FromQuery] int Id, [FromBody] string NovoNome)
         {
             try
             {

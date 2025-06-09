@@ -2,6 +2,7 @@
 using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -21,6 +22,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet("pendentes")]
+        [SwaggerOperation(Summary = "Consulta inscrições pendentes de liberação, permitidas para o CPF logado visualizar.")]
         public async Task<IActionResult> ConsultarInscricoesParaLiberacao([FromQuery] string Cpf)
         {
             try
@@ -35,6 +37,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta com filtro de todas as pessoas inscritas.")]
         public async Task<IActionResult> ConsultarInscricoes([FromQuery] FiltroGestaoInscricaoRequest filtro)
         {
             try
@@ -49,6 +52,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut("aprovar")]
+        [SwaggerOperation(Summary = "Liberação da inscrição para participação do evento.")]
         public async Task<IActionResult> AprovarInscricao([FromBody] List<int> Ids)
         {
             try

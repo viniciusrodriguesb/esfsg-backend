@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -23,6 +24,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta de todos os instrumentos no banco de dados.")]
         public async Task<IActionResult> ConsultarInstrumentos()
         {
             const string key = "instrumentos-key";
@@ -50,6 +52,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Inclui um novo instrumento no banco de dados.")]
         public async Task<IActionResult> IncluirInstrumento([FromBody] string Nome)
         {
             try
@@ -64,6 +67,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpDelete]
+        [SwaggerOperation(Summary = "Exclui um instrumento no banco de dados.")]
         public async Task<IActionResult> ExcluirInstrumento([FromQuery] int Id)
         {
             try
@@ -78,6 +82,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut]
+        [SwaggerOperation(Summary = "Edita um instrumento no banco de dados.")]
         public async Task<IActionResult> EditarInstrumento([FromQuery] int Id, [FromBody] string NovoNome)
         {
             try

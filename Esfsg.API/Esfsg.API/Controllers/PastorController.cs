@@ -1,5 +1,6 @@
 ﻿using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -17,6 +18,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta os pastores no banco de dados.")]
         public async Task<IActionResult> Consultar()
         {
             try
@@ -35,6 +37,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Inclui um pastor no banco de dados.")]
         public async Task<IActionResult> Incluir([FromBody] string NovoNome)
         {
             try
@@ -49,6 +52,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpDelete]
+        [SwaggerOperation(Summary = "Exclui um pastor no banco de dados.")]
         public async Task<IActionResult> Excluir(int Id)
         {
             try
@@ -63,6 +67,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut]
+        [SwaggerOperation(Summary = "Edita um pastor no banco de dados.")]
         public async Task<IActionResult> Editar([FromQuery] int Id, [FromBody] string NovoNome)
         {
             try

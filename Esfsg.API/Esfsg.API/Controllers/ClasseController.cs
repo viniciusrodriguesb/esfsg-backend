@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
 {
@@ -24,6 +25,7 @@ namespace Esfsg.API.Controllers
         #endregion
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Consulta as classes gravadas no banco de dados.")]
         public async Task<IActionResult> ConsultarClasses()
         {
             const string key = "classes-key";
@@ -51,6 +53,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Inclui uma nova classe no banco de dados.")]
         public async Task<IActionResult> IncluirClasse([FromBody] string Nome)
         {
             try
@@ -65,6 +68,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpDelete]
+        [SwaggerOperation(Summary = "Exclui uma classe no banco de dados.")]
         public async Task<IActionResult> ExcluirClasse([FromQuery] int Id)
         {
             try
@@ -79,6 +83,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPut]
+        [SwaggerOperation(Summary = "Edita uma classe no banco de dados.")]
         public async Task<IActionResult> EditarClasse([FromQuery] int Id, [FromBody] string NovoNome)
         {
             try
