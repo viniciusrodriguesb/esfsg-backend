@@ -43,8 +43,7 @@ namespace Esfsg.Application.Services
                                            Nascimento = x.Nascimento.ToString("dd/MM/yyyy"),
                                            Pcd = x.Pcd,
                                            PossuiDons = x.Dons,
-                                           QrCodePagamento = string.Empty,
-                                           DhExclusao = x.DhExclusao,
+                                           UsuarioBloqueado = x.DhExclusao != null,
                                            TipoUsuario = new TabelaDominioResponse()
                                            {
                                                Id = x.IdTipoUsuarioNavigation.Id,

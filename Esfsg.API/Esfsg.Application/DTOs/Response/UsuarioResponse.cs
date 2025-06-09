@@ -10,8 +10,7 @@
         public string Nascimento { get; set; }
         public string Pcd { get; set; }
         public bool PossuiDons { get; set; }
-        public string? QrCodePagamento { get; set; }
-        public DateTime? DhExclusao { get; set; }
+        public bool UsuarioBloqueado { get; set; }
         public TabelaDominioResponse TipoUsuario { get; set; }
         public TabelaDominioResponse Classe { get; set; }
         public List<string> CondicoesMedica { get; set; }
