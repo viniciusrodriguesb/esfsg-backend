@@ -43,8 +43,8 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                await _checkInService.ConfirmarPresenca(request);
-                return StatusCode(StatusCodes.Status200OK);
+                var result = await _checkInService.ConfirmarPresenca(request);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (ArgumentException ex)
             {

@@ -2,6 +2,7 @@
 using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Filtros;
 using Esfsg.Application.Interfaces;
+using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -33,7 +34,7 @@ namespace Esfsg.Application.Services
             var result = await query.AplicarFiltro(request)
                                     .Select(x => new CheckInListaResponse()
                                     {
-                                        IdPresenca = x.Id,
+                                        IdCheckin = x.Id,
                                         Presenca = x.Presente,
                                         Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
                                         Evento = new DadosEventoResponse()
@@ -52,26 +53,68 @@ namespace Esfsg.Application.Services
         }
 
 
-        public async Task ConfirmarPresenca(ValidaPresencaRequest request)
+        public async Task<ResultResponse<CheckinValidadoResponse>> ConfirmarPresenca(ValidaPresencaRequest request)
         {
-            int Id = 0;
+            int Id = ValidarEntradaDados(request);
 
+            var result = await _context.CHECK_IN.Where(x => x.Id == Id)
+                                                .ExecuteUpdateAsync(s => s.SetProperty(p => p.Presente, request.Presenca));
+
+            if (result == 0)
+            {
+                return new ResultResponse<CheckinValidadoResponse>()
+                {
+                    Mensagem = "Erro ao confirmar ou zerar a presença.",
+                    Sucesso = false
+                };
+            }
+
+            var response = await ConsultarDadosCheckin(Id);
+
+            return new ResultResponse<CheckinValidadoResponse>()
+            {
+                Mensagem = request.Presenca ? "Presença confirmada com sucesso." : "Presença zerada com sucesso.",
+                Sucesso = true,
+                Dados = response
+            };
+        }
+
+        #region Métodos Privados
+        private static int ValidarEntradaDados(ValidaPresencaRequest request)
+        {
             if (request.IdCheckIn.HasValue)
-                Id = request.IdCheckIn.Value;
+                return request.IdCheckIn.Value;
             else if (!string.IsNullOrEmpty(request.QrCode))
             {
                 var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(request.QrCode));
-                Id = int.Parse(decoded);
+                return int.Parse(decoded);
             }
             else
                 throw new ArgumentException("Para validar é necessário o ID ou o QRCode.");
-
-            var result = await _context.CHECK_IN.Where(x => x.Id == Id)
-                                               .ExecuteUpdateAsync(s => s.SetProperty(p => p.Presente, request.Presenca));
-
-            if (result == 0)
-                throw new ArgumentException("Check-in não encontrado.");
         }
+
+        private async Task<CheckinValidadoResponse?> ConsultarDadosCheckin(int Id)
+        {
+            return await _context.CHECK_IN
+                                         .AsNoTracking()
+                                         .Where(x => x.Id == Id)
+                                         .Include(i => i.IdInscricaoNavigation)
+                                            .ThenInclude(u => u.IdUsuarioNavigation)
+                                          .Include(i => i.IdInscricaoNavigation)
+                                             .ThenInclude(u => u.IdFuncaoEventoNavigation)
+                                          .Include(i => i.IdInscricaoNavigation)
+                                             .ThenInclude(vp => vp.VisitaParticipantes)
+                                                .ThenInclude(v => v.IdVisitaNavigation)
+                                         .Select(x => new CheckinValidadoResponse()
+                                         {
+                                             NomeCompleto = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
+                                             Periodo = x.IdInscricaoNavigation.Periodo,
+                                             Grupo = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
+                                             Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor,
+                                             EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.FirstOrDefault().IdVisitaNavigation.CorVoluntario
+                                         }).FirstOrDefaultAsync();
+        }
+        #endregion
 
     }
 }

@@ -2,7 +2,7 @@
 {
     public class CheckInListaResponse
     {
-        public int IdPresenca { get; set; }
+        public int IdCheckin { get; set; }
         public bool Presenca { get; set; }
         public string Nome { get; set; }
         public DadosIgrejaResponse Igreja { get; set; }
