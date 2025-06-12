@@ -56,27 +56,19 @@ namespace Esfsg.Application.Services
 
         public async Task<List<GestaoInscricaoResponse>?> ConsultarInscricoes(FiltroGestaoInscricaoRequest filtro)
         {
-            var inscricoes = await _context.INSCRICAO
-                                           .AsNoTracking()
-                                           .Include(u => u.IdUsuarioNavigation)
-                                                .ThenInclude(c => c.IdClasseNavigation)
-                                           .Include(u => u.IdUsuarioNavigation)
-                                                .ThenInclude(i => i.IdIgrejaNavigation)
-                                           .Include(f => f.IdFuncaoEventoNavigation)
-                                           .Include(x => x.VisitaParticipantes)
-                                           .AplicarFiltro(filtro)
-                                           .Select(x => new GestaoInscricaoResponse()
-                                           {
-                                               Nome = x.IdUsuarioNavigation.NomeCompleto,
-                                               Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
-                                               Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
-                                               Telefone = x.IdUsuarioNavigation.Telefone,
-                                               Periodo = x.Periodo,
-                                               FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
-                                               QntdDependentes = x.MenorInscricoes.Count(),
-                                               FuncaoVisita = x.Visita ? x.VisitaParticipantes.FirstOrDefault().Funcao : "Não optante"
-                                           })
-                                           .ToListAsync();
+            var inscricoes = await _context.INSCRICAO.AsNoTracking()
+                                                     .AplicarFiltro(filtro)
+                                                   .Select(x => new GestaoInscricaoResponse()
+                                                   {
+                                                       Nome = x.IdUsuarioNavigation.NomeCompleto,
+                                                       Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
+                                                       Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                                       Telefone = x.IdUsuarioNavigation.Telefone,
+                                                       Periodo = x.Periodo,
+                                                       FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
+                                                       QntdDependentes = x.MenorInscricoes.Count(),
+                                                       FuncaoVisita = x.Visita ? x.VisitaParticipantes.FirstOrDefault().Funcao : "Não optante"
+                                                   }).ToListAsync();
 
             return inscricoes;
         }

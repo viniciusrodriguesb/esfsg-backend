@@ -14,14 +14,11 @@ namespace Esfsg.Application.Services
         #region Construtor
         private readonly DbContextBase _context;
         private readonly IUsuarioService _usuarioService;
-        private readonly IPixService _pixService;
         public InscricaoService(DbContextBase context,
-                                IUsuarioService usuarioService,
-                                IPixService pixService)
+                                IUsuarioService usuarioService)
         {
             _context = context;
             _usuarioService = usuarioService;
-            _pixService = pixService;
         }
         #endregion
 

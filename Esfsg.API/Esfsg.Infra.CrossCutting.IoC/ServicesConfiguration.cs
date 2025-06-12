@@ -20,7 +20,6 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddScoped<ICheckInService, CheckInService>();
             services.AddScoped<IQrCodeService, QRCodeService>();
             services.AddScoped<IEmailStatusService, EmailStatusService>();
-            services.AddScoped<IPixService, PixService>();
             services.AddScoped<IPastorService, PastorService>();
             services.AddScoped<IRegiaoService, RegiaoService>();
             services.AddScoped<IPagamentoService, PagamentoService>();

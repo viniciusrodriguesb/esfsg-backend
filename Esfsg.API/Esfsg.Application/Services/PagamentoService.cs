@@ -38,8 +38,6 @@ namespace Esfsg.Application.Services
                                     .AsNoTracking()
                                     .Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_PAGAMENTO
                                                                            && s.DhExclusao == null))
-                                    .Include(e => e.IdEventoNavigation)
-                                    .Include(u => u.IdUsuarioNavigation)
                                     .Select(x => new PagamentoRequest()
                                     {
                                         IdInscricao = x.Id,
@@ -60,8 +58,6 @@ namespace Esfsg.Application.Services
                                     .AsNoTracking()
                                     .Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_PAGAMENTO
                                                                            && s.DhExclusao == null))
-                                    .Include(e => e.IdEventoNavigation)
-                                    .Include(u => u.IdUsuarioNavigation)
                                     .Select(x => new PagamentoRequest()
                                     {
                                         IdInscricao = x.Id,

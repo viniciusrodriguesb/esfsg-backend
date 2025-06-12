@@ -2,7 +2,6 @@
 using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Filtros;
 using Esfsg.Application.Interfaces;
-using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -22,32 +21,24 @@ namespace Esfsg.Application.Services
 
         public async Task<List<CheckInListaResponse>> Consultar(ConsultaCheckInRequest request)
         {
-            var query = _context.CHECK_IN
-                                 .AsNoTracking()
-                                 .Include(i => i.IdInscricaoNavigation)
-                                    .ThenInclude(u => u.IdUsuarioNavigation)
-                                        .ThenInclude(c => c.IdClasseNavigation)
-                                 .Include(i => i.IdInscricaoNavigation)
-                                    .ThenInclude(f => f.IdFuncaoEventoNavigation)
-                                 .AsQueryable();
-
-            var result = await query.AplicarFiltro(request)
-                                    .Select(x => new CheckInListaResponse()
-                                    {
-                                        IdCheckin = x.Id,
-                                        Presenca = x.Presente,
-                                        Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
-                                        Evento = new DadosEventoResponse()
-                                        {
-                                            Periodo = x.IdInscricaoNavigation.Periodo,
-                                            FuncaoEvento = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao
-                                        },
-                                        Igreja = new DadosIgrejaResponse()
-                                        {
-                                            Igreja = x.IdInscricaoNavigation.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
-                                            Classe = x.IdInscricaoNavigation.IdUsuarioNavigation.IdClasseNavigation.Descricao
-                                        }
-                                    }).ToListAsync();
+            var result = await _context.CHECK_IN.AsNoTracking()
+                                          .AplicarFiltro(request)
+                                          .Select(x => new CheckInListaResponse()
+                                          {
+                                              IdCheckin = x.Id,
+                                              Presenca = x.Presente,
+                                              Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
+                                              Evento = new DadosEventoResponse()
+                                              {
+                                                  Periodo = x.IdInscricaoNavigation.Periodo,
+                                                  FuncaoEvento = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao
+                                              },
+                                              Igreja = new DadosIgrejaResponse()
+                                              {
+                                                  Igreja = x.IdInscricaoNavigation.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                                  Classe = x.IdInscricaoNavigation.IdUsuarioNavigation.IdClasseNavigation.Descricao
+                                              }
+                                          }).ToListAsync();
 
             return result;
         }
@@ -95,24 +86,16 @@ namespace Esfsg.Application.Services
 
         private async Task<CheckinValidadoResponse?> ConsultarDadosCheckin(int Id)
         {
-            return await _context.CHECK_IN
-                                         .AsNoTracking()
-                                         .Where(x => x.Id == Id)
-                                         .Include(i => i.IdInscricaoNavigation)
-                                            .ThenInclude(u => u.IdUsuarioNavigation)
-                                          .Include(i => i.IdInscricaoNavigation)
-                                             .ThenInclude(u => u.IdFuncaoEventoNavigation)
-                                          .Include(i => i.IdInscricaoNavigation)
-                                             .ThenInclude(vp => vp.VisitaParticipantes)
-                                                .ThenInclude(v => v.IdVisitaNavigation)
-                                         .Select(x => new CheckinValidadoResponse()
-                                         {
-                                             NomeCompleto = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
-                                             Periodo = x.IdInscricaoNavigation.Periodo,
-                                             Grupo = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
-                                             Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor,
-                                             EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.FirstOrDefault().IdVisitaNavigation.CorVoluntario
-                                         }).FirstOrDefaultAsync();
+            return await _context.CHECK_IN.AsNoTracking()
+                                          .Where(x => x.Id == Id)
+                                          .Select(x => new CheckinValidadoResponse()
+                                          {
+                                              NomeCompleto = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
+                                              Periodo = x.IdInscricaoNavigation.Periodo,
+                                              Grupo = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
+                                              Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor,
+                                              EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.FirstOrDefault().IdVisitaNavigation.CorVoluntario
+                                          }).FirstOrDefaultAsync();
         }
         #endregion
 
