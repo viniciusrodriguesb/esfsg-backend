@@ -30,13 +30,6 @@ namespace Esfsg.Application.Services
             var pagamento = _context.PAGAMENTO.AsNoTracking()
                                               .Where(x => x.InscricaoNavigation.InscricaoStatus.Any(x => status.Contains(x.StatusId) && x.DhExclusao == null) &&
                                                           x.InscricaoNavigation.IdEvento == IdEvento)
-                                              .Include(i => i.InscricaoNavigation)
-                                                .ThenInclude(u => u.IdUsuarioNavigation)
-                                               .Include(i => i.InscricaoNavigation)
-                                                    .ThenInclude(x => x.IdEventoNavigation)
-                                              .Include(i => i.InscricaoNavigation)
-                                                    .ThenInclude(s => s.InscricaoStatus)
-                                                        .ThenInclude(s => s.StatusNavigation)
                                               .AsQueryable();
 
             if (!string.IsNullOrEmpty(Nome))

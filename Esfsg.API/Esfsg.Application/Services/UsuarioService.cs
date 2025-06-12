@@ -25,14 +25,6 @@ namespace Esfsg.Application.Services
             return await _context.USUARIO
                                        .AsNoTracking()
                                        .Where(x => x.Cpf.Trim() == CPF.Trim())
-                                       .Include(u => u.IdTipoUsuarioNavigation)
-                                       .Include(u => u.IdClasseNavigation)
-                                       .Include(u => u.UsuarioCondicoesMedicas)
-                                            .ThenInclude(c => c.CondicaoMedicaNavigation)
-                                       .Include(u => u.IdFuncaoIgrejas)
-                                            .ThenInclude(c => c.FuncaoIgrejaNavigation)
-                                       .Include(u => u.UsuarioInstrumentos)
-                                            .ThenInclude(c => c.IdInstrumentoNavigation)
                                        .Select(x => new UsuarioResponse()
                                        {
                                            Id = x.Id,
@@ -103,10 +95,9 @@ namespace Esfsg.Application.Services
 
         public async Task<USUARIO?> ConsultarUsuario(string CPF)
         {
-            return await _context.USUARIO
-                                        .AsNoTracking()
-                                        .Where(x => x.Cpf.Trim() == CPF.Trim())
-                                        .FirstOrDefaultAsync();
+            return await _context.USUARIO.AsNoTracking()
+                                         .Where(x => x.Cpf.Trim() == CPF.Trim())
+                                         .FirstOrDefaultAsync();
         }
 
         public async Task<USUARIO> IncluirUsuario(UsuarioRequest request)

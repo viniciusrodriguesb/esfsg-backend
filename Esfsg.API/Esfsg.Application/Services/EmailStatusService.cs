@@ -221,30 +221,20 @@ namespace Esfsg.Application.Services
         }
         private async Task<List<DadosInscricaoEmailResponse>> ObterInformacaoInscricao()
         {
-            return await _context.INSCRICAO
-                                  .AsNoTracking()
-                                  .Include(ev => ev.IdEventoNavigation)
-                                     .ThenInclude(iv => iv.IdIgrejaEventoNavigation)
-                                         .ThenInclude(r => r.RegiaoNavigation)
-                                  .Include(fe => fe.IdFuncaoEventoNavigation)
-                                  .Include(u => u.IdUsuarioNavigation)
-                                     .ThenInclude(iu => iu.IdIgrejaNavigation)
-                                  .Include(u => u.IdUsuarioNavigation)
-                                     .ThenInclude(c => c.IdClasseNavigation)
-                                  .Include(s => s.InscricaoStatus)
-                                  .Select(x => new DadosInscricaoEmailResponse()
-                                  {
-                                      NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
-                                      EmailUsuario = x.IdUsuarioNavigation.Email,
-                                      ClasseUsuario = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
-                                      IgrejaUsuario = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
-                                      DataInscricao = x.DhInscricao.ToString("dd/MM/yyyy"),
-                                      FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
-                                      Periodo = x.Periodo,
-                                      IdInscricao = x.Id,
-                                      IdsStatusInscricao = x.InscricaoStatus.Select(x => x.StatusId).ToList(),
-                                      Regiao = x.IdEventoNavigation.IdIgrejaEventoNavigation.RegiaoNavigation.Nome
-                                  }).ToListAsync();
+            return await _context.INSCRICAO.AsNoTracking()
+                                          .Select(x => new DadosInscricaoEmailResponse()
+                                          {
+                                              NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
+                                              EmailUsuario = x.IdUsuarioNavigation.Email,
+                                              ClasseUsuario = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
+                                              IgrejaUsuario = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                              DataInscricao = x.DhInscricao.ToString("dd/MM/yyyy"),
+                                              FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
+                                              Periodo = x.Periodo,
+                                              IdInscricao = x.Id,
+                                              IdsStatusInscricao = x.InscricaoStatus.Select(x => x.StatusId).ToList(),
+                                              Regiao = x.IdEventoNavigation.IdIgrejaEventoNavigation.RegiaoNavigation.Nome
+                                          }).ToListAsync();
         }
         private async Task<string?> ObterBodyEmail(StatusEnum status)
         {
