@@ -27,6 +27,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddScoped<IGestaoInscricaoService, GestaoInscricaoService>();
             services.AddScoped<IGestaoPagamentoService, GestaoPagamentoService>();
             services.AddScoped<IVisitaService, VisitaService>();
+            services.AddScoped<IIgrejaService, IgrejaService>();
         }
     }
 }
