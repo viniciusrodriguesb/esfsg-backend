@@ -24,6 +24,7 @@ namespace Esfsg.Application.Services
                                        .Where(x => x.IdIgrejaEventoNavigation.RegiaoId == RegiaoId)
                                        .Select(e => new EventoResponse()
                                        {
+                                           Id = e.Id,
                                            Nome = e.Nome,
                                            DataEvento = e.DhEvento.ToString("dd/MM/yyyy"),
                                            LimiteIntegral = e.LimiteIntegral,

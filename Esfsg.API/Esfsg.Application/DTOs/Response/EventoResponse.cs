@@ -2,6 +2,7 @@
 {
     public class EventoResponse
     {
+        public int Id { get; set; }
         public string Nome { get; set; }
         public int LimiteIntegral { get; set; }
         public int LimiteParcial { get; set; }
