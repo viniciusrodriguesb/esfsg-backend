@@ -1,4 +1,5 @@
-﻿using Esfsg.Application.DTOs.Response;
+﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.DTOs.Response;
 
 namespace Esfsg.Application.Interfaces
 {
@@ -6,5 +7,7 @@ namespace Esfsg.Application.Interfaces
     {
         Task<List<TabelaDominioResponse>> ConsultarFuncoesIgreja();
         Task<List<TabelaDominioResponse>> ConsultarFuncoesEvento(int IdEvento);
+        Task<List<FuncaoEventoResponse>> ConsultarFuncoesEventoAdministrativo();
+        Task EditarFuncoesEvento(AlteraFuncaoEventoRequest request);
     }
 }
