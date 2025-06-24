@@ -68,10 +68,12 @@ namespace Esfsg.Application.Services
                                                .ThenInclude(s => s.StatusNavigation)
                                           .Select(x => new InscricaoResponse()
                                           {
+                                              Id = x.Id,
                                               Periodo = x.Periodo,
                                               DhInscricao = x.DhInscricao.ToString("dd/MM/yyyy"),
                                               Visita = x.Visita,
-                                              Status = x.InscricaoStatus.Where(x => x.DhExclusao == null).FirstOrDefault().StatusNavigation.Descricao
+                                              IdStatus = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusId).FirstOrDefault(),
+                                              Status = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault()
                                           }).FirstOrDefaultAsync();
 
             return inscricao;
