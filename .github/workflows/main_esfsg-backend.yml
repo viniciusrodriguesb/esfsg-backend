@@ -32,6 +32,10 @@ jobs:
       - name: dotnet publish
         run: dotnet publish ./Esfsg.API/Esfsg.API/Esfsg.API.csproj --configuration Release --output ./publish
 
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Deploy para Azure Web App
         uses: azure/webapps-deploy@v2
         with:
