@@ -64,8 +64,6 @@ namespace Esfsg.Application.Services
                                           .AsNoTracking()
                                           .Where(x => x.IdUsuario == request.IdUsuario &&
                                                       x.IdEvento == request.IdEvento)
-                                          .Include(s => s.InscricaoStatus)
-                                               .ThenInclude(s => s.StatusNavigation)
                                           .Select(x => new InscricaoResponse()
                                           {
                                               Id = x.Id,
