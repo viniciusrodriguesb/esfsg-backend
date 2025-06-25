@@ -67,7 +67,7 @@ namespace Esfsg.Application.Services
                                                        Periodo = x.Periodo,
                                                        FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
                                                        QntdDependentes = x.MenorInscricoes.Count(),
-                                                       FuncaoVisita = x.Visita ? x.VisitaParticipantes.FirstOrDefault().Funcao : "Não optante"
+                                                       FuncaoVisita = x.Visita ? x.VisitaParticipantes.Select(f => f.Funcao).FirstOrDefault() : "Não optante"
                                                    }).ToListAsync();
 
             return inscricoes;

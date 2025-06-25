@@ -94,7 +94,7 @@ namespace Esfsg.Application.Services
                                               Periodo = x.IdInscricaoNavigation.Periodo,
                                               Grupo = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
                                               Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor,
-                                              EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.FirstOrDefault().IdVisitaNavigation.CorVoluntario
+                                              EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.Select(v => v.IdVisitaNavigation.CorVoluntario).FirstOrDefault()
                                           }).FirstOrDefaultAsync();
         }
         #endregion
