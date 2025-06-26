@@ -1,4 +1,5 @@
-﻿using Esfsg.Infra.Data;
+﻿using Esfsg.Application.DTOs;
+using Esfsg.Infra.Data;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.PostgreSql;
@@ -21,6 +22,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
 
         public static void ConfigureDatabaseHangfire(IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<HangfireConfiguration>(configuration.GetSection("HangfireConfiguration"));
             var connectionString = configuration.GetConnectionString("databaseConnection");
 
             services.AddHangfire(options =>
