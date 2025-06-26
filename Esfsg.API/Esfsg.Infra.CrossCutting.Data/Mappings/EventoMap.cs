@@ -21,7 +21,7 @@ namespace Esfsg.Infra.Data.Mappings
             builder.Property(e => e.Nome).HasColumnName("nome");
             builder.Property(e => e.ValorIntegral).HasColumnName("valor_integral");
             builder.Property(e => e.ValorParcial).HasColumnName("valor_parcial");
-
+            builder.Property(e => e.Ativo).HasColumnName("ativo");
 
             builder.HasOne(d => d.IdIgrejaEventoNavigation).WithMany(p => p.EventoIdIgrejaEventoNavigations)
                 .HasForeignKey(d => d.IdIgrejaEvento);

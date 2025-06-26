@@ -21,7 +21,9 @@ namespace Esfsg.Application.Services
         {
             return await _context.EVENTO
                                        .AsNoTracking()
-                                       .Where(x => x.IdIgrejaEventoNavigation.RegiaoId == RegiaoId)
+                                       .Where(x => x.IdIgrejaEventoNavigation.RegiaoId == RegiaoId &&
+                                                   x.Ativo && 
+                                                   x.Inscricaos.Count() < (x.LimiteIntegral + x.LimiteParcial))
                                        .Select(e => new EventoResponse()
                                        {
                                            Id = e.Id,
@@ -39,25 +41,27 @@ namespace Esfsg.Application.Services
 
         public async Task<List<string>?> ConsultarPeriodos(int IdEvento)
         {
-            const int TotalIntegral = 50;
-            const int TotalTarde = 100;
-
             var inscritosPorPeriodo = await _context.INSCRICAO
                 .AsNoTracking()
                 .Where(x => x.IdEvento == IdEvento &&
                             (x.Periodo.ToLower() == "integral" || x.Periodo.ToLower() == "tarde"))
-                .GroupBy(x => x.Periodo)
-                .Select(g => new { Periodo = g.Key, Quantidade = g.Count() })
-                .ToListAsync();
+                .GroupBy(x => new { x.IdEventoNavigation.LimiteIntegral, x.IdEventoNavigation.LimiteParcial })
+                .Select(g => new
+                {
+                    LimiteIntegral = g.Key.LimiteIntegral,
+                    LimiteParcial = g.Key.LimiteParcial,
+                    QuantidadeIntegral = g.Count(x => x.Periodo.ToLower() == "integral"),
+                    QuantidadeParcial = g.Count(x => x.Periodo.ToLower() == "tarde")
+                }).FirstOrDefaultAsync();
 
             var result = new List<string>();
 
-            var integral = inscritosPorPeriodo.FirstOrDefault(x => x.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase))?.Quantidade ?? 0;
-            if (integral < TotalIntegral)
+            if (inscritosPorPeriodo == null) return result;
+
+            if (inscritosPorPeriodo.QuantidadeIntegral < inscritosPorPeriodo.LimiteIntegral)
                 result.Add("Integral");
 
-            var tarde = inscritosPorPeriodo.FirstOrDefault(x => x.Periodo.Equals("Tarde", StringComparison.OrdinalIgnoreCase))?.Quantidade ?? 0;
-            if (tarde < TotalTarde)
+            if (inscritosPorPeriodo.QuantidadeParcial < inscritosPorPeriodo.LimiteParcial)
                 result.Add("Tarde");
 
             return result;

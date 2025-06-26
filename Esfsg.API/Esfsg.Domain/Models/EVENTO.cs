@@ -22,6 +22,8 @@ public partial class EVENTO
 
     public int IdIgrejaEvento { get; set; }
 
+    public bool Ativo { get; set; }
+
     #region Navigations
     public virtual IGREJA IdIgrejaEventoNavigation { get; set; } = null!;
 
