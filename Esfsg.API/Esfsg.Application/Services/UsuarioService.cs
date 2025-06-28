@@ -93,7 +93,8 @@ namespace Esfsg.Application.Services
                 Dados = new UsuarioAdministrativoResponse()
                 {
                     Id = usuario.Id,
-                    Nome = usuario.NomeCompleto
+                    Nome = usuario.NomeCompleto,
+                    Role = usuario.IdTipoUsuario
                 }
             };
         }
