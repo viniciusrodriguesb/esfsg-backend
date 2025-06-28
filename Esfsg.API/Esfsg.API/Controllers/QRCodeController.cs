@@ -38,7 +38,7 @@ namespace Esfsg.API.Controllers
                     if (response == null)
                         return NotFound("Nenhum registro encontrado.");
 
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(30));
+                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
                 }
 
                 return Ok(response);
@@ -66,7 +66,7 @@ namespace Esfsg.API.Controllers
                     if (response == null)
                         return NotFound("Nenhum registro encontrado.");
 
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(30));
+                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
                 }
 
                 return Ok(response);
