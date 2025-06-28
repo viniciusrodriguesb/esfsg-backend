@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Esfsg.Application.DTOs.Response
+﻿namespace Esfsg.Application.DTOs.Response
 {
     public class DashboardResponse
     {
@@ -12,11 +10,11 @@ namespace Esfsg.Application.DTOs.Response
 
     public class DadosInscritos
     {
-        public DadosQuantitativo Confirmados {  get; set; }
-        public DadosQuantitativo AguardandoLiberacao {  get; set; }
-        public DadosQuantitativo Pendentes {  get; set; }
-        public DadosQuantitativo Cancelados {  get; set; }
-        public DadosQuantitativo ReembolsoSolicitado {  get; set; }
+        public DadosQuantitativo Confirmados { get; set; }
+        public DadosQuantitativo AguardandoLiberacao { get; set; }
+        public DadosQuantitativo Pendentes { get; set; }
+        public DadosQuantitativo Cancelados { get; set; }
+        public DadosQuantitativo ReembolsoSolicitado { get; set; }
     }
 
     public class DadosInscritosPeriodo
@@ -35,15 +33,15 @@ namespace Esfsg.Application.DTOs.Response
     public class DadosQuantitativo
     {
         public int IdStatus { get; set; }
-        public int Quantidade {  get; set; }
+        public int Quantidade { get; set; }
         public decimal Percentual { get; set; }
     }
 
-
     public class DadosPagamento
     {
-        public decimal ValorArrecadado { get; set; }
-        public string ValorFormatado => ValorArrecadado.ToString("C", new CultureInfo("pt-BR"));
+        public string Total { get; set; }
+        public string ValorArrecadadoIntegral { get; set; }
+        public string ValorArrecadadoParcial { get; set; }
     }
 
 }
