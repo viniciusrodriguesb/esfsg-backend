@@ -3,6 +3,7 @@ using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Esfsg.Application.Services
 {
@@ -73,10 +74,14 @@ namespace Esfsg.Application.Services
                                                   },
                                                   Arrecadacao = new DadosPagamento
                                                   {
-                                                      ValorArrecadado = e.Inscricaos.Where(i => i.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO &&
+                                                      ValorArrecadadoIntegral = e.Inscricaos.Where(i => i.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO &&
+                                                                                                                                   s.DhExclusao == null)).Sum(i => i.Periodo.ToLower() == "integral" ? e.ValorIntegral : 0).ToString("C", new CultureInfo("pt-BR")),
+                                                      ValorArrecadadoParcial = e.Inscricaos.Where(i => i.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO &&
+                                                                                                                                   s.DhExclusao == null)).Sum(i => i.Periodo.ToLower() == "tarde" ? e.ValorParcial : 0).ToString("C", new CultureInfo("pt-BR")),
+                                                      Total = e.Inscricaos.Where(i => i.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO &&
                                                                                                                            s.DhExclusao == null))
                                                                 .Sum(i => i.Periodo.ToLower() == "integral" ? e.ValorIntegral
-                                                                    : i.Periodo.ToLower() == "tarde" ? e.ValorParcial : 0)
+                                                                    : i.Periodo.ToLower() == "tarde" ? e.ValorParcial : 0).ToString("C", new CultureInfo("pt-BR"))
                                                   },
                                                   InscritosVisita = new DadosVisita()
                                                   {
@@ -85,12 +90,6 @@ namespace Esfsg.Application.Services
                                                       InscritosDisponiveisVisita = e.Inscricaos.SelectMany(v => v.VisitaParticipantes).Where(v => v.IdVisita == null).Count()
                                                   }
                                               }).FirstOrDefaultAsync();
-
-
-            var arrecadacao = new DadosPagamento
-            {
-                ValorArrecadado = evento.Arrecadacao.ValorArrecadado
-            };
 
             return evento;
         }
@@ -105,7 +104,7 @@ namespace Esfsg.Application.Services
                                             Data = e.DhEvento.ToString("dd/MM/yyyy"),
                                             Nome = e.Nome,
                                             Igreja = e.IdIgrejaEventoNavigation.Nome
-                                        }) .FirstOrDefaultAsync();
+                                        }).FirstOrDefaultAsync();
         }
 
     }
