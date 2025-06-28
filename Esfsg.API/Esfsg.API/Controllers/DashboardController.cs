@@ -16,7 +16,7 @@ namespace Esfsg.API.Controllers
         {
             _dashboardService = dashboardService;
             _memoryCacheService = memoryCache;
-        } 
+        }
         #endregion
 
         [HttpGet]
@@ -35,7 +35,34 @@ namespace Esfsg.API.Controllers
                     if (response == null)
                         return NotFound("Nenhum registro encontrado.");
 
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(15));
+                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(10));
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("evento-proximo")]
+        public async Task<IActionResult> ConsultarEventoProximo()
+        {
+            const string key = "evento-proximo-key";
+
+            try
+            {
+                var response = _memoryCacheService.Get<EventoProximoResponse>(key);
+
+                if (response is null)
+                {
+                    response = await _dashboardService.ConsultarEventoProximo();
+
+                    if (response == null)
+                        return NotFound("Nenhum registro encontrado.");
+
+                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(30));
                 }
 
                 return Ok(response);

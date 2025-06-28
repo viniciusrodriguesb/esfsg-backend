@@ -3,7 +3,6 @@ using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace Esfsg.Application.Services
 {
@@ -94,6 +93,19 @@ namespace Esfsg.Application.Services
             };
 
             return evento;
+        }
+
+        public async Task<EventoProximoResponse?> ConsultarEventoProximo()
+        {
+            return await _context.EVENTO.AsNoTracking()
+                                        .OrderBy(x => x.DhEvento)
+                                        .Select(e => new EventoProximoResponse()
+                                        {
+                                            Id = e.Id,
+                                            Data = e.DhEvento.ToString("dd/MM/yyyy"),
+                                            Nome = e.Nome,
+                                            Igreja = e.IdIgrejaEventoNavigation.Nome
+                                        }) .FirstOrDefaultAsync();
         }
 
     }
