@@ -24,179 +24,192 @@ namespace Esfsg.Application.Services
 
         public async Task EnviarEmailInscricaoRealizada()
         {
-            const string subtitulo = "ESFRSG - Inscrição realizada";
+            const string subtitulo = "ESFRSG - Inscrição realizada com sucesso!";
 
-            var dadosUsuarios = await ObterInformacaoInscricao();
+            var dadosUsuarios = await ObterInformacaoInscricao(StatusEnum.ENVIADA);
 
-            var bodyQrcode = await ObterBodyEmail(StatusEnum.ENVIADA);
+            var stringBody = await ObterBodyEmail(StatusEnum.ENVIADA);
 
             foreach (var usuario in dadosUsuarios)
             {
-                var envioValido = await ValidarEnvioEmailStatus(StatusEnum.ENVIADA, usuario);
+                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.ENVIADA, usuario);
 
-                if (!envioValido)
+                if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
                     continue;
-
-                var qrCodeAcessoImagem = await _qrCodeService.GerarQRCodeAcesso(usuario.IdInscricao);
 
                 var map = new Dictionary<string, string>()
                 {
                     {"{nome}", usuario.NomeCompleto },
-                    {"{regiao}", usuario.Regiao },
-                    {"{dthr_insc}", usuario.DataInscricao },
-                    {"{periodo}", usuario.Periodo },
-                    {"{igreja}", usuario.IgrejaUsuario },
-                    {"{classe}", usuario.ClasseUsuario },
-                    {"{grupo_esf}", usuario.FuncaoEvento },
-                    {"{imagemBase64}", qrCodeAcessoImagem.ImagemBase64 },
+                    {"{evento}", usuario.Evento }
                 };
 
-                var body = SubstituirAtributos(bodyQrcode, map);
+                var body = SubstituirAtributos(stringBody, map);
 
-                await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                try
+                {
+                    await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                    await GravarLogEnvioEmail(StatusEnum.ENVIADA, usuario.IdInscricao, true);
+                }
+                catch (Exception)
+                {
+                    await GravarLogEnvioEmail(StatusEnum.ENVIADA, usuario.IdInscricao, false);
+                }
 
-                await GravarLogEnvioEmail(StatusEnum.ENVIADA, usuario.IdInscricao);
             }
         }
 
         public async Task EnviarEmailQrCodePagamento()
         {
-            const string subtitulo = "ESFRSG - Aguardando pagamento";
-            var dadosUsuarios = await ObterInformacaoInscricao();
+            const string subtitulo = "ESFRSG - Aguardando pagamento!";
 
-            var bodyQrcode = await ObterBodyEmail(StatusEnum.AGUARDANDO_PAGAMENTO);
+            var dadosUsuarios = await ObterInformacaoInscricao(StatusEnum.AGUARDANDO_PAGAMENTO);
+
+            var stringBody = await ObterBodyEmail(StatusEnum.AGUARDANDO_PAGAMENTO);
 
             foreach (var usuario in dadosUsuarios)
             {
-                var envioValido = await ValidarEnvioEmailStatus(StatusEnum.AGUARDANDO_PAGAMENTO, usuario);
-
-                if (!envioValido)
-                    continue;
+                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.AGUARDANDO_PAGAMENTO, usuario);
 
                 var qrCodePagamento = await _qrCodeService.ObterQrCodePagamento(usuario.IdInscricao);
+
+                if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario) || qrCodePagamento == null)
+                    continue;
 
                 var map = new Dictionary<string, string>()
                 {
                     {"{nome}", usuario.NomeCompleto },
-                    {"{regiao}", usuario.Regiao },
-                    {"{dthr_insc}", usuario.DataInscricao },
-                    {"{periodo}", usuario.Periodo },
-                    {"{igreja}", usuario.IgrejaUsuario },
-                    {"{classe}", usuario.ClasseUsuario },
-                    {"{grupo_esf}", usuario.FuncaoEvento },
+                    {"{evento}", usuario.Evento },
                     {"{imagemBase64}", qrCodePagamento.ImagemBase64 },
                 };
 
-                var body = SubstituirAtributos(bodyQrcode, map);
+                var body = SubstituirAtributos(stringBody, map);
 
-                await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                try
+                {
+                    await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                    await GravarLogEnvioEmail(StatusEnum.AGUARDANDO_PAGAMENTO, usuario.IdInscricao, true);
+                }
+                catch (Exception)
+                {
+                    await GravarLogEnvioEmail(StatusEnum.AGUARDANDO_PAGAMENTO, usuario.IdInscricao, false);
+                }
+
             }
         }
 
         public async Task EnviarEmailQrCodeAcesso()
         {
-            const string subtitulo = "ESFRSG - Pagamento confirmado";
-            var dadosUsuarios = await ObterInformacaoInscricao();
+            const string subtitulo = "ESFRSG - Pagamento confirmado!";
+            var dadosUsuarios = await ObterInformacaoInscricao(StatusEnum.PAGAMENTO_CONFIRMADO);
 
-            var bodyQrcode = await ObterBodyEmail(StatusEnum.PAGAMENTO_CONFIRMADO);
+            var stringBody = await ObterBodyEmail(StatusEnum.PAGAMENTO_CONFIRMADO);
 
             foreach (var usuario in dadosUsuarios)
             {
-                var envioValido = await ValidarEnvioEmailStatus(StatusEnum.PAGAMENTO_CONFIRMADO, usuario);
+                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.PAGAMENTO_CONFIRMADO, usuario);
 
-                if (!envioValido)
+                if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
                     continue;
-
-                var qrCodeAcessoImagem = await _qrCodeService.GerarQRCodeAcesso(usuario.IdInscricao);
 
                 var map = new Dictionary<string, string>()
                 {
                     {"{nome}", usuario.NomeCompleto },
-                    {"{regiao}", usuario.Regiao },
-                    {"{dthr_insc}", usuario.DataInscricao },
-                    {"{periodo}", usuario.Periodo },
-                    {"{igreja}", usuario.IgrejaUsuario },
-                    {"{classe}", usuario.ClasseUsuario },
-                    {"{grupo_esf}", usuario.FuncaoEvento },
-                    {"{imagemBase64}", qrCodeAcessoImagem.ImagemBase64 },
+                    {"{evento}", usuario.Evento }
                 };
 
-                var body = SubstituirAtributos(bodyQrcode, map);
+                var body = SubstituirAtributos(stringBody, map);
 
-                await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                try
+                {
+                    await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                    await GravarLogEnvioEmail(StatusEnum.PAGAMENTO_CONFIRMADO, usuario.IdInscricao, true);
+                }
+                catch (Exception)
+                {
+                    await GravarLogEnvioEmail(StatusEnum.PAGAMENTO_CONFIRMADO, usuario.IdInscricao, false);
+                }
+
             }
         }
 
         public async Task EnviarEmailCancelamentoInscricao()
         {
             const string subtitulo = "ESFRSG - Inscrição cancelada";
-            var dadosUsuarios = await ObterInformacaoInscricao();
+            var dadosUsuarios = await ObterInformacaoInscricao(StatusEnum.CANCELADA);
 
-            var bodyQrcode = await ObterBodyEmail(StatusEnum.CANCELADA);
+            var stringBody = await ObterBodyEmail(StatusEnum.CANCELADA);
 
             foreach (var usuario in dadosUsuarios)
             {
-                var envioValido = await ValidarEnvioEmailStatus(StatusEnum.CANCELADA, usuario);
+                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.CANCELADA, usuario);
 
-                if (!envioValido)
+                if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
                     continue;
 
                 var map = new Dictionary<string, string>()
                 {
                     {"{nome}", usuario.NomeCompleto },
-                    {"{regiao}", usuario.Regiao },
-                    {"{dthr_insc}", usuario.DataInscricao },
-                    {"{periodo}", usuario.Periodo },
-                    {"{igreja}", usuario.IgrejaUsuario },
-                    {"{classe}", usuario.ClasseUsuario },
-                    {"{grupo_esf}", usuario.FuncaoEvento }
+                    {"{evento}", usuario.Evento }
                 };
 
-                var body = SubstituirAtributos(bodyQrcode, map);
+                var body = SubstituirAtributos(stringBody, map);
 
-                await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                try
+                {
+                    await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                    await GravarLogEnvioEmail(StatusEnum.CANCELADA, usuario.IdInscricao, true);
+                }
+                catch (Exception)
+                {
+                    await GravarLogEnvioEmail(StatusEnum.CANCELADA, usuario.IdInscricao, false);
+                }
+
             }
         }
 
         public async Task EnviarEmailReembolso()
         {
             const string subtitulo = "ESFRSG - Reembolso solicitado";
-            var dadosUsuarios = await ObterInformacaoInscricao();
+            var dadosUsuarios = await ObterInformacaoInscricao(StatusEnum.REEMBOLSO_SOLICITADO);
 
-            var bodyQrcode = await ObterBodyEmail(StatusEnum.REEMBOLSO_SOLICITADO);
+            var stringBody = await ObterBodyEmail(StatusEnum.REEMBOLSO_SOLICITADO);
 
             foreach (var usuario in dadosUsuarios)
             {
-                var envioValido = await ValidarEnvioEmailStatus(StatusEnum.REEMBOLSO_SOLICITADO, usuario);
+                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.REEMBOLSO_SOLICITADO, usuario);
 
-                if (!envioValido)
+                if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
                     continue;
 
                 var map = new Dictionary<string, string>()
                 {
                     {"{nome}", usuario.NomeCompleto },
-                    {"{regiao}", usuario.Regiao },
-                    {"{dthr_insc}", usuario.DataInscricao },
-                    {"{periodo}", usuario.Periodo },
-                    {"{igreja}", usuario.IgrejaUsuario },
-                    {"{classe}", usuario.ClasseUsuario },
-                    {"{grupo_esf}", usuario.FuncaoEvento }
+                    {"{evento}", usuario.Evento }
                 };
 
-                var body = SubstituirAtributos(bodyQrcode, map);
+                var body = SubstituirAtributos(stringBody, map);
 
-                await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                try
+                {
+                    await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
+                    await GravarLogEnvioEmail(StatusEnum.REEMBOLSO_SOLICITADO, usuario.IdInscricao, true);
+                }
+                catch (Exception)
+                {
+                    await GravarLogEnvioEmail(StatusEnum.REEMBOLSO_SOLICITADO, usuario.IdInscricao, false);
+                }
+
             }
         }
 
         #region Métodos Privados
-        private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao)
+        private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao, bool enviado)
         {
             var log = new EMAIL_LOG()
             {
                 IdInscricao = IdInscricao,
                 IdStatus = (int)status,
-                Enviado = true,
+                Enviado = enviado,
                 DhEnvio = DateTime.Now
             };
 
@@ -205,43 +218,32 @@ namespace Esfsg.Application.Services
         }
         private async Task<bool> ValidarEnvioEmailStatus(StatusEnum status, DadosInscricaoEmailResponse usuario)
         {
-            if (!usuario.IdsStatusInscricao.Contains((int)status))
-                return false;
+            var emailJaEnviado = await _context.EMAIL_LOG.AsNoTracking()
+                                                .AnyAsync(x => x.IdInscricao == usuario.IdInscricao &&
+                                                               x.IdStatus == (int)status &&
+                                                               x.Enviado);
 
-            var emailJaEnviado = await _context.EMAIL_LOG
-                .AsNoTracking()
-                .AnyAsync(x => x.IdInscricao == usuario.IdInscricao &&
-                               x.IdStatus == (int)status &&
-                               x.Enviado);
-
-            if (emailJaEnviado)
-                return false;
-
-            return true;
+            return emailJaEnviado;
         }
-        private async Task<List<DadosInscricaoEmailResponse>> ObterInformacaoInscricao()
+        private async Task<List<DadosInscricaoEmailResponse>> ObterInformacaoInscricao(StatusEnum status)
         {
             return await _context.INSCRICAO.AsNoTracking()
-                                          .Select(x => new DadosInscricaoEmailResponse()
-                                          {
-                                              NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
-                                              EmailUsuario = x.IdUsuarioNavigation.Email,
-                                              ClasseUsuario = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
-                                              IgrejaUsuario = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
-                                              DataInscricao = x.DhInscricao.ToString("dd/MM/yyyy"),
-                                              FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
-                                              Periodo = x.Periodo,
-                                              IdInscricao = x.Id,
-                                              IdsStatusInscricao = x.InscricaoStatus.Select(x => x.StatusId).ToList(),
-                                              Regiao = x.IdEventoNavigation.IdIgrejaEventoNavigation.RegiaoNavigation.Nome
-                                          }).ToListAsync();
+                                           .Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)status))
+                                           .Select(x => new DadosInscricaoEmailResponse()
+                                           {
+                                               IdInscricao = x.Id,
+                                               NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
+                                               EmailUsuario = x.IdUsuarioNavigation.Email,
+                                               Evento = x.IdEventoNavigation.Nome,
+                                               IdsStatusInscricao = x.InscricaoStatus.Select(x => x.StatusId).ToList()
+                                           }).ToListAsync();
         }
-        private async Task<string?> ObterBodyEmail(StatusEnum status)
+        private async Task<string> ObterBodyEmail(StatusEnum status)
         {
             return await _context.EMAIL_BODY.AsNoTracking()
-                                                    .Where(x => x.IdStatus == (int)status)
-                                                    .Select(s => s.Body)
-                                                    .FirstOrDefaultAsync();
+                                            .Where(x => x.IdStatus == (int)status)
+                                            .Select(s => s.Body)
+                                            .FirstOrDefaultAsync();
         }
         private static string SubstituirAtributos(string template, Dictionary<string, string> valores)
         {

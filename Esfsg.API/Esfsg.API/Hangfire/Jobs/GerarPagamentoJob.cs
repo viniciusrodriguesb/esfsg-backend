@@ -21,7 +21,7 @@ namespace Esfsg.API.Hangfire.Jobs
         {
             try
             {
-               // await _pagamentoService.BuscarInscricoesParaPagamento();
+                await _pagamentoService.BuscarInscricoesParaPagamento();
             }
             catch (Exception)
             {

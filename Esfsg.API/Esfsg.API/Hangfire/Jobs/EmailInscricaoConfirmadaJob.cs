@@ -21,7 +21,7 @@ namespace Esfsg.API.Hangfire.Jobs
         {
             try
             {
-                //await _emailStatusService.EnviarEmailInscricaoRealizada();
+                await _emailStatusService.EnviarEmailInscricaoRealizada();
             }
             catch (Exception)
             {
