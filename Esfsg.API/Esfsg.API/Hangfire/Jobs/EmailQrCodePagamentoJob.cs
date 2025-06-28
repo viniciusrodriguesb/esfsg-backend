@@ -20,7 +20,8 @@ namespace Esfsg.API.Hangfire.Jobs
         {
             try
             {
-                await _emailStatusService.EnviarEmailQrCodePagamento();
+                await Task.Delay(1000);
+                //await _emailStatusService.EnviarEmailQrCodePagamento();
             }
             catch (Exception)
             {
