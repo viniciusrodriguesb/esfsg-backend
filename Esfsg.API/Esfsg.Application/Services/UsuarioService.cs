@@ -52,13 +52,13 @@ namespace Esfsg.Application.Services
                                        }).FirstOrDefaultAsync();
         }
 
-        public async Task<ResultResponse<USUARIO>> ConsultarUsuarioAdministrativo(UsuarioAdministrativoRequest request)
+        public async Task<ResultResponse<UsuarioAdministrativoResponse>> ConsultarUsuarioAdministrativo(UsuarioAdministrativoRequest request)
         {
             var usuario = await ConsultarUsuario(request.CPF);
 
             if (usuario == null)
             {
-                return new ResultResponse<USUARIO>()
+                return new ResultResponse<UsuarioAdministrativoResponse>()
                 {
                     Sucesso = false,
                     Mensagem = "Usuário não encontrado, por favor contacte a secretaria."
@@ -67,7 +67,7 @@ namespace Esfsg.Application.Services
 
             if (usuario.IdTipoUsuario == (int)TipoUsuarioEnum.PARTICIPANTE)
             {
-                return new ResultResponse<USUARIO>()
+                return new ResultResponse<UsuarioAdministrativoResponse>()
                 {
                     Sucesso = false,
                     Mensagem = "Usuário não tem permissão de acesso, por favor entre em contato com a secretaria."
@@ -79,17 +79,22 @@ namespace Esfsg.Application.Services
 
             if (result != PasswordVerificationResult.Success)
             {
-                return new ResultResponse<USUARIO>()
+                return new ResultResponse<UsuarioAdministrativoResponse>()
                 {
                     Sucesso = false,
                     Mensagem = "Senha incorreta. Tente novamente"
                 };
             }
 
-            return new ResultResponse<USUARIO>()
+            return new ResultResponse<UsuarioAdministrativoResponse>()
             {
                 Sucesso = true,
-                Mensagem = "Login realizado com sucesso."
+                Mensagem = "Login realizado com sucesso.",
+                Dados = new UsuarioAdministrativoResponse()
+                {
+                    Id = usuario.Id,
+                    Nome = usuario.NomeCompleto
+                }
             };
         }
 
