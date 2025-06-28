@@ -90,7 +90,7 @@ namespace Esfsg.Application.Services
 
                 var statusApi = await VerificarStatusPagamentoApiAsync(pagamento.IdTransacao);
 
-                if (statusApi != "approved" && pagamento.StatusRetornoApi == statusApi)
+                if (pagamento.StatusRetornoApi == statusApi)
                     continue;
 
                 await AtualizarInformacoesInscricao(statusApi, pagamento, inscricao);
@@ -152,7 +152,8 @@ namespace Esfsg.Application.Services
                 pagamento.StatusRetornoApi = statusApi;
                 _context.PAGAMENTO.Update(pagamento);
 
-                await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, inscricao.Id);
+                if (string.Equals(statusApi, "approved", StringComparison.OrdinalIgnoreCase))
+                    await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, inscricao.Id);
 
                 await transaction.CommitAsync();
             }

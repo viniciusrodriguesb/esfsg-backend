@@ -20,7 +20,7 @@ namespace Esfsg.API.Hangfire.Jobs
         {
             try
             {
-                //await _emailStatusService.EnviarEmailReembolso();
+                await _emailStatusService.EnviarEmailReembolso();
             }
             catch (Exception)
             {
