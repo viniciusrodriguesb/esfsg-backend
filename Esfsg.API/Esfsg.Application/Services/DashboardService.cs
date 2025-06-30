@@ -94,9 +94,10 @@ namespace Esfsg.Application.Services
             return evento;
         }
 
-        public async Task<EventoProximoResponse?> ConsultarEventoProximo()
+        public async Task<EventoProximoResponse?> ConsultarEventoProximo(int IdRegiao)
         {
             return await _context.EVENTO.AsNoTracking()
+                                        .Where( x => x.IdIgrejaEventoNavigation.RegiaoId == IdRegiao)
                                         .OrderBy(x => x.DhEvento)
                                         .Select(e => new EventoProximoResponse()
                                         {
