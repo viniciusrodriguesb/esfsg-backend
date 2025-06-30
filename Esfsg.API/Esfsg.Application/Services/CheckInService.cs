@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Filtros;
+using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,28 +20,30 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task<List<CheckInListaResponse>> Consultar(ConsultaCheckInRequest request)
+        public async Task<PaginacaoResponse<CheckInListaResponse>> Consultar(ConsultaCheckInRequest request, PaginacaoRequest paginacao)
         {
-            var result = await _context.CHECK_IN.AsNoTracking()
-                                          .AplicarFiltro(request)
-                                          .Select(x => new CheckInListaResponse()
-                                          {
-                                              IdCheckin = x.Id,
-                                              Presenca = x.Presente,
-                                              Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
-                                              Evento = new DadosEventoResponse()
-                                              {
-                                                  Periodo = x.IdInscricaoNavigation.Periodo,
-                                                  FuncaoEvento = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao
-                                              },
-                                              Igreja = new DadosIgrejaResponse()
-                                              {
-                                                  Igreja = x.IdInscricaoNavigation.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
-                                                  Classe = x.IdInscricaoNavigation.IdUsuarioNavigation.IdClasseNavigation.Descricao
-                                              }
-                                          }).ToListAsync();
+            var query = _context.CHECK_IN.AsNoTracking()
+                                           .AplicarFiltro(request)
+                                           .Select(x => new CheckInListaResponse()
+                                           {
+                                               IdCheckin = x.Id,
+                                               Presenca = x.Presente,
+                                               Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
+                                               Evento = new DadosEventoResponse()
+                                               {
+                                                   Periodo = x.IdInscricaoNavigation.Periodo,
+                                                   FuncaoEvento = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao
+                                               },
+                                               Igreja = new DadosIgrejaResponse()
+                                               {
+                                                   Igreja = x.IdInscricaoNavigation.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                                   Classe = x.IdInscricaoNavigation.IdUsuarioNavigation.IdClasseNavigation.Descricao
+                                               }
+                                           });
 
-            return result;
+            var resultadoPaginado = await query.PaginarDados(paginacao);
+
+            return resultadoPaginado;
         }
 
 

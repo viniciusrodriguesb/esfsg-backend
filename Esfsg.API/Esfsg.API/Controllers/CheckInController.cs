@@ -20,13 +20,13 @@ namespace Esfsg.API.Controllers
 
         [HttpGet]
         [SwaggerOperation(Summary = "Consulta de inscrições para marcar presença.")]
-        public async Task<IActionResult> Consultar([FromQuery] ConsultaCheckInRequest request)
+        public async Task<IActionResult> Consultar([FromQuery] ConsultaCheckInRequest request, [FromQuery] PaginacaoRequest paginacao)
         {
             try
             {
-                var response = await _checkInService.Consultar(request);
+                var response = await _checkInService.Consultar(request, paginacao);
 
-                if (response == null || !response.Any())
+                if (response.Itens == null || !response.Itens.Any())
                     return NotFound("Nenhum registro encontrado.");
 
                 return StatusCode(StatusCodes.Status200OK, response);

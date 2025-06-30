@@ -5,7 +5,7 @@ namespace Esfsg.Application.Interfaces
 {
     public interface ICheckInService
     {
-        Task<List<CheckInListaResponse>> Consultar(ConsultaCheckInRequest request);
+        Task<PaginacaoResponse<CheckInListaResponse>> Consultar(ConsultaCheckInRequest request, PaginacaoRequest paginacao);
         Task<ResultResponse<CheckinValidadoResponse>> ConfirmarPresenca(ValidaPresencaRequest request);
     }
 }

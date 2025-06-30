@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Enums;
+using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
@@ -19,25 +20,27 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task<List<InscritosVisitaResponse>> ConsultarInscritosVisita(int IdEvento)
+        public async Task<PaginacaoResponse<InscritosVisitaResponse>> ConsultarInscritosVisita(int IdEvento, PaginacaoRequest paginacao)
         {
-            var inscritosVisita = await _context.VISITA_PARTICIPANTE
-                                                .AsNoTracking()
-                                                .Where(x => x.IdInscricaoNavigation.IdEvento == IdEvento)
-                                                .Select(x => new InscritosVisitaResponse()
-                                                {
-                                                    Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
-                                                    FuncaoEvento = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
-                                                    DadosVisita = new DadosInscritoVisita()
-                                                    {
-                                                        Funcao = x.Funcao,
-                                                        NomeVisita = x.IdVisitaNavigation != null ? x.IdVisitaNavigation.Descricao : null,
-                                                        VagasCarro = x.Vagas,
-                                                        Alocado = x.IdVisita != null
-                                                    }
-                                                }).ToListAsync();
+            var query = _context.VISITA_PARTICIPANTE
+                                .AsNoTracking()
+                                .Where(x => x.IdInscricaoNavigation.IdEvento == IdEvento)
+                                .Select(x => new InscritosVisitaResponse()
+                                {
+                                    Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
+                                    FuncaoEvento = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
+                                    DadosVisita = new DadosInscritoVisita()
+                                    {
+                                        Funcao = x.Funcao,
+                                        NomeVisita = x.IdVisitaNavigation != null ? x.IdVisitaNavigation.Descricao : null,
+                                        VagasCarro = x.Vagas,
+                                        Alocado = x.IdVisita != null
+                                    }
+                                });
 
-            return inscritosVisita;
+            var resultadoPaginado = await query.PaginarDados(paginacao);
+
+            return resultadoPaginado;
         }
 
         public async Task AlocarInscritosVisita(List<AlocarVisitaRequest> alocacoes)
