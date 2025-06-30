@@ -10,5 +10,6 @@
         public string Periodo { get; set; }
         public string FuncaoVisita { get; set; }
         public int QntdDependentes { get; set; }
+        public TabelaDominioResponse Status { get; set; }
     }     
 }

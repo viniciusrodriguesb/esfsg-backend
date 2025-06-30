@@ -23,11 +23,11 @@ namespace Esfsg.API.Controllers
 
         [HttpGet("pendentes")]
         [SwaggerOperation(Summary = "Consulta inscrições pendentes de liberação, permitidas para o CPF logado visualizar.")]
-        public async Task<IActionResult> ConsultarInscricoesParaLiberacao([FromQuery] string Cpf)
+        public async Task<IActionResult> ConsultarInscricoesParaLiberacao([FromQuery] string Cpf, [FromQuery] PaginacaoRequest Paginacao)
         {
             try
             {
-                var result = await _gestaoInscricaoService.ConsultarInscricoesParaLiberacao(Cpf);
+                var result = await _gestaoInscricaoService.ConsultarInscricoesParaLiberacao(Cpf, Paginacao);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -38,11 +38,11 @@ namespace Esfsg.API.Controllers
 
         [HttpGet]
         [SwaggerOperation(Summary = "Consulta com filtro de todas as pessoas inscritas.")]
-        public async Task<IActionResult> ConsultarInscricoes([FromQuery] FiltroGestaoInscricaoRequest filtro)
+        public async Task<IActionResult> ConsultarInscricoes([FromQuery] FiltroGestaoInscricaoRequest Filtro, [FromQuery] PaginacaoRequest Paginacao)
         {
             try
             {
-                var result = await _gestaoInscricaoService.ConsultarInscricoes(filtro);
+                var result = await _gestaoInscricaoService.ConsultarInscricoes(Filtro, Paginacao);
                 return Ok(result);
             }
             catch (Exception ex)

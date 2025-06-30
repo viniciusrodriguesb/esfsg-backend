@@ -2,6 +2,7 @@
 using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Enums;
 using Esfsg.Application.Filtros;
+using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task<List<InscricaoParaLiberacaoResponse>?> ConsultarInscricoesParaLiberacao(string Cpf)
+        public async Task<PaginacaoResponse<InscricaoParaLiberacaoResponse>> ConsultarInscricoesParaLiberacao(string Cpf, PaginacaoRequest paginacao)
         {
 
             var usuario = await _usuarioService.ConsultarUsuario(Cpf);
@@ -37,7 +38,7 @@ namespace Esfsg.Application.Services
             if (usuario.IdTipoUsuario == (int)TipoUsuarioEnum.PASTOR)
                 query = query.Where(x => x.IdUsuarioNavigation.IdIgreja == usuario.IdIgreja);
 
-            var result = await query.Select(x => new InscricaoParaLiberacaoResponse()
+            var result = query.Select(x => new InscricaoParaLiberacaoResponse()
             {
                 Nome = x.IdUsuarioNavigation.NomeCompleto,
                 Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
@@ -54,28 +55,37 @@ namespace Esfsg.Application.Services
                     NomeDependente = d.Nome,
                     IdadeDependente = d.Idade
                 }).ToList()
-            }).OrderBy(x => x.Nome).ToListAsync();
+            }).OrderBy(x => x.Nome);
 
-            return result;
+            var resultadoPaginado = await result.PaginarDados(paginacao);
+
+            return resultadoPaginado;
         }
 
-        public async Task<List<GestaoInscricaoResponse>?> ConsultarInscricoes(FiltroGestaoInscricaoRequest filtro)
+        public async Task<PaginacaoResponse<GestaoInscricaoResponse>> ConsultarInscricoes(FiltroGestaoInscricaoRequest filtro, PaginacaoRequest paginacao)
         {
-            var inscricoes = await _context.INSCRICAO.AsNoTracking()
-                                                     .AplicarFiltro(filtro)
-                                                   .Select(x => new GestaoInscricaoResponse()
-                                                   {
-                                                       Nome = x.IdUsuarioNavigation.NomeCompleto,
-                                                       Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
-                                                       Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
-                                                       Telefone = x.IdUsuarioNavigation.Telefone,
-                                                       Periodo = x.Periodo,
-                                                       FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
-                                                       QntdDependentes = x.MenorInscricoes.Count(),
-                                                       FuncaoVisita = x.Visita ? x.VisitaParticipantes.Select(f => f.Funcao).FirstOrDefault() : "Não optante"
-                                                   }).ToListAsync();
+            var query = _context.INSCRICAO.AsNoTracking()
+                                          .AplicarFiltro(filtro)
+                                          .Select(x => new GestaoInscricaoResponse()
+                                          {
+                                              Nome = x.IdUsuarioNavigation.NomeCompleto,
+                                              Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
+                                              Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                              Telefone = x.IdUsuarioNavigation.Telefone,
+                                              Periodo = x.Periodo,
+                                              FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
+                                              QntdDependentes = x.MenorInscricoes.Count(),
+                                              FuncaoVisita = x.Visita ? x.VisitaParticipantes.Select(f => f.Funcao).FirstOrDefault() : "Não optante",
+                                              Status = new TabelaDominioResponse()
+                                              {
+                                                  Id = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusId).FirstOrDefault(),
+                                                  Descricao = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault()
+                                              }
+                                          });
 
-            return inscricoes;
+            var resultadoPaginado = await query.PaginarDados(paginacao);
+
+            return resultadoPaginado;
         }
 
 
