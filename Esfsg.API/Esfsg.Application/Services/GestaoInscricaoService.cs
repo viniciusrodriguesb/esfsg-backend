@@ -44,6 +44,11 @@ namespace Esfsg.Application.Services
                 FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
                 Idade = ValidarIdadeParticipante(x.IdUsuarioNavigation.Nascimento),
                 Periodo = x.Periodo,
+                UsuarioBloqueado = new DadosBloqueio()
+                {
+                    UsuarioBloqueado = x.IdUsuarioNavigation.DhExclusao != null,
+                    MotivoBloqueio = x.IdUsuarioNavigation.DhExclusao != null ? x.IdUsuarioNavigation.MotivoExclusao : string.Empty
+                },
                 Dependentes = x.MenorInscricoes.Select(d => new DependenteResponse()
                 {
                     NomeDependente = d.Nome,
