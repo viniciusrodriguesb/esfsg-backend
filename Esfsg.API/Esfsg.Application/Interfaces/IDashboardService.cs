@@ -5,6 +5,6 @@ namespace Esfsg.Application.Interfaces
     public interface IDashboardService
     {
         Task<DashboardResponse?> ConsultarDadosDashboard(int IdEvento);
-        Task<EventoProximoResponse?> ConsultarEventoProximo();
+        Task<EventoProximoResponse?> ConsultarEventoProximo(int IdRegiao);
     }
 }

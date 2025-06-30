@@ -47,7 +47,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpGet("evento-proximo")]
-        public async Task<IActionResult> ConsultarEventoProximo()
+        public async Task<IActionResult> ConsultarEventoProximo([FromQuery] int IdRegiao)
         {
             const string key = "evento-proximo-key";
 
@@ -57,7 +57,7 @@ namespace Esfsg.API.Controllers
 
                 if (response is null)
                 {
-                    response = await _dashboardService.ConsultarEventoProximo();
+                    response = await _dashboardService.ConsultarEventoProximo(IdRegiao);
 
                     if (response == null)
                         return NotFound("Nenhum registro encontrado.");
