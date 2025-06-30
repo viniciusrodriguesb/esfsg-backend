@@ -6,7 +6,8 @@
         public long Idade { get; set; }
         public string Classe { get; set; }
         public string Periodo { get; set; }
-        public string FuncaoEvento { get; set; }       
+        public string FuncaoEvento { get; set; }      
+        public DadosBloqueio? UsuarioBloqueado { get; set; }
         public List<DependenteResponse>? Dependentes { get; set; }
     }
 
@@ -14,6 +15,12 @@
     {
         public string NomeDependente { get; set; }
         public long IdadeDependente { get; set; }
+    }
+
+    public class DadosBloqueio
+    {
+        public bool UsuarioBloqueado { get; set; }
+        public string MotivoBloqueio { get; set; }
     }
 
 }
