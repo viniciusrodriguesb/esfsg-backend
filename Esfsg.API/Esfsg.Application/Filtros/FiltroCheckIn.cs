@@ -16,6 +16,8 @@ namespace Esfsg.Application.Filtros
             if (filtro.FuncaoEvento != null)
                 query = query.Where(x => filtro.FuncaoEvento.Contains(x.IdInscricaoNavigation.IdFuncaoEvento));
 
+            query = query.Where(x => x.Presente == filtro.Validado);
+
             return query;
         }
     }
