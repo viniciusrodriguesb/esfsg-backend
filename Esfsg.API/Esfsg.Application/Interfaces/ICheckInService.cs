@@ -6,6 +6,7 @@ namespace Esfsg.Application.Interfaces
     public interface ICheckInService
     {
         Task<PaginacaoResponse<CheckInListaResponse>> Consultar(ConsultaCheckInRequest request, PaginacaoRequest paginacao);
-        Task<ResultResponse<CheckinValidadoResponse>> ConfirmarPresenca(ValidaPresencaRequest request);
+        Task<ResultResponse<CheckinValidadoResponse>> ConfirmarPresencaPorQRCode(ValidaPresencaRequest request);
+        Task<ResultResponse<List<CheckinValidadoResponse>>> ConfirmarPresencaPorId(ValidaPresencaIdRequest request);
     }
 }

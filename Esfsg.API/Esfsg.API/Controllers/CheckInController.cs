@@ -37,13 +37,32 @@ namespace Esfsg.API.Controllers
             }
         }
 
-        [HttpPost]
-        [SwaggerOperation(Summary = "Confirmação de presença no evento.")]
+        [HttpPost("QRCode")]
+        [SwaggerOperation(Summary = "Confirmação de presença no evento por QRCode.")]
         public async Task<IActionResult> ConfirmarPresenca([FromBody] ValidaPresencaRequest request)
         {
             try
             {
-                var result = await _checkInService.ConfirmarPresenca(request);
+                var result = await _checkInService.ConfirmarPresencaPorQRCode(request);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [SwaggerOperation(Summary = "Confirmação de presença no evento por lista de ID's.")]
+        public async Task<IActionResult> ConfirmarPresenca([FromBody] ValidaPresencaIdRequest request)
+        {
+            try
+            {
+                var result = await _checkInService.ConfirmarPresencaPorId(request);
                 return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (ArgumentException ex)
