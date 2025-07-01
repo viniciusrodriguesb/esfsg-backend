@@ -21,6 +21,8 @@
     {
         public int QuantidadeInscritosIntegral { get; set; }
         public int QuantidadeInscritosTarde { get; set; }
+        public int QuantidadeLiberadaIntegral { get; set; }
+        public int QuantidadeLiberadaTarde { get; set; }
     }
 
     public class DadosVisita

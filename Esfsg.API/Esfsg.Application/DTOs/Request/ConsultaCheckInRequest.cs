@@ -4,7 +4,7 @@
     {
         public string? Nome { get; set; }
         public string? Periodo { get; set; }
-        public List<int?>? FuncaoEvento { get; set; }
+        public int? FuncaoEvento { get; set; }
         public bool Validado { get; set; }
     }
 }

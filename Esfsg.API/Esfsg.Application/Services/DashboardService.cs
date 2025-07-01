@@ -31,7 +31,7 @@ namespace Esfsg.Application.Services
                                                           IdStatus = (int)StatusEnum.PAGAMENTO_CONFIRMADO,
                                                           Quantidade = e.Inscricaos.Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO && s.DhExclusao == null)).Count(),
                                                           Percentual = e.Inscricaos.Any() ?
-                                                                       ((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100
+                                                                       Math.Round(((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100, 2)
                                                                        : 0
                                                       },
                                                       AguardandoLiberacao = new DadosQuantitativo()
@@ -39,7 +39,7 @@ namespace Esfsg.Application.Services
                                                           IdStatus = (int)StatusEnum.AGUARDANDO_LIBERACAO,
                                                           Quantidade = e.Inscricaos.Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_LIBERACAO && s.DhExclusao == null)).Count(),
                                                           Percentual = e.Inscricaos.Any() ?
-                                                                       ((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_LIBERACAO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100
+                                                                       Math.Round(((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_LIBERACAO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100, 2)
                                                                        : 0
                                                       },
                                                       Pendentes = new DadosQuantitativo()
@@ -47,7 +47,7 @@ namespace Esfsg.Application.Services
                                                           IdStatus = (int)StatusEnum.AGUARDANDO_PAGAMENTO,
                                                           Quantidade = e.Inscricaos.Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_PAGAMENTO && s.DhExclusao == null)).Count(),
                                                           Percentual = e.Inscricaos.Any() ?
-                                                                       ((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_PAGAMENTO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100
+                                                                       Math.Round(((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_PAGAMENTO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100, 2)
                                                                        : 0
                                                       },
                                                       Cancelados = new DadosQuantitativo()
@@ -55,7 +55,7 @@ namespace Esfsg.Application.Services
                                                           IdStatus = (int)StatusEnum.CANCELADA,
                                                           Quantidade = e.Inscricaos.Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.CANCELADA && s.DhExclusao == null)).Count(),
                                                           Percentual = e.Inscricaos.Any() ?
-                                                                       ((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.CANCELADA && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100
+                                                                       Math.Round(((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.CANCELADA && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100, 2)
                                                                        : 0
                                                       },
                                                       ReembolsoSolicitado = new DadosQuantitativo()
@@ -63,14 +63,16 @@ namespace Esfsg.Application.Services
                                                           IdStatus = (int)StatusEnum.REEMBOLSO_SOLICITADO,
                                                           Quantidade = e.Inscricaos.Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.REEMBOLSO_SOLICITADO && s.DhExclusao == null)).Count(),
                                                           Percentual = e.Inscricaos.Any() ?
-                                                                       ((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.REEMBOLSO_SOLICITADO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100
+                                                                       Math.Round(((decimal)e.Inscricaos.Count(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.REEMBOLSO_SOLICITADO && s.DhExclusao == null)) / e.Inscricaos.Count()) * 100, 2)
                                                                        : 0
                                                       },
                                                   },
                                                   InscritosPeriodo = new DadosInscritosPeriodo()
                                                   {
                                                       QuantidadeInscritosIntegral = e.Inscricaos.Where(x => x.Periodo.ToLower() == "integral").Count(),
+                                                      QuantidadeLiberadaIntegral = e.LimiteIntegral,
                                                       QuantidadeInscritosTarde = e.Inscricaos.Where(x => x.Periodo.ToLower() == "tarde").Count(),
+                                                      QuantidadeLiberadaTarde = e.LimiteParcial
                                                   },
                                                   Arrecadacao = new DadosPagamento
                                                   {
@@ -97,7 +99,7 @@ namespace Esfsg.Application.Services
         public async Task<EventoProximoResponse?> ConsultarEventoProximo(int IdRegiao)
         {
             return await _context.EVENTO.AsNoTracking()
-                                        .Where( x => x.IdIgrejaEventoNavigation.RegiaoId == IdRegiao)
+                                        .Where(x => x.IdIgrejaEventoNavigation.RegiaoId == IdRegiao)
                                         .OrderBy(x => x.DhEvento)
                                         .Select(e => new EventoProximoResponse()
                                         {
