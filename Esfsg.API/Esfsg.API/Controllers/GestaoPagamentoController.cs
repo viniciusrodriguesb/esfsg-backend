@@ -44,7 +44,7 @@ namespace Esfsg.API.Controllers
 
         [HttpPost("Pix/Gerar")]
         [SwaggerOperation(Summary = "Geração de novo código pix.")]
-        public async Task<IActionResult> BuscarInscricaoPagamentoPorId([FromBody] int IdInscricao)
+        public async Task<IActionResult> GerarNovoCodigoPix([FromBody] int IdInscricao)
         {
             try
             {

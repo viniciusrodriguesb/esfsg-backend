@@ -40,7 +40,8 @@ namespace Esfsg.Application.Services
         {
             var dadosPagamento = await _context.PAGAMENTO
                                                .AsNoTracking()
-                                               .Where(x => x.IdInscricao == IdInscricao)
+                                               .Where(x => x.IdInscricao == IdInscricao &&
+                                                           x.DhExpiracao >= DateTime.Now)
                                                .Select(x => new QrCodePagamentoResponse()
                                                {
                                                    PixCopiaCola = x.CodigoPix,

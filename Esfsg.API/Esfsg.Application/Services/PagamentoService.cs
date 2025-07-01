@@ -48,6 +48,11 @@ namespace Esfsg.Application.Services
 
             foreach (var inscricao in inscricoes)
             {
+                var existePagamentoValido = await VerificarRegistroInserido(inscricao.IdInscricao);
+
+                if (existePagamentoValido)
+                    continue;
+
                 await CriarPagamentoPixAsync(inscricao);
             }
         }
@@ -83,7 +88,9 @@ namespace Esfsg.Application.Services
 
             foreach (var inscricao in inscricoes)
             {
-                var pagamento = inscricao.Pagamentos.Where(x => x.IdInscricao == inscricao.Id).FirstOrDefault();
+                var pagamento = inscricao.Pagamentos.Where(x => x.IdInscricao == inscricao.Id &&
+                                                                x.DhExpiracao >= DateTime.Now)
+                                                    .FirstOrDefault();
 
                 if (pagamento == null)
                     continue;
@@ -98,7 +105,7 @@ namespace Esfsg.Application.Services
 
         }
 
-        #region API's Mercado Pago
+        #region API's Mercado Pago        
 
         private async Task<string?> VerificarStatusPagamentoApiAsync(string idTransacao)
         {
@@ -166,6 +173,14 @@ namespace Esfsg.Application.Services
         #endregion
 
         #region Métodos Privados - CriarPagamentoPixAsync
+
+        private async Task<bool> VerificarRegistroInserido(int IdInscricao)
+        {
+            return await _context.PAGAMENTO
+                                 .AsNoTracking()
+                                 .AnyAsync(x => x.IdInscricao == IdInscricao &&
+                                                x.DhExpiracao >= DateTime.Now);
+        }
 
         private PagamentoPixResponse PreencherObjetoDadosPagamento(string? responseContent)
         {
