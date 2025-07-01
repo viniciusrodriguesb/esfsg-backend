@@ -94,7 +94,8 @@ namespace Esfsg.Application.Services
                 {
                     Id = usuario.Id,
                     Nome = usuario.NomeCompleto,
-                    Role = usuario.IdTipoUsuario
+                    Role = usuario.IdTipoUsuario,
+                    Cpf = usuario.Cpf
                 }
             };
         }
