@@ -22,7 +22,7 @@ namespace Esfsg.Application.Services
             return await _context.EVENTO
                                        .AsNoTracking()
                                        .Where(x => x.IdIgrejaEventoNavigation.RegiaoId == RegiaoId &&
-                                                   x.Ativo && 
+                                                   x.Ativo &&
                                                    x.Inscricaos.Count() < (x.LimiteIntegral + x.LimiteParcial))
                                        .Select(e => new EventoResponse()
                                        {
@@ -54,15 +54,15 @@ namespace Esfsg.Application.Services
                     QuantidadeParcial = g.Count(x => x.Periodo.ToLower() == "tarde")
                 }).FirstOrDefaultAsync();
 
-            var result = new List<string>();
+            var result = new List<string> { "Integral", "Tarde" };
 
             if (inscritosPorPeriodo == null) return result;
 
-            if (inscritosPorPeriodo.QuantidadeIntegral < inscritosPorPeriodo.LimiteIntegral)
-                result.Add("Integral");
+            if (inscritosPorPeriodo.QuantidadeIntegral >= inscritosPorPeriodo.LimiteIntegral)
+                result.Remove("Integral");
 
-            if (inscritosPorPeriodo.QuantidadeParcial < inscritosPorPeriodo.LimiteParcial)
-                result.Add("Tarde");
+            if (inscritosPorPeriodo.QuantidadeParcial >= inscritosPorPeriodo.LimiteParcial)
+                result.Remove("Tarde");
 
             return result;
         }
