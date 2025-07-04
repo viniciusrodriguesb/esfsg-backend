@@ -53,15 +53,12 @@ namespace Esfsg.Application.Services
         {
             var dadoPagamento = await _context.PAGAMENTO.AsNoTracking()
                                                         .Where(x => x.IdInscricao == IdInscricao)
-                                                        .FirstOrDefaultAsync();
+                                                        .FirstOrDefaultAsync();          
 
-            if (dadoPagamento == null)
-                throw new ArgumentException("Não foi encontrada nenhuma informação de pagamento para esta inscrição");
-
-            if (dadoPagamento.StatusRetornoApi == "approved")
+            if (dadoPagamento != null && dadoPagamento.StatusRetornoApi == "approved")
                 throw new ArgumentException("Pagamento desta inscrição já foi realizado.");
 
-            if (dadoPagamento.StatusRetornoApi != "approved" && dadoPagamento.DhExpiracao.Date > DateTime.Now.Date)
+            if (dadoPagamento != null && dadoPagamento.StatusRetornoApi != "approved" && dadoPagamento.DhExpiracao.Date > DateTime.Now.Date)
                 throw new ArgumentException("Ainda há um código pix em aberto para essa inscrição");
 
             await _pagamentoService.BuscarInscricaoPagamentoPorId(IdInscricao);
