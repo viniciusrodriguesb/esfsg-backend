@@ -2,6 +2,7 @@
 {
     public class InscricaoParaLiberacaoResponse
     {
+        public int Id { get; set; }
         public string Nome {  get; set; }
         public long Idade { get; set; }
         public string Classe { get; set; }
