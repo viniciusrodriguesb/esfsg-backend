@@ -40,6 +40,7 @@ namespace Esfsg.Application.Services
 
             var result = query.Select(x => new InscricaoParaLiberacaoResponse()
             {
+                Id = x.Id,
                 Nome = x.IdUsuarioNavigation.NomeCompleto,
                 Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
                 FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,

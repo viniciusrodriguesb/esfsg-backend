@@ -51,7 +51,7 @@ namespace Esfsg.API.Controllers
             }
         }
 
-        [HttpPut("aprovar")]
+        [HttpPost("aprovar")]
         [SwaggerOperation(Summary = "Liberação da inscrição para participação do evento.")]
         public async Task<IActionResult> AprovarInscricao([FromBody] List<int> Ids)
         {
