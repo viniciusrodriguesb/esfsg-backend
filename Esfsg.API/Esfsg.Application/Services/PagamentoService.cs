@@ -158,6 +158,7 @@ namespace Esfsg.Application.Services
             {
                 pagamento.StatusRetornoApi = statusApi;
                 _context.PAGAMENTO.Update(pagamento);
+                await _context.SaveChangesAsync();
 
                 if (string.Equals(statusApi, "approved", StringComparison.OrdinalIgnoreCase))
                     await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, inscricao.Id);
