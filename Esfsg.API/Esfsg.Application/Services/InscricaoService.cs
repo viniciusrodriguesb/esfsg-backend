@@ -22,7 +22,7 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task RealizarInscricao(InscricaoRequest request)
+        public async Task<UsuarioResponse?> RealizarInscricao(InscricaoRequest request)
         {
             if (string.IsNullOrEmpty(request.Cpf))
                 throw new ArgumentException("É necessário enviar o CPF para prosseguir com a inscrição.");
@@ -50,6 +50,8 @@ namespace Esfsg.Application.Services
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
+
+                return await _usuarioService.ConsultarUsuarioLogin(usuario.Cpf);
             }
             catch (Exception)
             {
@@ -77,7 +79,7 @@ namespace Esfsg.Application.Services
             return inscricao;
         }
 
-        #region Métodos Privados - RealizarInscricao
+        #region Métodos Privados - RealizarInscricao       
 
         private async Task PersistirIgrejaInexistente(InscricaoRequest request)
         {
