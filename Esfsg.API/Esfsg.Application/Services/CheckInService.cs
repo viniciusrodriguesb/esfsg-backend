@@ -5,7 +5,6 @@ using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Text;
 
 namespace Esfsg.Application.Services
 {
@@ -46,32 +45,6 @@ namespace Esfsg.Application.Services
             return resultadoPaginado;
         }
 
-        public async Task<ResultResponse<CheckinValidadoResponse>> ConfirmarPresencaPorQRCode(ValidaPresencaRequest request)
-        {
-            int Id = ValidarEntradaDados(request);
-
-            var result = await _context.CHECK_IN.Where(x => x.Id == Id)
-                                                .ExecuteUpdateAsync(s => s.SetProperty(p => p.Presente, request.Presenca));
-
-            if (result == 0)
-            {
-                return new ResultResponse<CheckinValidadoResponse>()
-                {
-                    Mensagem = "Erro ao confirmar ou zerar a presença.",
-                    Sucesso = false
-                };
-            }
-
-            var response = await ConsultarDadosCheckin(Id);
-
-            return new ResultResponse<CheckinValidadoResponse>()
-            {
-                Mensagem = request.Presenca ? "Presença confirmada com sucesso." : "Presença zerada com sucesso.",
-                Sucesso = true,
-                Dados = response
-            };
-        }
-
         public async Task<ResultResponse<List<CheckinValidadoResponse>>> ConfirmarPresencaPorId(ValidaPresencaIdRequest request)
         {
             var result = await _context.CHECK_IN.Where(x => request.Ids.Contains(x.Id))
@@ -98,21 +71,7 @@ namespace Esfsg.Application.Services
 
         }
 
-
-        #region Métodos Privados
-        private static int ValidarEntradaDados(ValidaPresencaRequest request)
-        {
-            if (request.IdCheckIn.HasValue)
-                return request.IdCheckIn.Value;
-            else if (!string.IsNullOrEmpty(request.QrCode))
-            {
-                var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(request.QrCode));
-                return int.Parse(decoded);
-            }
-            else
-                throw new ArgumentException("Para validar é necessário o ID ou o QRCode.");
-        }
-
+        #region Métodos Privados       
         private async Task<CheckinValidadoResponse?> ConsultarDadosCheckin(int Id)
         {
             return await _context.CHECK_IN.AsNoTracking()

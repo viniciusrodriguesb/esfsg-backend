@@ -43,9 +43,8 @@ namespace Esfsg.Application.Services
             return resultadoPaginado;
         }
 
-        public async Task AlocarInscritosVisita(List<AlocarVisitaRequest> alocacoes)
+        public async Task<ResultResponse<VISITA_PARTICIPANTE>> AlocarInscritosVisita(List<AlocarVisitaRequest> alocacoes)
         {
-
             foreach (var alocacao in alocacoes)
             {
                 var jaAlocado = await _context.VISITA_PARTICIPANTE
@@ -56,7 +55,14 @@ namespace Esfsg.Application.Services
                                                              x.IdVisita == alocacao.IdVisita);
 
                 if (jaAlocado != null)
-                    throw new ArgumentException($"O participante {jaAlocado.IdInscricaoNavigation?.IdUsuarioNavigation.NomeCompleto} já está alocado nesta visita!");
+                {
+                    return new ResultResponse<VISITA_PARTICIPANTE>()
+                    {
+                        Sucesso = false,
+                        Mensagem = $"O participante {jaAlocado.IdInscricaoNavigation?.IdUsuarioNavigation.NomeCompleto} já está alocado nesta visita!",
+                        Dados = jaAlocado
+                    };
+                }
 
                 var participante = await _context.VISITA_PARTICIPANTE.FirstOrDefaultAsync(x => x.IdInscricao == alocacao.IdInscricao);
 
@@ -70,6 +76,13 @@ namespace Esfsg.Application.Services
             }
 
             await _context.SaveChangesAsync();
+
+            return new ResultResponse<VISITA_PARTICIPANTE>()
+            {
+                Sucesso = true,
+                Mensagem = $"Inscritos alocados com sucesso."
+            };
+
         }
 
         public List<TabelaDominioResponse> ConsultarFuncoesVisita()
@@ -83,7 +96,7 @@ namespace Esfsg.Application.Services
                        }).ToList();
         }
 
-        public async Task CriarVisita(VisitaRequest visita)
+        public async Task<ResultResponse<VISITA>> CriarVisita(VisitaRequest visita)
         {
 
             var existeVisita = await _context.VISITA
@@ -94,7 +107,13 @@ namespace Esfsg.Application.Services
                                        .AnyAsync();
 
             if (existeVisita)
-                throw new ArgumentException("Já existe visita com informações enviadas.");
+            {
+                return new ResultResponse<VISITA>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Já existe visita com informações enviadas."
+                };
+            }
 
             var novaVisita = new VISITA()
             {
@@ -106,6 +125,13 @@ namespace Esfsg.Application.Services
 
             await _context.VISITA.AddAsync(novaVisita);
             await _context.SaveChangesAsync();
+
+            return new ResultResponse<VISITA>()
+            {
+                Sucesso = true,
+                Mensagem = "Visita criada com sucesso.",
+                Dados = novaVisita
+            };
         }
 
         public async Task ExcluirVisita(int Id)

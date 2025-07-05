@@ -71,6 +71,10 @@ namespace Esfsg.API.Controllers
 
                 return Ok(response);
             }
+            catch(ArgumentException ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
