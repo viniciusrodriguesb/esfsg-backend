@@ -54,8 +54,8 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                await _inscricaoService.RealizarInscricao(request);
-                return StatusCode(StatusCodes.Status201Created);
+                var result = await _inscricaoService.RealizarInscricao(request);
+                return StatusCode(StatusCodes.Status200OK, result);
             }
             catch (ArgumentException ex)
             {

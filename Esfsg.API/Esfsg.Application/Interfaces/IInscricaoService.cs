@@ -5,7 +5,7 @@ namespace Esfsg.Application.Interfaces
 {
     public interface IInscricaoService
     {
-        Task RealizarInscricao(InscricaoRequest request);
+        Task<UsuarioResponse?> RealizarInscricao(InscricaoRequest request);
         Task<InscricaoResponse?> ConsultarInscricao(InscricaoEventoResquest request);
     }
 }
