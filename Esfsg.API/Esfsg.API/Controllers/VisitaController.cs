@@ -49,7 +49,7 @@ namespace Esfsg.API.Controllers
 
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
@@ -61,12 +61,8 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                await _visitaService.AlocarInscritosVisita(alocacoes);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+                var result = await _visitaService.AlocarInscritosVisita(alocacoes);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (Exception ex)
             {
@@ -80,12 +76,8 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                await _visitaService.CriarVisita(visita);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+                var result = await _visitaService.CriarVisita(visita);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (Exception ex)
             {
