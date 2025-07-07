@@ -7,6 +7,8 @@ namespace Esfsg.Application.Filtros
     {
         public static IQueryable<CHECK_IN> AplicarFiltro(this IQueryable<CHECK_IN> query, ConsultaCheckInRequest filtro)
         {
+            query = query.Where(x => x.IdInscricaoNavigation.IdEvento == filtro.IdEvento);
+
             if (!string.IsNullOrEmpty(filtro.Nome))
             {
                 var nomeFiltro = filtro.Nome.Trim().ToLower();
