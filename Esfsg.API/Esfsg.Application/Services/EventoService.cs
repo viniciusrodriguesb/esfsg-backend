@@ -17,26 +17,25 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task<List<EventoResponse>> ConsultarEvento(int RegiaoId)
+        public async Task<List<EventoResponse>> ConsultarEvento()
         {
-            return await _context.EVENTO
-                                       .AsNoTracking()
-                                       .Where(x => x.IdIgrejaEventoNavigation.RegiaoId == RegiaoId &&
-                                                   x.Ativo &&
-                                                   x.Inscricaos.Count() < (x.LimiteIntegral + x.LimiteParcial))
-                                       .Select(e => new EventoResponse()
-                                       {
-                                           Id = e.Id,
-                                           Nome = e.Nome,
-                                           DataEvento = e.DhEvento.ToString("dd/MM/yyyy"),
-                                           LimiteIntegral = e.LimiteIntegral,
-                                           LimiteParcial = e.LimiteParcial,
-                                           LinkGrupoWpp = new Uri(e.LinkWpp),
-                                           ValorIntegral = e.ValorIntegral,
-                                           ValorParcial = e.ValorParcial,
-                                           IgrejaEvento = e.IdIgrejaEventoNavigation.Nome,
-                                           IgrejaVigilia = e.IdIgrejaVigiliaNavigation.Nome,
-                                       }).ToListAsync();
+            return await _context.EVENTO.AsNoTracking()
+                                        .Where(x => x.Ativo &&
+                                                    x.Inscricaos.Count() < (x.LimiteIntegral + x.LimiteParcial))
+                                        .Select(e => new EventoResponse()
+                                        {
+                                            Id = e.Id,
+                                            Nome = e.Nome,
+                                            DataEvento = e.DhEvento.ToString("dd/MM/yyyy"),
+                                            LimiteIntegral = e.LimiteIntegral,
+                                            LimiteParcial = e.LimiteParcial,
+                                            LinkGrupoWpp = new Uri(e.LinkWpp),
+                                            ValorIntegral = e.ValorIntegral,
+                                            ValorParcial = e.ValorParcial,
+                                            IgrejaEvento = e.IdIgrejaEventoNavigation.Nome,
+                                            IgrejaVigilia = e.IdIgrejaVigiliaNavigation.Nome,
+                                            Regiao = e.IdIgrejaEventoNavigation.RegiaoNavigation.Nome
+                                        }).ToListAsync();
         }
 
         public async Task<List<string>?> ConsultarPeriodos(int IdEvento)
@@ -67,9 +66,16 @@ namespace Esfsg.Application.Services
             return result;
         }
 
-        public async Task IncluirEvento(EventoRequest request)
+        public async Task<ResultResponse<EVENTO>> IncluirEvento(EventoRequest request)
         {
-            await ValidarEvento(request);
+            if (await VerificarEventoExistente(request))
+            {
+                return new ResultResponse<EVENTO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Evento já existente na data e local solicitado."
+                };
+            }
 
             var novoEvento = new EVENTO()
             {
@@ -86,6 +92,13 @@ namespace Esfsg.Application.Services
 
             await _context.EVENTO.AddAsync(novoEvento);
             await _context.SaveChangesAsync();
+
+            return new ResultResponse<EVENTO>()
+            {
+                Sucesso = true,
+                Mensagem = "Evento criado com sucesso.",
+                Dados = novoEvento
+            };
         }
 
         public async Task ExcluirEvento(int Id)
@@ -95,14 +108,20 @@ namespace Esfsg.Application.Services
                           .ExecuteDeleteAsync();
         }
 
-        public async Task EditarEvento(int Id, AlteraEventoRequest request)
+        public async Task<ResultResponse<EVENTO>> EditarEvento(int Id, AlteraEventoRequest request)
         {
             var evento = await _context.EVENTO
                                        .Where(x => x.Id == Id)
                                        .FirstOrDefaultAsync();
 
             if (evento == null)
-                throw new ArgumentException("Evento não localizado.");
+            {
+                return new ResultResponse<EVENTO>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Evento não localizado."
+                };
+            }
 
             if (!string.IsNullOrWhiteSpace(request.Nome))
                 evento.Nome = request.Nome;
@@ -132,19 +151,37 @@ namespace Esfsg.Application.Services
                 evento.IdIgrejaEvento = request.IdIgrejaEvento.Value;
 
             await _context.SaveChangesAsync();
+
+            var response = new EVENTO()
+            {
+                Id = evento.Id,
+                Nome = evento.Nome,
+                DhEvento = evento.DhEvento,
+                LimiteIntegral = evento.LimiteIntegral,
+                LimiteParcial = evento.LimiteParcial,
+                LinkWpp = evento.LinkWpp,
+                ValorIntegral = evento.ValorIntegral,
+                ValorParcial = evento.ValorParcial,
+                IdIgrejaVigilia = evento.IdIgrejaVigilia,
+                IdIgrejaEvento = evento.IdIgrejaEvento
+            };
+
+            return new ResultResponse<EVENTO>()
+            {
+                Sucesso = true,
+                Mensagem = "Evento editado com sucesso.",
+                Dados = response
+            };
         }
 
         #region Métodos Privados
-        private async Task ValidarEvento(EventoRequest request)
+        private async Task<bool> VerificarEventoExistente(EventoRequest request)
         {
-            var evento = await _context.EVENTO
+            return await _context.EVENTO
                                        .AsNoTracking()
                                        .Where(x => x.DhEvento.Date == request.DhEvento.Date &&
                                                    x.IdIgrejaEvento == request.IdIgrejaEvento)
                                        .AnyAsync();
-
-            if (evento)
-                throw new ArgumentException("Evento já existente na data e igreja selecionados.");
         }
         #endregion
     }

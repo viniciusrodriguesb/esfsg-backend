@@ -23,16 +23,16 @@ namespace Esfsg.API.Controllers
 
         [HttpGet("pendentes")]
         [SwaggerOperation(Summary = "Consulta inscrições pendentes de liberação, permitidas para o CPF logado visualizar.")]
-        public async Task<IActionResult> ConsultarInscricoesParaLiberacao([FromQuery] string Cpf, [FromQuery] PaginacaoRequest Paginacao)
+        public async Task<IActionResult> ConsultarInscricoesParaLiberacao([FromQuery] InscricoesPendentesRequest request, [FromQuery] PaginacaoRequest Paginacao)
         {
             try
             {
-                var result = await _gestaoInscricaoService.ConsultarInscricoesParaLiberacao(Cpf, Paginacao);
+                var result = await _gestaoInscricaoService.ConsultarInscricoesParaLiberacao(request, Paginacao);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Esfsg.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -55,12 +55,13 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Liberação da inscrição para participação do evento.")]
         public async Task<IActionResult> AprovarInscricao([FromBody] List<int> Ids)
         {
+            if (Ids == null || !Ids.Any())
+                return StatusCode(StatusCodes.Status400BadRequest, "Nenhuma inscrição foi informada para aprovação.");
+
             try
             {
-                foreach (var id in Ids)
-                {
-                    await _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id);
-                }
+                var tarefas = Ids.Select(id => _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id));
+                await Task.WhenAll(tarefas);
 
                 return StatusCode(StatusCodes.Status200OK);
             }

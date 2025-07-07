@@ -49,19 +49,31 @@ namespace Esfsg.Application.Services
             return result;
         }
 
-        public async Task GerarNovoCodigoPix(int IdInscricao)
+        public async Task<ResultResponse<string>> GerarNovoCodigoPix(int IdInscricao)
         {
             var dadoPagamento = await _context.PAGAMENTO.AsNoTracking()
                                                         .Where(x => x.IdInscricao == IdInscricao)
                                                         .FirstOrDefaultAsync();          
 
             if (dadoPagamento != null && dadoPagamento.StatusRetornoApi == "approved")
-                throw new ArgumentException("Pagamento desta inscrição já foi realizado.");
+            {
+                return new ResultResponse<string>() { Sucesso = false, Mensagem = "Pagamento desta inscrição já foi realizado." };
+            }
 
             if (dadoPagamento != null && dadoPagamento.StatusRetornoApi != "approved" && dadoPagamento.DhExpiracao.Date > DateTime.Now.Date)
-                throw new ArgumentException("Ainda há um código pix em aberto para essa inscrição");
+            {
+                return new ResultResponse<string>() { Sucesso = false, Mensagem = "Ainda há um código pix em aberto para essa inscrição" };
+            }
 
-            await _pagamentoService.BuscarInscricaoPagamentoPorId(IdInscricao);
+            try
+            {
+                await _pagamentoService.BuscarInscricaoPagamentoPorId(IdInscricao);
+                return new ResultResponse<string>() { Sucesso = true, Mensagem = "Código Pix gerado com sucesso." };
+            }
+            catch (Exception)
+            {
+                return new ResultResponse<string>() { Sucesso = false, Mensagem = "Erro ao gerar novo código Pix." };
+            }
         }
 
     }

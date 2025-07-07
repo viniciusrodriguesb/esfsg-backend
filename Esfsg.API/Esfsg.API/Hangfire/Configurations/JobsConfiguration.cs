@@ -13,29 +13,29 @@ namespace Esfsg.API.Hangfire.Configurations
 
             #region Emails
             jobManager.AddOrUpdate<EmailInscricaoConfirmadaJob>(
-                  "email-inscricao-confirmada",
-                  job => job.Execute(),
-                         "*/5 * * * *");
+              "email-inscricao-confirmada",
+              job => job.Execute(),
+                     "*/3 * * * *");
 
-            jobManager.AddOrUpdate<EmailQrCodeAcessoJob>(
+            jobManager.AddOrUpdate<EmailQrCodePagamentoJob>(
                "email-qrcode-pagamento",
                job => job.Execute(),
                       "*/5 * * * *");
 
-            jobManager.AddOrUpdate<EmailQrCodePagamentoJob>(
-               "email-qrcode-acesso",
-               job => job.Execute(),
-                      "*/5 * * * *");
+            jobManager.AddOrUpdate<EmailQrCodeAcessoJob>(
+              "email-qrcode-acesso",
+              job => job.Execute(),
+                     "*/5 * * * *");
 
             jobManager.AddOrUpdate<EmailCancelamentoJob>(
                "email-cancelamento",
                job => job.Execute(),
-                      "*/5 * * * *");
+                      "*/10 * * * *");
 
             jobManager.AddOrUpdate<EmailReembolsoJob>(
                "email-reembolso",
                job => job.Execute(),
-                      "*/5 * * * *");
+                      "*/10 * * * *");
             #endregion
 
             #region Pagamento

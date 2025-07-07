@@ -22,17 +22,17 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task<PaginacaoResponse<InscricaoParaLiberacaoResponse>> ConsultarInscricoesParaLiberacao(string Cpf, PaginacaoRequest paginacao)
+        public async Task<PaginacaoResponse<InscricaoParaLiberacaoResponse>> ConsultarInscricoesParaLiberacao(InscricoesPendentesRequest request, PaginacaoRequest paginacao)
         {
-
-            var usuario = await _usuarioService.ConsultarUsuario(Cpf);
+            var usuario = await _usuarioService.ConsultarUsuario(request.CpfLogado);
 
             if (usuario.IdTipoUsuario > (int)TipoUsuarioEnum.PASTOR)
                 return null;
 
             var query = _context.INSCRICAO.AsNoTracking()
-                                          .Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_LIBERACAO
-                                                                              && s.DhExclusao == null))
+                                          .Where(x => x.IdEvento == request.IdEvento &&
+                                                      x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_LIBERACAO &&
+                                                                                 s.DhExclusao == null))
                                           .AsQueryable();
 
             if (usuario.IdTipoUsuario == (int)TipoUsuarioEnum.PASTOR)

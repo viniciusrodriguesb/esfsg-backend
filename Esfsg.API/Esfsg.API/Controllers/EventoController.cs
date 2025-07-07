@@ -11,22 +11,19 @@ namespace Esfsg.API.Controllers
     {
         #region Construtor
         private readonly IEventoService _eventoService;
-        private readonly IMemoryCacheService _memoryCacheService;
-        public EventoController(IEventoService eventoService,
-                                IMemoryCacheService memoryCacheService)
+        public EventoController(IEventoService eventoService)
         {
             _eventoService = eventoService;
-            _memoryCacheService = memoryCacheService;
         }
         #endregion
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Consulta todos os eventos de uma região.")]
-        public async Task<IActionResult> ConsultarEventos([FromQuery] int RegiaoId)
+        [SwaggerOperation(Summary = "Consulta todos os eventos disponíveis.")]
+        public async Task<IActionResult> ConsultarEventos()
         {
             try
             {
-                var result = await _eventoService.ConsultarEvento(RegiaoId);
+                var result = await _eventoService.ConsultarEvento();
 
                 if (result == null || !result.Any())
                     return NotFound("Nenhum registro encontrado.");
@@ -60,12 +57,8 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                await _eventoService.IncluirEvento(request);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+                var result = await _eventoService.IncluirEvento(request);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (Exception ex)
             {
@@ -98,12 +91,8 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                await _eventoService.EditarEvento(Id, request);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+                var result = await _eventoService.EditarEvento(Id, request);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (Exception ex)
             {

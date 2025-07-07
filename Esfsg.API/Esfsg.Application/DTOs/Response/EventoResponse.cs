@@ -12,5 +12,6 @@
         public string DataEvento { get; set; }
         public string IgrejaVigilia { get; set; }
         public string IgrejaEvento { get; set; }
+        public string Regiao { get; set; }
     }
 }

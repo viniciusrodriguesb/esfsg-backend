@@ -68,13 +68,19 @@ namespace Esfsg.Application.Services
                                                .ToListAsync();
         }
 
-        public async Task EditarFuncoesEvento(AlteraFuncaoEventoRequest request)
+        public async Task<ResultResponse<FuncaoEventoResponse>> EditarFuncoesEvento(AlteraFuncaoEventoRequest request)
         {
             var funcao = await _context.FUNCAO_EVENTO.Where(f => f.Id == request.IdFuncao)
-                                                    .FirstOrDefaultAsync();
+                                                     .FirstOrDefaultAsync();
 
             if (funcao == null)
-                throw new ArgumentException("Função não encontrada.");
+            {
+                return new ResultResponse<FuncaoEventoResponse>()
+                {
+                    Sucesso = false,
+                    Mensagem = "Função para o evento não encontrada."
+                };
+            }
 
             if (!string.IsNullOrWhiteSpace(request.Descricao))
                 funcao.Descricao = request.Descricao;
@@ -87,6 +93,21 @@ namespace Esfsg.Application.Services
 
             _context.FUNCAO_EVENTO.Update(funcao);
             await _context.SaveChangesAsync();
+
+            var response = new FuncaoEventoResponse
+            {
+                Id = funcao.Id,
+                Descricao = funcao.Descricao,
+                Cor = funcao.Cor,
+                Quantidade = funcao.Quantidade
+            };
+
+            return new ResultResponse<FuncaoEventoResponse>()
+            {
+                Sucesso = true,
+                Mensagem = "Função do evento editada com sucesso.",
+                Dados = response
+            };
         }
 
 

@@ -6,7 +6,9 @@ namespace Esfsg.Application.Filtros
     public static class FiltroGestaoInscricao
     {
         public static IQueryable<INSCRICAO> AplicarFiltro(this IQueryable<INSCRICAO> query, FiltroGestaoInscricaoRequest filtro)
-        {            
+        {
+            query = query.Where(x => x.IdEvento == filtro.IdEvento);
+
             if (!string.IsNullOrEmpty(filtro.Nome))
                 query = query.Where(x => x.IdUsuarioNavigation.NomeCompleto.Contains(filtro.Nome));
 
