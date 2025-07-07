@@ -1,6 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Enums;
+using Esfsg.Application.Filtros;
 using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
@@ -24,17 +25,19 @@ namespace Esfsg.Application.Services
         {
             var query = _context.VISITA_PARTICIPANTE
                                 .AsNoTracking()
-                                .Where(x => x.IdInscricaoNavigation.IdEvento == request.IdEvento &&
-                                            request.Alocado ? x.IdVisita != null : x.IdVisita == null)
+                                .AplicarFiltro(request)
                                 .Select(x => new InscritosVisitaResponse()
                                 {
+                                    IdInscricao = x.IdInscricaoNavigation.Id,
                                     Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
                                     FuncaoEvento = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
                                     DadosVisita = new DadosInscritoVisita()
                                     {
                                         Funcao = x.Funcao,
                                         NomeVisita = x.IdVisitaNavigation != null ? x.IdVisitaNavigation.Descricao : null,
+                                        Endereco = x.IdVisitaNavigation.EnderecoVisitado,
                                         VagasCarro = x.Vagas,
+                                        Carro = x.Carro,
                                         Alocado = x.IdVisita != null
                                     }
                                 });
@@ -42,6 +45,19 @@ namespace Esfsg.Application.Services
             var resultadoPaginado = await query.PaginarDados(paginacao);
 
             return resultadoPaginado;
+        }
+
+        public async Task<List<VisitaResponse>> ConsultarVisitas()
+        {
+            return await _context.VISITA
+                                 .AsNoTracking()
+                                 .Select(x => new VisitaResponse()
+                                 {
+                                     Id = x.Id,
+                                     Endereco = x.EnderecoVisitado,
+                                     Nome = x.Descricao,
+                                     Observacao = x.Observacoes
+                                 }).ToListAsync();
         }
 
         public async Task<ResultResponse<VISITA_PARTICIPANTE>> AlocarInscritosVisita(List<AlocarVisitaRequest> alocacoes)

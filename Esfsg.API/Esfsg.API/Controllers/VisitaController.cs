@@ -1,6 +1,9 @@
 ﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
+using Esfsg.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
@@ -11,9 +14,11 @@ namespace Esfsg.API.Controllers
     {
         #region Construtor
         private readonly IVisitaService _visitaService;
-        public VisitaController(IVisitaService visitaService)
+        private readonly IMemoryCacheService _memoryCacheService;
+        public VisitaController(IVisitaService visitaService, IMemoryCacheService memoryCacheService)
         {
             _visitaService = visitaService;
+            _memoryCacheService = memoryCacheService;
         }
         #endregion
 
@@ -48,6 +53,34 @@ namespace Esfsg.API.Controllers
                     return NotFound("Nenhum registro encontrado.");
 
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [SwaggerOperation(Summary = "Consulta todas as visitas criadas.")]
+        public async Task<IActionResult> ConsultarVisitas()
+        {
+            const string key = "visitas-key";
+
+            try
+            {
+                var response = _memoryCacheService.Get<List<VisitaResponse>>(key);
+
+                if (response is null)
+                {
+                    response = await _visitaService.ConsultarVisitas();
+
+                    if (response == null || !response.Any())
+                        return NotFound("Nenhum registro encontrado.");
+
+                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
+                }
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
