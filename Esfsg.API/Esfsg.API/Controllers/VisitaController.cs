@@ -19,11 +19,11 @@ namespace Esfsg.API.Controllers
 
         [HttpGet("inscritos-visitas")]
         [SwaggerOperation(Summary = "Consulta todos os inscritos ativos para visita.")]
-        public async Task<IActionResult> ConsultarInscritosVisita(int IdEvento, [FromQuery] PaginacaoRequest Paginacao)
+        public async Task<IActionResult> ConsultarInscritosVisita([FromQuery] ConsultaVisitaRequest request, [FromQuery] PaginacaoRequest Paginacao)
         {
             try
             {
-                var result = await _visitaService.ConsultarInscritosVisita(IdEvento, Paginacao);
+                var result = await _visitaService.ConsultarInscritosVisita(request, Paginacao);
 
                 if (result.Itens == null || !result.Itens.Any())
                     return NotFound("Nenhum registro encontrado.");

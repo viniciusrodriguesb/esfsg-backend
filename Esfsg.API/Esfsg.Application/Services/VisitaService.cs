@@ -20,11 +20,12 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task<PaginacaoResponse<InscritosVisitaResponse>> ConsultarInscritosVisita(int IdEvento, PaginacaoRequest paginacao)
+        public async Task<PaginacaoResponse<InscritosVisitaResponse>> ConsultarInscritosVisita(ConsultaVisitaRequest request, PaginacaoRequest paginacao)
         {
             var query = _context.VISITA_PARTICIPANTE
                                 .AsNoTracking()
-                                .Where(x => x.IdInscricaoNavigation.IdEvento == IdEvento)
+                                .Where(x => x.IdInscricaoNavigation.IdEvento == request.IdEvento &&
+                                            request.Alocado ? x.IdVisita != null : x.IdVisita == null)
                                 .Select(x => new InscritosVisitaResponse()
                                 {
                                     Nome = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
