@@ -8,6 +8,7 @@ namespace Esfsg.Application.Interfaces
     {
         Task<PaginacaoResponse<InscritosVisitaResponse>> ConsultarInscritosVisita(ConsultaVisitaRequest request, PaginacaoRequest paginacao);
         List<TabelaDominioResponse> ConsultarFuncoesVisita();
+        Task<List<VisitaResponse>> ConsultarVisitas();
         Task<ResultResponse<VISITA>> CriarVisita(VisitaRequest visita);
         Task<ResultResponse<VISITA_PARTICIPANTE>> AlocarInscritosVisita(List<AlocarVisitaRequest> alocacoes);
         Task ExcluirVisita(int Id);
