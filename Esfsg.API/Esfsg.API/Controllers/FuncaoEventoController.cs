@@ -10,7 +10,7 @@ namespace Esfsg.API.Controllers
 
     [ApiController]
     [Route("api/[controller]/v1")]
-    public class FuncaoEventoController : ControllerBase    
+    public class FuncaoEventoController : ControllerBase
     {
 
         #region Construtor
@@ -42,8 +42,8 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                await _funcoesService.EditarFuncoesEvento(request);
-                return Ok();
+                var result = await _funcoesService.EditarFuncoesEvento(request);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (Exception ex)
             {
