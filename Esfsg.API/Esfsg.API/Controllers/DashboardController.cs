@@ -22,7 +22,7 @@ namespace Esfsg.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ConsultarDadosDashboard([FromQuery] int IdEvento)
         {
-            const string key = "dashboard-key";
+            string key = $"dashboard-{IdEvento}-key";
 
             try
             {

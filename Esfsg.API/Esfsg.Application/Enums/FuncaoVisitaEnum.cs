@@ -2,11 +2,11 @@
 {
     public enum FuncaoVisitaEnum
     {
-        Responsavel = 0,
-        Participante = 1,
-        Palavra = 2,
-        Louvor = 3,
-        Instrumentista = 4,
-        Guia = 5
+        Responsavel = 1,
+        Participante = 2,
+        Palavra = 3,
+        Louvor = 4,
+        Instrumentista = 5,
+        Guia = 6
     }
 }
