@@ -6,6 +6,7 @@ using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -20,14 +21,17 @@ namespace Esfsg.Application.Services
         private readonly IConfiguration _configuration;
         private readonly DbContextBase _context;
         private readonly IStatusService _statusService;
+        private readonly ILogger<PagamentoService> _logger;
         public PagamentoService(IHttpClientFactory httpClientFactory,
                                 IConfiguration configuration,
                                 IStatusService statusService,
-                                DbContextBase context)
+                                DbContextBase context,
+                                ILogger<PagamentoService> logger)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _context = context;
+            _logger = logger;
             _statusService = statusService;
         }
         #endregion
@@ -137,9 +141,21 @@ namespace Esfsg.Application.Services
 
             PreencherContentHeaders(request, json);
 
-            var response = await httpClient.SendAsync(request);
+            HttpResponseMessage response;
+            string responseContent;
+            try
+            {
+                response = await httpClient.SendAsync(request);
+                responseContent = await response.Content.ReadAsStringAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Erro de comunicação com o Mercado Pago.");
+                throw;
+            }
 
-            var responseContent = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Erro HTTP ao gerar pagamento Pix. Status: {response.StatusCode} - Conteúdo: {responseContent}");
 
             var dadosPagamentoResponse = PreencherObjetoDadosPagamento(responseContent);
 
