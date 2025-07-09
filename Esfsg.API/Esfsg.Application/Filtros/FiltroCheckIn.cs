@@ -1,4 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.Enums;
 using Esfsg.Domain.Models;
 
 namespace Esfsg.Application.Filtros
@@ -8,6 +9,8 @@ namespace Esfsg.Application.Filtros
         public static IQueryable<CHECK_IN> AplicarFiltro(this IQueryable<CHECK_IN> query, ConsultaCheckInRequest filtro)
         {
             query = query.Where(x => x.IdInscricaoNavigation.IdEvento == filtro.IdEvento);
+            query = query.Where(x => x.IdInscricaoNavigation.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.PAGAMENTO_CONFIRMADO &&
+                                                                                      s.DhExclusao == null));
 
             if (!string.IsNullOrEmpty(filtro.Nome))
             {
