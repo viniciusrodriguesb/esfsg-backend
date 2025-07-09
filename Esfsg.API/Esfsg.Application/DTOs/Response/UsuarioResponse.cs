@@ -16,5 +16,11 @@
         public List<string> CondicoesMedica { get; set; }
         public List<string> FuncoesIgreja { get; set; }
         public List<string> Instrumentos { get; set; }
-    }  
+    }
+
+    public class DadosUsuario
+    {
+        public int? TipoUsuario { get; set; }
+        public int PastorId { get; set; }
+    }
 }

@@ -24,9 +24,9 @@ namespace Esfsg.Application.Services
 
         public async Task<PaginacaoResponse<InscricaoParaLiberacaoResponse>> ConsultarInscricoesParaLiberacao(InscricoesPendentesRequest request, PaginacaoRequest paginacao)
         {
-            var usuario = await _usuarioService.ConsultarUsuario(request.CpfLogado);
+            var usuario = await ConsultarUsuario(request.CpfLogado);
 
-            if (usuario.IdTipoUsuario > (int)TipoUsuarioEnum.PASTOR)
+            if (usuario.TipoUsuario > (int)TipoUsuarioEnum.PASTOR)
                 return null;
 
             var query = _context.INSCRICAO.AsNoTracking()
@@ -35,8 +35,11 @@ namespace Esfsg.Application.Services
                                                                                  s.DhExclusao == null))
                                           .AsQueryable();
 
-            if (usuario.IdTipoUsuario == (int)TipoUsuarioEnum.PASTOR)
-                query = query.Where(x => x.IdUsuarioNavigation.IdIgreja == usuario.IdIgreja);
+            if (usuario.TipoUsuario == (int)TipoUsuarioEnum.PASTOR)
+            {
+                var igrejasVinculadas = await BuscarIgrejasVinculadasPastor(usuario.PastorId);
+                query = query.Where(x => igrejasVinculadas.Contains((int)x.IdUsuarioNavigation.IdIgreja));
+            }
 
             var result = query.Select(x => new InscricaoParaLiberacaoResponse()
             {
@@ -45,6 +48,7 @@ namespace Esfsg.Application.Services
                 Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
                 FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
                 Idade = ValidarIdadeParticipante(x.IdUsuarioNavigation.Nascimento),
+                Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
                 Periodo = x.Periodo,
                 UsuarioBloqueado = new DadosBloqueio()
                 {
@@ -102,6 +106,24 @@ namespace Esfsg.Application.Services
             }
 
             return idade;
+        }
+        private async Task<List<int>> BuscarIgrejasVinculadasPastor(int IdPastor)
+        {
+            return await _context.IGREJA
+                                 .AsNoTracking()
+                                 .Where(x => x.PastorId == IdPastor)
+                                 .Select(i => i.Id)
+                                 .ToListAsync();
+        }
+        private async Task<DadosUsuario?> ConsultarUsuario(string CPF)
+        {
+            return await _context.USUARIO.AsNoTracking()
+                                         .Where(x => x.Cpf.Trim() == CPF.Trim())
+                                         .Select(u => new DadosUsuario()
+                                         {
+                                             TipoUsuario = u.IdTipoUsuario,
+                                             PastorId = u.IdIgrejaNavigation.PastorId
+                                         }).FirstOrDefaultAsync();
         }
 
 
