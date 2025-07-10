@@ -1,5 +1,8 @@
-﻿using Esfsg.Application.DTOs.Response;
+﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Enums;
+using Esfsg.Application.Filtros;
+using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,41 +22,31 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
-        public async Task<List<DadosGestaoPagamentoResponse>> ObterDadosPagamentoInscricao(string? Nome, int IdEvento)
+        public async Task<PaginacaoResponse<DadosGestaoPagamentoResponse>> ObterDadosPagamentoInscricao(ConsultaGestaoPagamentoRequest request, PaginacaoRequest paginacao)
         {
-            var status = new List<int>
-            {
-                (int)StatusEnum.AGUARDANDO_PAGAMENTO,
-                (int)StatusEnum.PAGAMENTO_CONFIRMADO
-            };
+            var query = _context.PAGAMENTO.AsNoTracking()
+                                          .AplicarFiltro(request)
+                                          .Select(x => new DadosGestaoPagamentoResponse()
+                                          {
+                                              IdInscricao = x.IdInscricao,
+                                              Nome = x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
+                                              Periodo = x.InscricaoNavigation.Periodo,
+                                              DataExpiracao = x.DhExpiracao.ToString("dd/MM/yyyy"),
+                                              Status = x.InscricaoNavigation.InscricaoStatus.FirstOrDefault(x => x.DhExclusao == null).StatusNavigation.Descricao,
+                                              Telefone = x.InscricaoNavigation.IdUsuarioNavigation.Telefone,
+                                              Valor = x.InscricaoNavigation.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase) ? x.InscricaoNavigation.IdEventoNavigation.ValorIntegral : x.InscricaoNavigation.IdEventoNavigation.ValorParcial,
+                                          });
 
-            var pagamento = _context.PAGAMENTO.AsNoTracking()
-                                              .Where(x => x.InscricaoNavigation.InscricaoStatus.Any(x => status.Contains(x.StatusId) && x.DhExclusao == null) &&
-                                                          x.InscricaoNavigation.IdEvento == IdEvento)
-                                              .AsQueryable();
+            var resultadoPaginado = await query.PaginarDados(paginacao);
 
-            if (!string.IsNullOrEmpty(Nome))
-                pagamento = pagamento.Where(x => x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto.Contains(Nome));
-
-            var result = await pagamento.Select(x => new DadosGestaoPagamentoResponse()
-            {
-                IdInscricao = x.IdInscricao,
-                Nome = x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
-                Periodo = x.InscricaoNavigation.Periodo,
-                DataExpiracao = x.DhExpiracao.ToString("dd/MM/yyyy"),
-                Status = x.InscricaoNavigation.InscricaoStatus.FirstOrDefault(x => x.DhExclusao == null).StatusNavigation.Descricao,
-                Telefone = x.InscricaoNavigation.IdUsuarioNavigation.Telefone,
-                Valor = x.InscricaoNavigation.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase) ? x.InscricaoNavigation.IdEventoNavigation.ValorIntegral : x.InscricaoNavigation.IdEventoNavigation.ValorParcial,
-            }).ToListAsync();
-
-            return result;
+            return resultadoPaginado;
         }
 
         public async Task<ResultResponse<string>> GerarNovoCodigoPix(int IdInscricao)
         {
             var dadoPagamento = await _context.PAGAMENTO.AsNoTracking()
                                                         .Where(x => x.IdInscricao == IdInscricao)
-                                                        .FirstOrDefaultAsync();          
+                                                        .FirstOrDefaultAsync();
 
             if (dadoPagamento != null && dadoPagamento.StatusRetornoApi == "approved")
             {

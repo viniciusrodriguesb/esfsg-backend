@@ -1,10 +1,11 @@
-﻿using Esfsg.Application.DTOs.Response;
+﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.DTOs.Response;
 
 namespace Esfsg.Application.Interfaces
 {
     public interface IGestaoPagamentoService
     {
-        Task<List<DadosGestaoPagamentoResponse>> ObterDadosPagamentoInscricao(string? Nome, int IdEvento);
+        Task<PaginacaoResponse<DadosGestaoPagamentoResponse>> ObterDadosPagamentoInscricao(ConsultaGestaoPagamentoRequest request, PaginacaoRequest paginacao);
         Task<ResultResponse<string>> GerarNovoCodigoPix(int IdInscricao);
     }
 }

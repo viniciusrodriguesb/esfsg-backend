@@ -1,4 +1,5 @@
-﻿using Esfsg.Application.Enums;
+﻿using Esfsg.Application.DTOs.Request;
+using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -21,13 +22,13 @@ namespace Esfsg.API.Controllers
 
         [HttpGet]
         [SwaggerOperation(Summary = "Consulta inscrições pendentes de pagamento e pagas.")]
-        public async Task<IActionResult> ObterDadosPagamentoInscricao([FromQuery] string? Nome, int IdEvento)
+        public async Task<IActionResult> ObterDadosPagamentoInscricao([FromQuery] ConsultaGestaoPagamentoRequest request, [FromQuery] PaginacaoRequest paginacao)
         {
             try
             {
-                var result = await _gestaoPagamentoService.ObterDadosPagamentoInscricao(Nome, IdEvento);
+                var result = await _gestaoPagamentoService.ObterDadosPagamentoInscricao(request, paginacao);
 
-                if (result == null || !result.Any())
+                if (result == null || !result.Itens.Any())
                     return NotFound("Nenhum registro encontrado.");
 
                 return StatusCode(StatusCodes.Status200OK, result);
@@ -59,11 +60,11 @@ namespace Esfsg.API.Controllers
 
         [HttpPut("confirmacao-manual")]
         [SwaggerOperation(Summary = "Confirmação manual do pagamento da inscrição.")]
-        public async Task<IActionResult> ConfirmarPagamento(int Id)
+        public async Task<IActionResult> ConfirmarPagamento(int IdInscricao)
         {
             try
             {
-                await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, Id);
+                await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, IdInscricao);
                 return StatusCode(StatusCodes.Status200OK);
             }
             catch (ArgumentException ex)

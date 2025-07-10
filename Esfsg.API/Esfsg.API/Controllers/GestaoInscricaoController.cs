@@ -52,7 +52,7 @@ namespace Esfsg.API.Controllers
         }
 
         [HttpPost("aprovar")]
-        [SwaggerOperation(Summary = "Liberação da inscrição para participação do evento.")]
+        [SwaggerOperation(Summary = "Liberação das inscrições para participação do evento.")]
         public async Task<IActionResult> AprovarInscricao([FromBody] List<int> Ids)
         {
             if (Ids == null || !Ids.Any())
@@ -61,6 +61,30 @@ namespace Esfsg.API.Controllers
             try
             {
                 var tarefas = Ids.Select(id => _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id));
+                await Task.WhenAll(tarefas);
+
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("cancelar")]
+        [SwaggerOperation(Summary = "Cancelamento das inscrições para participação do evento.")]
+        public async Task<IActionResult> CancelarInscricao([FromBody] List<int> Ids)
+        {
+            if (Ids == null || !Ids.Any())
+                return StatusCode(StatusCodes.Status400BadRequest, "Nenhuma inscrição foi informada para aprovação.");
+
+            try
+            {
+                var tarefas = Ids.Select(id => _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, id));
                 await Task.WhenAll(tarefas);
 
                 return StatusCode(StatusCodes.Status200OK);
