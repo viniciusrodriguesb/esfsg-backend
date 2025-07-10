@@ -26,7 +26,8 @@ namespace Esfsg.Application.Services
                                         {
                                             Id = x.Id,
                                             Descricao = x.Nome,
-                                        }).ToListAsync();
+                                        }).OrderBy(x => x.Descricao)
+                                          .ToListAsync();
 
             return classes;
         }

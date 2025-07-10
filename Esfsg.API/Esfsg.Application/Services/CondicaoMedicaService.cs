@@ -25,7 +25,8 @@ namespace Esfsg.Application.Services
                                  {
                                      Descricao = x.Descricao,
                                      Id = x.Id
-                                 }).ToListAsync();
+                                 }).OrderBy(x => x.Descricao)
+                                   .ToListAsync();
         }
 
         public async Task ExcluirCondicaoMedica(int Id)

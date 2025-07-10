@@ -25,7 +25,8 @@ namespace Esfsg.Application.Services
                                         {
                                             Id = x.Id,
                                             Descricao = x.Descricao,
-                                        }).ToListAsync();
+                                        }).OrderBy(x => x.Descricao)
+                                          .ToListAsync();
 
             return funcoes;
         }
@@ -48,7 +49,7 @@ namespace Esfsg.Application.Services
                                                        Id = x.Funcao.Id,
                                                        Descricao = x.Funcao.Descricao,
                                                    })
-                                                   .OrderBy(x => x.Id)
+                                                   .OrderBy(x => x.Descricao)
                                                    .ToListAsync();
 
             return funcoesDisponiveis;
@@ -64,7 +65,7 @@ namespace Esfsg.Application.Services
                                                    Cor = x.Cor,
                                                    Quantidade = x.Quantidade
                                                })
-                                               .OrderBy(x => x.Id)
+                                               .OrderBy(x => x.Descricao)
                                                .ToListAsync();
         }
 

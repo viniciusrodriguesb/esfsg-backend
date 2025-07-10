@@ -110,7 +110,8 @@ namespace Esfsg.Application.Services
                        {
                            Id = (int)e,
                            Descricao = e.ToString()
-                       }).ToList();
+                       }).OrderBy(x => x.Descricao)
+                         .ToList();
         }
 
         public async Task<ResultResponse<VISITA>> CriarVisita(VisitaRequest visita)
