@@ -101,12 +101,11 @@ namespace Esfsg.Application.Services
 
                 var statusApi = await VerificarStatusPagamentoApiAsync(pagamento.IdTransacao);
 
-                if (pagamento.StatusRetornoApi == statusApi)
+                if (string.IsNullOrWhiteSpace(statusApi) || pagamento.StatusRetornoApi == statusApi)
                     continue;
 
                 await AtualizarInformacoesInscricao(statusApi, pagamento, inscricao);
             }
-
         }
 
         #region API's Mercado Pago        
