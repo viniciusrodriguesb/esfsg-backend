@@ -64,8 +64,10 @@ namespace Esfsg.API.Controllers
         {
             try
             {
-                var tarefas = Ids.Select(id => _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, id));
-                await Task.WhenAll(tarefas);
+                foreach (var id in Ids)
+                {
+                    await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, id);
+                }
 
                 return StatusCode(StatusCodes.Status200OK);
             }

@@ -60,8 +60,10 @@ namespace Esfsg.API.Controllers
 
             try
             {
-                var tarefas = Ids.Select(id => _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id));
-                await Task.WhenAll(tarefas);
+                foreach (var id in Ids)
+                {
+                    await _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id);
+                }
 
                 return StatusCode(StatusCodes.Status200OK);
             }
@@ -84,8 +86,10 @@ namespace Esfsg.API.Controllers
 
             try
             {
-                var tarefas = Ids.Select(id => _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, id));
-                await Task.WhenAll(tarefas);
+                foreach (var id in Ids)
+                {
+                    await _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, id);
+                }
 
                 return StatusCode(StatusCodes.Status200OK);
             }
