@@ -60,11 +60,13 @@ namespace Esfsg.API.Controllers
 
         [HttpPut("confirmacao-manual")]
         [SwaggerOperation(Summary = "Confirmação manual do pagamento da inscrição.")]
-        public async Task<IActionResult> ConfirmarPagamento(int IdInscricao)
+        public async Task<IActionResult> ConfirmarPagamento([FromBody] List<int> Ids)
         {
             try
             {
-                await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, IdInscricao);
+                var tarefas = Ids.Select(id => _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, id));
+                await Task.WhenAll(tarefas);
+
                 return StatusCode(StatusCodes.Status200OK);
             }
             catch (ArgumentException ex)
