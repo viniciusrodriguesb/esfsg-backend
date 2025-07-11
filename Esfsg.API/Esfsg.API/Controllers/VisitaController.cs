@@ -1,9 +1,7 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
-using Esfsg.Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Esfsg.API.Controllers
@@ -110,6 +108,21 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = await _visitaService.CriarVisita(visita);
+                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [SwaggerOperation(Summary = "Edição de uma visita")]
+        public async Task<IActionResult> EditarVisita([FromBody] EditarVisitaRequest visita)
+        {
+            try
+            {
+                var result = await _visitaService.EditarVisitaAsync(visita);
                 return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
             }
             catch (Exception ex)

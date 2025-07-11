@@ -159,5 +159,50 @@ namespace Esfsg.Application.Services
                           .ExecuteDeleteAsync();
         }
 
+        public async Task<ResultResponse<EditarVisitaRequest>> EditarVisitaAsync(EditarVisitaRequest request)
+        {
+            var visita = await _context.VISITA.FindAsync(request.Id);
+
+            if (visita == null)
+            {
+                return new ResultResponse<EditarVisitaRequest>
+                {
+                    Sucesso = false,
+                    Mensagem = "Visita não encontrada."
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Descricao))
+                visita.Descricao = request.Descricao;
+
+            if (!string.IsNullOrWhiteSpace(request.CorVoluntario))
+                visita.CorVoluntario = request.CorVoluntario;
+
+            if (!string.IsNullOrWhiteSpace(request.EnderecoVisitado))
+                visita.EnderecoVisitado = request.EnderecoVisitado;
+
+            if (!string.IsNullOrWhiteSpace(request.Observacoes))
+                visita.Observacoes = request.Observacoes;
+
+            _context.VISITA.Update(visita);
+            await _context.SaveChangesAsync();
+
+            var response = new EditarVisitaRequest
+            {
+                Id = visita.Id,
+                Descricao = visita.Descricao,
+                CorVoluntario = visita.CorVoluntario,
+                EnderecoVisitado = visita.EnderecoVisitado,
+                Observacoes = visita.Observacoes
+            };
+
+            return new ResultResponse<EditarVisitaRequest>
+            {
+                Sucesso = true,
+                Mensagem = "Visita atualizada com sucesso.",
+                Dados = response
+            };
+        }
+
     }
 }
