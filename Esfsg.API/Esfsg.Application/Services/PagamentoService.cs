@@ -150,11 +150,14 @@ namespace Esfsg.Application.Services
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Erro de comunicação com o Mercado Pago.");
-                throw;
+                return;
             }
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception($"Erro HTTP ao gerar pagamento Pix. Status: {response.StatusCode} - Conteúdo: {responseContent}");
+            {
+                _logger.LogError($"Erro HTTP ao gerar pagamento Pix. Status: {response.StatusCode} - Conteúdo: {responseContent}");
+                return;
+            }
 
             var dadosPagamentoResponse = PreencherObjetoDadosPagamento(responseContent);
 
