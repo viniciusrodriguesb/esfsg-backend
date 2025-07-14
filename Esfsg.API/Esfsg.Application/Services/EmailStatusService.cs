@@ -70,7 +70,7 @@ namespace Esfsg.Application.Services
             {
                 var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.AGUARDANDO_PAGAMENTO, usuario);
 
-                var qrCodePagamento = await _qrCodeService.ObterQrCodePagamento(usuario.IdInscricao);
+                var qrCodePagamento = await ObterQrCodePagamento(usuario.IdInscricao);
 
                 if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario) || qrCodePagamento == null)
                     continue;
@@ -203,6 +203,19 @@ namespace Esfsg.Application.Services
         }
 
         #region Métodos Privados
+
+        private async Task<QrCodePagamentoResponse?> ObterQrCodePagamento(int IdInscricao)
+        {
+            return await _context.PAGAMENTO.AsNoTracking()
+                                           .Where(x => x.IdInscricao == IdInscricao &&
+                                                       x.DhExpiracao >= DateTime.Now)
+                                           .Select(x => new QrCodePagamentoResponse()
+                                           {
+                                               PixCopiaCola = x.CodigoPix,
+                                               ImagemBase64 = x.QrCodeBase64,
+                                               DataExpiracao = x.DhExpiracao.ToString("dd/MM/yyyy")
+                                           }).FirstOrDefaultAsync();
+        }
         private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao, bool enviado)
         {
             var log = new EMAIL_LOG()

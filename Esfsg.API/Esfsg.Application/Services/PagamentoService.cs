@@ -66,7 +66,8 @@ namespace Esfsg.Application.Services
             var inscricao = await _context.INSCRICAO
                                     .AsNoTracking()
                                     .Where(x => x.InscricaoStatus.Any(s => s.StatusId == (int)StatusEnum.AGUARDANDO_PAGAMENTO
-                                                                           && s.DhExclusao == null))
+                                                                           && s.DhExclusao == null) &&
+                                                                           x.Id == IdInscricao)
                                     .Select(x => new PagamentoRequest()
                                     {
                                         IdInscricao = x.Id,
@@ -238,11 +239,11 @@ namespace Esfsg.Application.Services
                 payment_method_id = "pix",
                 payer = new
                 {
-                    email = dadosPagamento.Email,
+                    email = string.Concat(dadosPagamento.Email.Where(c => !char.IsWhiteSpace(c))).ToLowerInvariant(),
                     identification = new
                     {
                         type = "CPF",
-                        number = dadosPagamento.CPF
+                        number = string.Concat(dadosPagamento.CPF.Where(c => !char.IsWhiteSpace(c))),
                     }
                 },
                 description = "Pagamento Inscrição EsF",
