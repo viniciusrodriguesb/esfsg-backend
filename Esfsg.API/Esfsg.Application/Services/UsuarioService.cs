@@ -292,38 +292,12 @@ namespace Esfsg.Application.Services
             if (request.IdClasse.HasValue)
                 usuario.IdClasse = request.IdClasse.Value;
 
-            await _context.SaveChangesAsync();
-
-            var usuarioAtualizado = await _context.USUARIO
-                                            .AsNoTracking()
-                                            .Where(x => x.Id == request.IdUsuario)
-                                            .Select(x => new UsuarioEditadoResponse()
-                                            {
-                                                IdUsuario = x.Id,
-                                                NomeCompleto = x.NomeCompleto,
-                                                Cpf = x.Cpf,
-                                                Classe = new TabelaDominioResponse()
-                                                {
-                                                    Id = x.IdClasseNavigation.Id,
-                                                    Descricao = x.IdClasseNavigation.Descricao
-                                                },
-                                                Igreja = new TabelaDominioResponse()
-                                                {
-                                                    Id = x.IdIgrejaNavigation.Id,
-                                                    Descricao = x.IdIgrejaNavigation.Nome
-                                                },
-                                                Dons = x.Dons,
-                                                Email = x.Email,
-                                                Nascimento = x.Nascimento,
-                                                Pcd = x.Pcd,
-                                                Telefone = x.Telefone
-                                            }).FirstOrDefaultAsync();
+            await _context.SaveChangesAsync();           
 
             return new ResultResponse<UsuarioEditadoResponse>
             {
                 Sucesso = true,
-                Mensagem = "Usuário atualizado com sucesso.",
-                Dados = usuarioAtualizado
+                Mensagem = "Usuário atualizado com sucesso."
             };
 
         }
