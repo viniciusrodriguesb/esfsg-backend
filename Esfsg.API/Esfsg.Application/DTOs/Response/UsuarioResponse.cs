@@ -13,6 +13,7 @@
         public bool UsuarioBloqueado { get; set; }
         public TabelaDominioResponse TipoUsuario { get; set; }
         public TabelaDominioResponse Classe { get; set; }
+        public TabelaDominioResponse Igreja { get; set; }
         public List<string> CondicoesMedica { get; set; }
         public List<string> FuncoesIgreja { get; set; }
         public List<string> Instrumentos { get; set; }

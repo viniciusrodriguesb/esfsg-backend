@@ -46,6 +46,11 @@ namespace Esfsg.Application.Services
                                                Id = x.IdClasseNavigation.Id,
                                                Descricao = x.IdClasseNavigation.Descricao
                                            },
+                                           Igreja = new TabelaDominioResponse()
+                                           {
+                                               Id = x.IdIgrejaNavigation.Id,
+                                               Descricao = x.IdIgrejaNavigation.Nome
+                                           },
                                            CondicoesMedica = x.UsuarioCondicoesMedicas.Select(x => x.CondicaoMedicaNavigation.Descricao).ToList(),
                                            FuncoesIgreja = x.IdFuncaoIgrejas.Select(x => x.FuncaoIgrejaNavigation.Descricao).ToList(),
                                            Instrumentos = x.UsuarioInstrumentos.Select(x => x.IdInstrumentoNavigation.Descricao).ToList()
