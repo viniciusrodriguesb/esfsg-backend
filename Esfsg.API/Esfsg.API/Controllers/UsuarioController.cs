@@ -51,6 +51,21 @@ namespace Esfsg.API.Controllers
             }
         }
 
+        [HttpPut]
+        [SwaggerOperation(Summary = "Alteração de dados do usuário")]
+        public async Task<IActionResult> AlterarUsuario([FromBody] AlterarUsuarioRequest request)
+        {
+            try
+            {
+                var result = await _usuarioService.AlterarUsuario(request);
+                return result.Sucesso ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPut("administrativo/role")]
         [SwaggerOperation(Summary = "Alteração de role de um usuário.")]
         public async Task<IActionResult> AlterarRoleUsuario([FromBody] AlteraRoleRequest role)

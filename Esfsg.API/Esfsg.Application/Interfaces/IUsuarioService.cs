@@ -12,5 +12,6 @@ namespace Esfsg.Application.Interfaces
         Task<ResultResponse<UsuarioAdministrativoResponse>> ConsultarUsuarioAdministrativo(UsuarioAdministrativoRequest request);
         Task<ResultResponse<USUARIO>> AlterarRoleUsuario(AlteraRoleRequest role);
         Task<ResultResponse<USUARIO>> AlterarSenha(AlterarSenhaRequest request);
+        Task<ResultResponse<UsuarioEditadoResponse>> AlterarUsuario(AlterarUsuarioRequest request);
     }
 }

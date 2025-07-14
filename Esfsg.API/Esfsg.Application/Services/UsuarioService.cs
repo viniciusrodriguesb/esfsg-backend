@@ -246,5 +246,81 @@ namespace Esfsg.Application.Services
                 Mensagem = "Senha atualizada com sucesso."
             };
         }
+
+        public async Task<ResultResponse<UsuarioEditadoResponse>> AlterarUsuario(AlterarUsuarioRequest request)
+        {
+            var usuario = await _context.USUARIO.FindAsync(request.IdUsuario);
+
+            if (usuario == null)
+            {
+                return new ResultResponse<UsuarioEditadoResponse>
+                {
+                    Sucesso = false,
+                    Mensagem = "Usuário não encontrado."
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.NomeCompleto))
+                usuario.NomeCompleto = request.NomeCompleto;
+
+            if (!string.IsNullOrWhiteSpace(request.Cpf))
+                usuario.Cpf = request.Cpf.Trim();
+
+            if (!string.IsNullOrWhiteSpace(request.Email))
+                usuario.Email = request.Email.Trim().ToLowerInvariant();
+
+            if (!string.IsNullOrWhiteSpace(request.Telefone))
+                usuario.Telefone = request.Telefone;
+
+            if (request.Nascimento.HasValue)
+                usuario.Nascimento = request.Nascimento.Value;
+
+            if (!string.IsNullOrWhiteSpace(request.Pcd))
+                usuario.Pcd = request.Pcd;
+
+            if (request.Dons.HasValue)
+                usuario.Dons = request.Dons.Value;
+
+            if (request.IdIgreja.HasValue)
+                usuario.IdIgreja = request.IdIgreja.Value;
+
+            if (request.IdClasse.HasValue)
+                usuario.IdClasse = request.IdClasse.Value;
+
+            await _context.SaveChangesAsync();
+
+            var usuarioAtualizado = await _context.USUARIO
+                                            .AsNoTracking()
+                                            .Where(x => x.Id == request.IdUsuario)
+                                            .Select(x => new UsuarioEditadoResponse()
+                                            {
+                                                IdUsuario = x.Id,
+                                                NomeCompleto = x.NomeCompleto,
+                                                Cpf = x.Cpf,
+                                                Classe = new TabelaDominioResponse()
+                                                {
+                                                    Id = x.IdClasseNavigation.Id,
+                                                    Descricao = x.IdClasseNavigation.Descricao
+                                                },
+                                                Igreja = new TabelaDominioResponse()
+                                                {
+                                                    Id = x.IdIgrejaNavigation.Id,
+                                                    Descricao = x.IdIgrejaNavigation.Nome
+                                                },
+                                                Dons = x.Dons,
+                                                Email = x.Email,
+                                                Nascimento = x.Nascimento,
+                                                Pcd = x.Pcd,
+                                                Telefone = x.Telefone
+                                            }).FirstOrDefaultAsync();
+
+            return new ResultResponse<UsuarioEditadoResponse>
+            {
+                Sucesso = true,
+                Mensagem = "Usuário atualizado com sucesso.",
+                Dados = usuarioAtualizado
+            };
+
+        }
     }
 }
