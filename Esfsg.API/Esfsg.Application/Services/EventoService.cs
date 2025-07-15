@@ -20,8 +20,7 @@ namespace Esfsg.Application.Services
         public async Task<List<EventoResponse>> ConsultarEvento()
         {
             return await _context.EVENTO.AsNoTracking()
-                                        .Where(x => x.Ativo &&
-                                                    x.Inscricaos.Count() < (x.LimiteIntegral + x.LimiteParcial))
+                                        .Where(x => x.Ativo)
                                         .Select(e => new EventoResponse()
                                         {
                                             Id = e.Id,
