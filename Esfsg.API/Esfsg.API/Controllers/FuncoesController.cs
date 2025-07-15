@@ -56,21 +56,12 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Consulta todas as funções disponíveis no evento.")]
         public async Task<IActionResult> ConsultarFuncoesEvento(int IdEvento)
         {
-            string key = $"funcoes-evento-{IdEvento}";
-
             try
             {
-                var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+                var response = await _funcoesService.ConsultarFuncoesEvento(IdEvento);
 
-                if (response is null || _env.IsDevelopment())
-                {
-                    response = await _funcoesService.ConsultarFuncoesEvento(IdEvento);
-
-                    if (response == null || !response.Any())
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
 
                 return Ok(response);
             }
