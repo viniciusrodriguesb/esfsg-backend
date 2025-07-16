@@ -33,6 +33,8 @@ namespace Esfsg.Application.Services
                                    .Include(s => s.InscricaoStatus)
                                         .ThenInclude(s => s.StatusNavigation)
                                    .Include(c => c.CheckIns)
+                                   .OrderBy(x => x.IdUsuarioNavigation.IdIgreja)
+                                        .ThenBy(x => x.IdUsuarioNavigation.NomeCompleto)
                                    .Select(x => new RelatorioInscricaoResponse()
                                    {
                                        NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
