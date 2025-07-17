@@ -15,11 +15,9 @@ namespace Esfsg.Infra.CrossCutting.IoC
         {
             var connectionString = configuration.GetConnectionString("databaseConnection");
 
-            services.AddDbContext<DbContextBase>(options => options.UseNpgsql(connectionString, npgsqlOptions =>
-            {
-                npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null);
-                npgsqlOptions.CommandTimeout(60);
-            }));
+            services.AddDbContext<DbContextBase>(options =>
+                options.UseNpgsql(connectionString)
+                );
         }
 
         public static void ConfigureDatabaseHangfire(IServiceCollection services, IConfiguration configuration)
@@ -29,12 +27,8 @@ namespace Esfsg.Infra.CrossCutting.IoC
 
             services.AddHangfire(options =>
             {
-                options.UseConsole().UsePostgreSqlStorage(connectionString, new PostgreSqlStorageOptions
-                {
-                    QueuePollInterval = TimeSpan.FromSeconds(5),
-                    InvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    DistributedLockTimeout = TimeSpan.FromMinutes(5)
-                });
+                options.UseConsole()
+                       .UsePostgreSqlStorage(connectionString);
             });
         }
 
