@@ -10,6 +10,6 @@ namespace Esfsg.Application.Interfaces
         Task ExcluirEvento(int Id);
         Task<ResultResponse<EVENTO>> EditarEvento(int Id, AlteraEventoRequest request);
         Task<List<EventoResponse>> ConsultarEvento();
-        Task<List<string>?> ConsultarPeriodos(int IdEvento);
+        Task<List<TabelaDominioResponse>> ConsultarPeriodos(int IdEvento);
     }
 }

@@ -37,7 +37,7 @@ namespace Esfsg.Application.Services
                                         }).ToListAsync();
         }
 
-        public async Task<List<string>?> ConsultarPeriodos(int IdEvento)
+        public async Task<List<TabelaDominioResponse>> ConsultarPeriodos(int IdEvento)
         {
             var inscritosPorPeriodo = await _context.INSCRICAO
                 .AsNoTracking()
@@ -52,15 +52,35 @@ namespace Esfsg.Application.Services
                     QuantidadeParcial = g.Count(x => x.Periodo.ToLower() == "tarde")
                 }).FirstOrDefaultAsync();
 
-            var result = new List<string> { "Integral", "Tarde" };
+            var result = new List<TabelaDominioResponse>()
+            {
+                new TabelaDominioResponse()
+                {
+                     Id = 1,
+                     Descricao = "Integral"
+                },
+                new TabelaDominioResponse()
+                {
+                    Id = 2,
+                    Descricao = "Tarde"
+                }
+            };
 
             if (inscritosPorPeriodo == null) return result;
 
             if (inscritosPorPeriodo.QuantidadeIntegral >= inscritosPorPeriodo.LimiteIntegral)
-                result.Remove("Integral");
+            {
+                var item = result.FirstOrDefault(x => x.Descricao == "Integral");
+                if (item != null)
+                    result.Remove(item);
+            }
 
             if (inscritosPorPeriodo.QuantidadeParcial >= inscritosPorPeriodo.LimiteParcial)
-                result.Remove("Tarde");
+            {
+                var item = result.FirstOrDefault(x => x.Descricao == "Tarde");
+                if (item != null)
+                    result.Remove(item);
+            }
 
             return result;
         }
