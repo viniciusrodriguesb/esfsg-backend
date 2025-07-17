@@ -54,7 +54,7 @@ namespace Esfsg.Application.Services
             if (!string.IsNullOrEmpty(Descricao))
             {
                 var nomeFiltro = Descricao.Trim().ToLower();
-                query = query.Where(x => x.Descricao.Contains(nomeFiltro));
+                query = query.Where(x => x.Descricao.ToLower().Contains(nomeFiltro));
             }
 
             var result = await query.Select(x => new VisitaResponse()
@@ -190,8 +190,7 @@ namespace Esfsg.Application.Services
             if (!string.IsNullOrWhiteSpace(request.EnderecoVisitado))
                 visita.EnderecoVisitado = request.EnderecoVisitado;
 
-            if (!string.IsNullOrWhiteSpace(request.Observacoes))
-                visita.Observacoes = request.Observacoes;
+            visita.Observacoes = request.Observacoes;
 
             _context.VISITA.Update(visita);
             await _context.SaveChangesAsync();
@@ -202,11 +201,11 @@ namespace Esfsg.Application.Services
                 .Select(x => new EditarVisitaRequest()
                 {
                     Id = x.Id,
-                    Descricao = x.Descricao,    
+                    Descricao = x.Descricao,
                     CorVoluntario = x.CorVoluntario,
-                    EnderecoVisitado= x.EnderecoVisitado,
-                    Observacoes = x.Observacoes                    
-                }).FirstOrDefaultAsync();            
+                    EnderecoVisitado = x.EnderecoVisitado,
+                    Observacoes = x.Observacoes
+                }).FirstOrDefaultAsync();
 
             return new ResultResponse<EditarVisitaRequest>
             {
