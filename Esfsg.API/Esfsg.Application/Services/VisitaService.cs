@@ -62,7 +62,8 @@ namespace Esfsg.Application.Services
                 Id = x.Id,
                 Endereco = x.EnderecoVisitado,
                 Nome = x.Descricao,
-                Observacao = x.Observacoes
+                Observacao = x.Observacoes,
+                Cor = x.CorVoluntario
             }).ToListAsync();
 
             return result;
