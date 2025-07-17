@@ -47,17 +47,25 @@ namespace Esfsg.Application.Services
             return resultadoPaginado;
         }
 
-        public async Task<List<VisitaResponse>> ConsultarVisitas()
+        public async Task<List<VisitaResponse>> ConsultarVisitas(string? Descricao)
         {
-            return await _context.VISITA
-                                 .AsNoTracking()
-                                 .Select(x => new VisitaResponse()
-                                 {
-                                     Id = x.Id,
-                                     Endereco = x.EnderecoVisitado,
-                                     Nome = x.Descricao,
-                                     Observacao = x.Observacoes
-                                 }).ToListAsync();
+            var query = _context.VISITA.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrEmpty(Descricao))
+            {
+                var nomeFiltro = Descricao.Trim().ToLower();
+                query = query.Where(x => x.Descricao.Contains(nomeFiltro));
+            }
+
+            var result = await query.Select(x => new VisitaResponse()
+            {
+                Id = x.Id,
+                Endereco = x.EnderecoVisitado,
+                Nome = x.Descricao,
+                Observacao = x.Observacoes
+            }).ToListAsync();
+
+            return result;
         }
 
         public async Task<ResultResponse<VISITA_PARTICIPANTE>> AlocarInscritosVisita(List<AlocarVisitaRequest> alocacoes)
