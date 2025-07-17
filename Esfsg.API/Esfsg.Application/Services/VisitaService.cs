@@ -196,20 +196,23 @@ namespace Esfsg.Application.Services
             _context.VISITA.Update(visita);
             await _context.SaveChangesAsync();
 
-            var response = new EditarVisitaRequest
-            {
-                Id = visita.Id,
-                Descricao = visita.Descricao,
-                CorVoluntario = visita.CorVoluntario,
-                EnderecoVisitado = visita.EnderecoVisitado,
-                Observacoes = visita.Observacoes
-            };
+            var visitaAtualizada = await _context.VISITA
+                .AsNoTracking()
+                .Where(x => x.Id == request.Id)
+                .Select(x => new EditarVisitaRequest()
+                {
+                    Id = x.Id,
+                    Descricao = x.Descricao,    
+                    CorVoluntario = x.CorVoluntario,
+                    EnderecoVisitado= x.EnderecoVisitado,
+                    Observacoes = x.Observacoes                    
+                }).FirstOrDefaultAsync();            
 
             return new ResultResponse<EditarVisitaRequest>
             {
                 Sucesso = true,
                 Mensagem = "Visita atualizada com sucesso.",
-                Dados = response
+                Dados = visitaAtualizada
             };
         }
 
