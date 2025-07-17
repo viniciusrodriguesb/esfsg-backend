@@ -1,6 +1,7 @@
 ﻿using Hangfire;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using QuestPDF.Infrastructure;
 
 namespace Esfsg.Infra.CrossCutting.IoC
 {
@@ -11,6 +12,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddHttpClient();
             services.AddMemoryCache();
             services.AddHangfireServer();
+            QuestPDF.Settings.License = LicenseType.Community;
 
             DatabaseConfiguration.ConfigureDatabase(services, configuration);
             DatabaseConfiguration.ConfigureDatabaseHangfire(services, configuration);

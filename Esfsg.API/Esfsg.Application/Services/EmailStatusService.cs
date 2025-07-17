@@ -13,12 +13,10 @@ namespace Esfsg.Application.Services
         #region Construtor
         private readonly DbContextBase _context;
         private readonly IEmailService _emailService;
-        private readonly IQrCodeService _qrCodeService;
-        public EmailStatusService(DbContextBase context, IEmailService emailService, IQrCodeService qrCodeService)
+        public EmailStatusService(DbContextBase context, IEmailService emailService)
         {
             _context = context;
             _emailService = emailService;
-            _qrCodeService = qrCodeService;
         }
         #endregion
 
@@ -80,6 +78,7 @@ namespace Esfsg.Application.Services
                     {"{nome}", usuario.NomeCompleto },
                     {"{evento}", usuario.Evento },
                     {"{imagemBase64}", qrCodePagamento.ImagemBase64 },
+                    {"{pixCopiaCola}", qrCodePagamento.PixCopiaCola },
                 };
 
                 var body = SubstituirAtributos(stringBody, map);
@@ -218,17 +217,31 @@ namespace Esfsg.Application.Services
         }
         private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao, bool enviado)
         {
-            var log = new EMAIL_LOG()
-            {
-                IdInscricao = IdInscricao,
-                IdStatus = (int)status,
-                Enviado = enviado,
-                DhEnvio = DateTime.Now
-            };
+            var logExistente = await _context.EMAIL_LOG.FirstOrDefaultAsync(x => x.IdInscricao == IdInscricao && x.IdStatus == (int)status);
 
-            await _context.EMAIL_LOG.AddAsync(log);
+            if (logExistente != null)
+            {
+                logExistente.Enviado = enviado;
+                logExistente.DhEnvio = DateTime.Now;
+
+                _context.EMAIL_LOG.Update(logExistente);
+            }
+            else
+            {
+                var novoLog = new EMAIL_LOG()
+                {
+                    IdInscricao = IdInscricao,
+                    IdStatus = (int)status,
+                    Enviado = enviado,
+                    DhEnvio = DateTime.Now
+                };
+
+                await _context.EMAIL_LOG.AddAsync(novoLog);
+            }
+
             await _context.SaveChangesAsync();
         }
+
         private async Task<bool> ValidarEnvioEmailStatus(StatusEnum status, DadosInscricaoEmailResponse usuario)
         {
             var emailJaEnviado = await _context.EMAIL_LOG.AsNoTracking()

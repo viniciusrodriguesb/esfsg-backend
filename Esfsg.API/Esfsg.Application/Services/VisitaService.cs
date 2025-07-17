@@ -47,17 +47,26 @@ namespace Esfsg.Application.Services
             return resultadoPaginado;
         }
 
-        public async Task<List<VisitaResponse>> ConsultarVisitas()
+        public async Task<List<VisitaResponse>> ConsultarVisitas(string? Descricao)
         {
-            return await _context.VISITA
-                                 .AsNoTracking()
-                                 .Select(x => new VisitaResponse()
-                                 {
-                                     Id = x.Id,
-                                     Endereco = x.EnderecoVisitado,
-                                     Nome = x.Descricao,
-                                     Observacao = x.Observacoes
-                                 }).ToListAsync();
+            var query = _context.VISITA.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrEmpty(Descricao))
+            {
+                var nomeFiltro = Descricao.Trim().ToLower();
+                query = query.Where(x => x.Descricao.ToLower().Contains(nomeFiltro));
+            }
+
+            var result = await query.Select(x => new VisitaResponse()
+            {
+                Id = x.Id,
+                Endereco = x.EnderecoVisitado,
+                Nome = x.Descricao,
+                Observacao = x.Observacoes,
+                Cor = x.CorVoluntario
+            }).ToListAsync();
+
+            return result;
         }
 
         public async Task<ResultResponse<VISITA_PARTICIPANTE>> AlocarInscritosVisita(List<AlocarVisitaRequest> alocacoes)
@@ -181,26 +190,28 @@ namespace Esfsg.Application.Services
             if (!string.IsNullOrWhiteSpace(request.EnderecoVisitado))
                 visita.EnderecoVisitado = request.EnderecoVisitado;
 
-            if (!string.IsNullOrWhiteSpace(request.Observacoes))
-                visita.Observacoes = request.Observacoes;
+            visita.Observacoes = request.Observacoes;
 
             _context.VISITA.Update(visita);
             await _context.SaveChangesAsync();
 
-            var response = new EditarVisitaRequest
-            {
-                Id = visita.Id,
-                Descricao = visita.Descricao,
-                CorVoluntario = visita.CorVoluntario,
-                EnderecoVisitado = visita.EnderecoVisitado,
-                Observacoes = visita.Observacoes
-            };
+            var visitaAtualizada = await _context.VISITA
+                .AsNoTracking()
+                .Where(x => x.Id == request.Id)
+                .Select(x => new EditarVisitaRequest()
+                {
+                    Id = x.Id,
+                    Descricao = x.Descricao,
+                    CorVoluntario = x.CorVoluntario,
+                    EnderecoVisitado = x.EnderecoVisitado,
+                    Observacoes = x.Observacoes
+                }).FirstOrDefaultAsync();
 
             return new ResultResponse<EditarVisitaRequest>
             {
                 Sucesso = true,
                 Mensagem = "Visita atualizada com sucesso.",
-                Dados = response
+                Dados = visitaAtualizada
             };
         }
 

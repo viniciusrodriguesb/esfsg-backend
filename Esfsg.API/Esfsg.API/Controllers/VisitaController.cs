@@ -60,23 +60,14 @@ namespace Esfsg.API.Controllers
 
         [HttpGet]
         [SwaggerOperation(Summary = "Consulta todas as visitas criadas.")]
-        public async Task<IActionResult> ConsultarVisitas()
+        public async Task<IActionResult> ConsultarVisitas([FromQuery] string? Descricao)
         {
-            const string key = "visitas-key";
-
             try
             {
-                var response = _memoryCacheService.Get<List<VisitaResponse>>(key);
+                var response = await _visitaService.ConsultarVisitas(Descricao);
 
-                if (response is null)
-                {
-                    response = await _visitaService.ConsultarVisitas();
-
-                    if (response == null || !response.Any())
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
 
                 return Ok(response);
             }
