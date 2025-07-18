@@ -30,6 +30,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddScoped<IIgrejaService, IgrejaService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IRelatorioService, RelatorioService>();
+            services.AddScoped<IGestaoUsuarioService, GestaoUsuarioService>();
         }
     }
 }

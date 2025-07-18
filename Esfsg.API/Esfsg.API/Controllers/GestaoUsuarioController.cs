@@ -7,23 +7,23 @@ namespace Esfsg.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/v1")]
-    public class UsuarioController : ControllerBase
+    public class GestaoUsuarioController : ControllerBase
     {
         #region Construtor
-        private readonly IUsuarioService _usuarioService;
-        public UsuarioController(IUsuarioService usuarioService)
+        private readonly IGestaoUsuarioService _gestaoUsuarioService;
+        public GestaoUsuarioController(IGestaoUsuarioService gestaoUsuarioService)
         {
-            _usuarioService = usuarioService;
+            _gestaoUsuarioService = gestaoUsuarioService;
         }
         #endregion
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Consulta dados do usuário para realizar LOGIN.")]
-        public async Task<IActionResult> ConsultarUsuarioLogin([FromQuery] string CPF)
+        [SwaggerOperation(Summary = "Consulta todos os usuários cadastrados no sistema.")]
+        public async Task<IActionResult> ConsultarUsuarioLogin([FromQuery] GestaoUsuarioRequest request, [FromQuery] PaginacaoRequest paginacao)
         {
             try
             {
-                var result = await _usuarioService.ConsultarUsuarioLogin(CPF);
+                var result = await _gestaoUsuarioService.ConsultarUsuarios(request, paginacao);
 
                 if (result == null)
                     return NotFound("Nenhum registro encontrado.");
@@ -36,13 +36,13 @@ namespace Esfsg.API.Controllers
             }
         }
 
-        [HttpGet("administrativo")]
-        [SwaggerOperation(Summary = "Consulta dados do usuário para realizar LOGIN ADMINISTRATIVO.")]
-        public async Task<IActionResult> ConsultarUsuarioAdmnistrativo([FromQuery] UsuarioAdministrativoRequest request)
+        [HttpPut("administrativo/role")]
+        [SwaggerOperation(Summary = "Alteração de role de um usuário.")]
+        public async Task<IActionResult> AlterarRoleUsuario([FromBody] AlteraRoleRequest role)
         {
             try
             {
-                var result = await _usuarioService.ConsultarUsuarioAdministrativo(request);
+                var result = await _gestaoUsuarioService.AlterarRoleUsuario(role);
                 return result.Sucesso ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -51,19 +51,19 @@ namespace Esfsg.API.Controllers
             }
         }
 
-        [HttpPut]
-        [SwaggerOperation(Summary = "Alteração de dados do usuário")]
-        public async Task<IActionResult> AlterarUsuario([FromBody] AlterarUsuarioRequest request)
+        [HttpPut("administrativo/senha")]
+        [SwaggerOperation(Summary = "Redefinição de senha de um usuário.")]
+        public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaRequest request)
         {
             try
             {
-                var result = await _usuarioService.AlterarUsuario(request);
+                var result = await _gestaoUsuarioService.AlterarSenha(request);
                 return result.Sucesso ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }  
+        }
     }
 }

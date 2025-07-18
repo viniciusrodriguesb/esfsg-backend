@@ -182,75 +182,7 @@ namespace Esfsg.Application.Services
             }
         }
 
-        public async Task<ResultResponse<USUARIO>> AlterarRoleUsuario(AlteraRoleRequest role)
-        {
-
-            var usuario = await _context.USUARIO.FirstOrDefaultAsync(x => x.Id == role.IdUsuario);
-
-            if (usuario == null)
-            {
-                return new ResultResponse<USUARIO>()
-                {
-                    Sucesso = false,
-                    Mensagem = "Usuário não encontrado, por favor contacte a secretaria."
-                };
-            }
-
-            usuario.IdTipoUsuario = (int)role.TipoUsuario;
-
-            _context.Update(usuario);
-            var res = await _context.SaveChangesAsync();
-
-            if (res == 0)
-            {
-                return new ResultResponse<USUARIO>()
-                {
-                    Sucesso = false,
-                    Mensagem = "Erro ao atualizar o tipo de usuário. Entre em contato com a TI."
-                };
-            }
-
-            return new ResultResponse<USUARIO>()
-            {
-                Sucesso = true,
-                Mensagem = "Tipo de usuario atualizado com sucesso."
-            };
-        }
-
-        public async Task<ResultResponse<USUARIO>> AlterarSenha(AlterarSenhaRequest request)
-        {
-            var usuario = await _context.USUARIO.FirstOrDefaultAsync(x => x.Id == request.IdUsuario);
-
-            if (usuario == null)
-            {
-                return new ResultResponse<USUARIO>()
-                {
-                    Sucesso = false,
-                    Mensagem = "Usuário não encontrado, por favor contacte a secretaria."
-                };
-            }
-
-            var senhaCriptografada = new PasswordHasher<USUARIO>().HashPassword(usuario, request.Senha);
-            usuario.Senha = senhaCriptografada;
-
-            _context.Update(usuario);
-            var res = await _context.SaveChangesAsync();
-
-            if (res == 0)
-            {
-                return new ResultResponse<USUARIO>()
-                {
-                    Sucesso = false,
-                    Mensagem = "Erro ao atualizar a senha. Entre em contato com a TI."
-                };
-            }
-
-            return new ResultResponse<USUARIO>()
-            {
-                Sucesso = true,
-                Mensagem = "Senha atualizada com sucesso."
-            };
-        }
+        
 
         public async Task<ResultResponse<UsuarioEditadoResponse>> AlterarUsuario(AlterarUsuarioRequest request)
         {

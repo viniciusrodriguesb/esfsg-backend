@@ -11,8 +11,10 @@ namespace Esfsg.Application.Filtros
             query = query.Where(x => x.InscricaoNavigation.InscricaoStatus.Any(x => x.StatusId == (int)filtro.Status && x.DhExclusao == null));
 
             if (!string.IsNullOrEmpty(filtro.Nome))
-                query = query.Where(x => x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto.Contains(filtro.Nome));
-
+            {
+                var nomeFiltro = filtro.Nome.Trim().ToLower();
+                query = query.Where(x => x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto.ToLower().Contains(filtro.Nome));
+            }             
 
             return query;
         }

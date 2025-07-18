@@ -10,7 +10,10 @@ namespace Esfsg.Application.Filtros
             query = query.Where(x => x.IdEvento == filtro.IdEvento);
 
             if (!string.IsNullOrEmpty(filtro.Nome))
-                query = query.Where(x => x.IdUsuarioNavigation.NomeCompleto.Contains(filtro.Nome));
+            {
+                var nomeFiltro = filtro.Nome.Trim().ToLower();
+                query = query.Where(x => x.IdUsuarioNavigation.NomeCompleto.ToLower().Contains(filtro.Nome));
+            }
 
             if (!string.IsNullOrEmpty(filtro.Periodo))
                 query = query.Where(x => x.Periodo.Contains(filtro.Periodo));
