@@ -13,7 +13,7 @@ namespace Esfsg.Application.Filtros
             if (!string.IsNullOrEmpty(filtro.Nome))
             {
                 var nomeFiltro = filtro.Nome.Trim().ToLower();
-                query = query.Where(x => x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto.ToLower().Contains(filtro.Nome));
+                query = query.Where(x => x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto.ToLower().Contains(nomeFiltro));
             }             
 
             return query;
