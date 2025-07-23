@@ -1,6 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.DTOs.Response;
-using Esfsg.Application.Enums;
 using Esfsg.Application.Filtros;
 using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
@@ -24,17 +23,17 @@ namespace Esfsg.Application.Services
 
         public async Task<PaginacaoResponse<DadosGestaoPagamentoResponse>> ObterDadosPagamentoInscricao(ConsultaGestaoPagamentoRequest request, PaginacaoRequest paginacao)
         {
-            var query = _context.PAGAMENTO.AsNoTracking()
-                                          .AplicarFiltro(request)
+            var query = _context.INSCRICAO.AsNoTracking()
+                                          .AplicarFiltroPagamento(request)
                                           .Select(x => new DadosGestaoPagamentoResponse()
                                           {
-                                              IdInscricao = x.IdInscricao,
-                                              Nome = x.InscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
-                                              Periodo = x.InscricaoNavigation.Periodo,
-                                              DataExpiracao = x.DhExpiracao.ToString("dd/MM/yyyy"),
-                                              Status = x.InscricaoNavigation.InscricaoStatus.FirstOrDefault(x => x.DhExclusao == null).StatusNavigation.Descricao,
-                                              Telefone = x.InscricaoNavigation.IdUsuarioNavigation.Telefone,
-                                              Valor = x.InscricaoNavigation.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase) ? x.InscricaoNavigation.IdEventoNavigation.ValorIntegral : x.InscricaoNavigation.IdEventoNavigation.ValorParcial,
+                                              IdInscricao = x.Id,
+                                              Nome = x.IdUsuarioNavigation.NomeCompleto,
+                                              Periodo = x.Periodo,
+                                              DataExpiracao = x.Pagamentos.OrderByDescending(x => x.Id).Select(d => d.DhExpiracao).FirstOrDefault().ToString("dd/MM/yyyy"),
+                                              Status = x.InscricaoStatus.FirstOrDefault(x => x.DhExclusao == null).StatusNavigation.Descricao,
+                                              Telefone = x.IdUsuarioNavigation.Telefone,
+                                              Valor = x.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase) ? x.IdEventoNavigation.ValorIntegral : x.IdEventoNavigation.ValorParcial,
                                           });
 
             var resultadoPaginado = await query.PaginarDados(paginacao);
