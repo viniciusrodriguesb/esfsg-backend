@@ -1,6 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Request.Relatorios;
 using Esfsg.Application.Enums;
-using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +43,25 @@ namespace Esfsg.API.Controllers
                 }
 
                 return File(arquivo, contentType, nomeArquivo);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("funcoes")]
+        public async Task<IActionResult> GerarRelatorioPorFuncao([FromQuery] int IdEvento)
+        {
+            try
+            {
+                var resultadoZip = await _relatorioService.GerarRelatorioPorFuncao(IdEvento);
+                var nomeArquivo = $"Relatorios_Funcoes_{DateTime.Now:yyyyMMdd_HHmmss}.zip";
+                return File(resultadoZip, "application/zip", nomeArquivo);
             }
             catch (ArgumentException ex)
             {
