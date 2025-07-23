@@ -5,6 +5,7 @@ using Esfsg.Application.Helpers;
 using Esfsg.Application.Interfaces;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 
 namespace Esfsg.Application.Services
 {
@@ -23,16 +24,7 @@ namespace Esfsg.Application.Services
         {
             var query = await _context.INSCRICAO
                                    .AsNoTracking()
-                                   .Where(x => x.InscricaoStatus.Any(s => s.DhExclusao == null) &&
-                                               x.IdEvento == request.IdEvento)
-                                   .Include(u => u.IdUsuarioNavigation)
-                                        .ThenInclude(c => c.IdClasseNavigation)
-                                   .Include(u => u.IdUsuarioNavigation)
-                                        .ThenInclude(c => c.IdIgrejaNavigation)
-                                   .Include(fe => fe.IdFuncaoEventoNavigation)
-                                   .Include(s => s.InscricaoStatus)
-                                        .ThenInclude(s => s.StatusNavigation)
-                                   .Include(c => c.CheckIns)
+                                   .Where(x => x.IdEvento == request.IdEvento)
                                    .OrderBy(x => x.IdUsuarioNavigation.IdIgreja)
                                         .ThenBy(x => x.IdUsuarioNavigation.NomeCompleto)
                                    .Select(x => new RelatorioInscricaoResponse()
@@ -45,7 +37,7 @@ namespace Esfsg.Application.Services
                                        Periodo = x.Periodo,
                                        FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
                                        DhInscricao = x.DhInscricao.ToString("dd/MM/yyyy HH:mm:ss"),
-                                       StatusInscricao = x.InscricaoStatus.Select(s => s.StatusNavigation.Descricao).FirstOrDefault(),
+                                       StatusInscricao = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault(),
                                        Presenca = x.CheckIns.Select(c => c.Presente).FirstOrDefault() ? "Presente" : "Ausente"
                                    }).ToListAsync();
 
@@ -56,6 +48,61 @@ namespace Esfsg.Application.Services
                 ETipoRelatorio.PDF => PdfHelper<RelatorioInscricaoResponse>.ExportarParaPdf(query, titulo),
                 _ => throw new ArgumentException("Tipo de relatório não suportado."),
             };
+        }
+
+        public async Task<byte[]> GerarRelatorioPorFuncao(int IdEvento)
+        {
+
+            var funcoes = await _context.FUNCAO_EVENTO
+                                        .AsNoTracking()
+                                        .ToListAsync();
+
+            var arquivosPdf = new List<(string NomeArquivo, byte[] ConteudoArquivo)>();
+            foreach (var funcao in funcoes)
+            {
+                var inscricoes = await _context.INSCRICAO.AsNoTracking()
+                                                   .Where(x => x.IdEvento == IdEvento &&
+                                                               x.IdFuncaoEvento == funcao.Id)
+                                                   .OrderBy(x => x.IdUsuarioNavigation.IdIgreja)
+                                                     .ThenBy(x => x.IdUsuarioNavigation.NomeCompleto)
+                                                   .Select(x => new RelatorioInscricaoResponse()
+                                                   {
+                                                       NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
+                                                       Cpf = FormatoHelper.FormatarCpf(x.IdUsuarioNavigation.Cpf),
+                                                       Telefone = FormatoHelper.FormatarTelefone(x.IdUsuarioNavigation.Telefone),
+                                                       Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
+                                                       Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                                       Periodo = x.Periodo,
+                                                       FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
+                                                       DhInscricao = x.DhInscricao.ToString("dd/MM/yyyy HH:mm:ss"),
+                                                       StatusInscricao = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault(),
+                                                       Presenca = x.CheckIns.Select(c => c.Presente).FirstOrDefault() ? "Presente" : "Ausente"
+                                                   }).ToListAsync();
+
+                if (!inscricoes.Any())
+                    continue;
+
+                string titulo = $"Relatório de funções: {funcao.Descricao}";
+                var nomeArquivo = $"{funcao.Descricao}.pdf";
+                var pdf = PdfHelper<RelatorioInscricaoResponse>.ExportarParaPdf(inscricoes, titulo);
+
+                arquivosPdf.Add((nomeArquivo, pdf));
+            }
+
+            using var zipStream = new MemoryStream();
+            using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
+            {
+                foreach (var arquivo in arquivosPdf)
+                {
+                    var entry = archive.CreateEntry(arquivo.NomeArquivo);
+
+                    using var entryStream = entry.Open();
+                    await entryStream.WriteAsync(arquivo.ConteudoArquivo, 0, arquivo.ConteudoArquivo.Length);
+                }
+            }
+
+            zipStream.Position = 0;
+            return zipStream.ToArray();
         }
 
     }

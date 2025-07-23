@@ -93,24 +93,13 @@ namespace Esfsg.Application.Services
                 funcao.Quantidade = request.Qntd.Value;
 
             _context.FUNCAO_EVENTO.Update(funcao);
-            await _context.SaveChangesAsync();
-
-            var response = new FuncaoEventoResponse
-            {
-                Id = funcao.Id,
-                Descricao = funcao.Descricao,
-                Cor = funcao.Cor,
-                Quantidade = funcao.Quantidade
-            };
+            await _context.SaveChangesAsync();            
 
             return new ResultResponse<FuncaoEventoResponse>()
             {
                 Sucesso = true,
-                Mensagem = "Função do evento editada com sucesso.",
-                Dados = response
+                Mensagem = "Função do evento editada com sucesso."
             };
         }
-
-
     }
 }
