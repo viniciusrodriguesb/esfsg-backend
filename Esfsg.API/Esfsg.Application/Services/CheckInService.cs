@@ -37,7 +37,7 @@ namespace Esfsg.Application.Services
                                                {
                                                    Igreja = x.IdInscricaoNavigation.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
                                                    Classe = x.IdInscricaoNavigation.IdUsuarioNavigation.IdClasseNavigation.Descricao
-                                               }
+                                               }                                                                            
                                            });
 
             var resultadoPaginado = await query.PaginarDados(paginacao);
@@ -71,21 +71,7 @@ namespace Esfsg.Application.Services
 
         }
 
-        #region Métodos Privados       
-        private async Task<CheckinValidadoResponse?> ConsultarDadosCheckin(int Id)
-        {
-            return await _context.CHECK_IN.AsNoTracking()
-                                          .Where(x => x.Id == Id)
-                                          .Select(x => new CheckinValidadoResponse()
-                                          {
-                                              NomeCompleto = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
-                                              Periodo = x.IdInscricaoNavigation.Periodo,
-                                              Grupo = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
-                                              Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor,
-                                              EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.Select(v => v.IdVisitaNavigation.CorVoluntario).FirstOrDefault()
-                                          }).FirstOrDefaultAsync();
-        }
-
+        #region Métodos Privados   
         private async Task<List<CheckinValidadoResponse>> ConsultarDadosCheckin(List<int> ids)
         {
             return await _context.CHECK_IN.AsNoTracking()
@@ -96,7 +82,12 @@ namespace Esfsg.Application.Services
                                               Periodo = x.IdInscricaoNavigation.Periodo,
                                               Grupo = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
                                               Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor,
-                                              EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.Select(v => v.IdVisitaNavigation.CorVoluntario).FirstOrDefault()
+                                              EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.Select(v => v.IdVisitaNavigation.CorVoluntario).FirstOrDefault(),
+                                              Dependente = x.IdInscricaoNavigation.MenorInscricoes.Select(m => new DadosDependenteResponse()
+                                              {
+                                                  Nome = m.Nome,
+                                                  Cor = "Roxa"
+                                              }).ToList()
                                           }).ToListAsync();
         }
         #endregion

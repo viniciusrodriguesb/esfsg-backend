@@ -7,5 +7,13 @@
         public string Grupo { get; set; }
         public string Pulseira {  get; set; }
         public string? EtiquetaVisita { get; set; }
+        public List<DadosDependenteResponse> Dependente { get; set; }
     }
+
+    public class DadosDependenteResponse
+    {
+        public string Nome { get; set; }
+        public string Cor { get; set; }
+    }
+
 }
