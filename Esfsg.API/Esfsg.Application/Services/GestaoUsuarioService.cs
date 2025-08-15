@@ -110,5 +110,51 @@ namespace Esfsg.Application.Services
                 Mensagem = "Senha atualizada com sucesso."
             };
         }
+
+        public async Task GerirBloqueiosUsuario()
+        {
+            var inscricoes = await _context.INSCRICAO
+                                           .Where(x => x.IdEventoNavigation.DhEvento < DateTime.Now)
+                                           .Include(i => i.IdUsuarioNavigation)
+                                           .Include(i => i.CheckIns)
+                                           .ToListAsync();
+
+            if (!inscricoes.Any())
+                return;
+
+            bool houveAlteracao = false;
+            foreach (var inscricao in inscricoes)
+            {
+                var dadosUsuario = inscricao.IdUsuarioNavigation;
+                var checkin = inscricao.CheckIns.FirstOrDefault();
+
+                if (checkin == null)
+                    continue;
+
+                if (checkin.Presente && dadosUsuario.DhExclusao != null)
+                {
+                    dadosUsuario.DhExclusao = null;
+                    dadosUsuario.MotivoExclusao = string.Empty;
+                    houveAlteracao = true;
+                }
+
+                if (!checkin.Presente)
+                {
+                    if (dadosUsuario.DhExclusao != null)
+                        continue;
+
+                    if (dadosUsuario.DhExclusao == null)
+                    {
+                        dadosUsuario.DhExclusao = DateTime.Now;
+                        dadosUsuario.MotivoExclusao = "Participante não compareceu no último evento.";
+                        houveAlteracao = true;
+                    }
+                }
+
+                if (houveAlteracao)
+                    await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

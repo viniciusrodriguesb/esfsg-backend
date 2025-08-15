@@ -9,5 +9,6 @@ namespace Esfsg.Application.Interfaces
         Task<PaginacaoResponse<GestaoUsuarioResponse>> ConsultarUsuarios(GestaoUsuarioRequest request, PaginacaoRequest paginacao);
         Task<ResultResponse<USUARIO>> AlterarRoleUsuario(AlteraRoleRequest role);
         Task<ResultResponse<USUARIO>> AlterarSenha(AlterarSenhaRequest request);
+        Task GerirBloqueiosUsuario();
     }
 }

@@ -50,6 +50,13 @@ namespace Esfsg.API.Hangfire.Configurations
                      "*/5 * * * *");
             #endregion
 
+            #region Gestão Bloqueio
+            jobManager.AddOrUpdate<GerirBloqueiosJob>(
+                "gerir-bloqueios",
+                job => job.Execute(),
+                       "0 23 1 * *");
+            #endregion
+
         }
     }
 }
