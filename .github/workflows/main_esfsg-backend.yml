@@ -26,8 +26,11 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release --no-restore ./Esfsg.API/esfsg-backend.sln
 
-      - name: dotnet publish
+      - name: Publish API
         run: dotnet publish ./Esfsg.API/Esfsg.API/Esfsg.API.csproj --configuration Release --output ./publish
+
+      - name: Publish Hangfire
+        run: dotnet publish ./Esfsg.API/Esfsg.Hangfire/Esfsg.Hangfire.csproj --configuration Release --output ./publish-hangfire
 
       - uses: azure/login@v1
         with:
@@ -39,15 +42,8 @@ jobs:
           app-name: 'esfsg-backend' 
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish
-
-      # ----------------------------
-      # BUILD E DEPLOY DO HANGFIRE
-      # ----------------------------
-
-      - name: Publish Hangfire
-        run: dotnet publish ./Esfsg.API/Esfsg.Hangfire/Esfsg.Hangfire.csproj --configuration Release --output ./publish-hangfire
-
+          package: ./publish 
+          
       - name: Deploy Hangfire para Azure Web App
         uses: azure/webapps-deploy@v2
         with:
