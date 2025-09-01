@@ -13,7 +13,7 @@ builder.Logging.AddDebug();
 #endregion
 
 #region Add Jobs
-builder.Services.AddServices(builder.Configuration);
+builder.Services.AddHangfireServices(builder.Configuration);
 
 builder.Services.AddScoped<EmailQrCodeAcessoJob>();
 builder.Services.AddScoped<EmailInscricaoConfirmadaJob>();

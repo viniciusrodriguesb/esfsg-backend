@@ -1,8 +1,4 @@
-using Esfsg.API.Hangfire.Configurations;
-using Esfsg.API.Hangfire.Jobs;
 using Esfsg.Infra.CrossCutting.IoC;
-using Hangfire;
-using Hangfire.Dashboard;
 
 internal class Program
 {
@@ -16,22 +12,8 @@ internal class Program
         builder.Logging.AddDebug();
         #endregion
 
-        #region Add Services
         builder.Services.AddServices(builder.Configuration);
-
-        builder.Services.AddScoped<EmailQrCodeAcessoJob>();
-        builder.Services.AddScoped<EmailInscricaoConfirmadaJob>();
-        builder.Services.AddScoped<EmailQrCodePagamentoJob>();
-        builder.Services.AddScoped<EmailCancelamentoJob>();
-        builder.Services.AddScoped<EmailReembolsoJob>();
-        builder.Services.AddScoped<GerarPagamentoJob>();
-        builder.Services.AddScoped<AlteraStatusInscricaoPagamentoJob>();
-        #endregion
-
-        builder.Services.AddTransient<IDashboardAuthorizationFilter, HangfireAuthorization>();
-
         builder.Services.AddControllers();
-
         builder.Services.AddSwaggerConfiguration();
 
         var app = builder.Build();
@@ -45,12 +27,6 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
-
-        JobsConfiguration.ConfigureJobs(app.Services);
-        app.UseHangfireDashboard("/jobs", new DashboardOptions
-        {
-            Authorization = new[] { app.Services.GetRequiredService<IDashboardAuthorizationFilter>() }
-        });
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
