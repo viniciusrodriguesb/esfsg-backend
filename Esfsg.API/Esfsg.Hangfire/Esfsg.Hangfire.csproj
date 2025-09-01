@@ -4,34 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>895932e7-3f11-4341-9902-851dfdfab19d</UserSecretsId>
+    <UserSecretsId>ff445232-3e73-4ad2-a86c-fb1725626215</UserSecretsId>
   </PropertyGroup>
-
-  <ItemGroup>
-	  <PackageReference Include="Hangfire" Version="1.8.18" />
-	  <PackageReference Include="Hangfire.Console" Version="1.4.3" />
-	  <PackageReference Include="Hangfire.Core" Version="1.8.18" />
-	  <PackageReference Include="Hangfire.PostgreSql" Version="1.20.12" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.15" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.15" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.15">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.15" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.15">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	  <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
-	  <PackageReference Include="QRCoder" Version="1.6.0" />
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
-	  <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Esfsg.Infra.CrossCutting.IoC\Esfsg.Infra.CrossCutting.IoC.csproj" />

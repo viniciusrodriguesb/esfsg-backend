@@ -4,14 +4,14 @@ using Hangfire;
 
 namespace Esfsg.Hangfire.Jobs
 {
-    public class EmailQrCodeJob : IJob
+    public class GerirBloqueiosJob : IJob
     {
 
         #region Construtor
-        private readonly IEmailStatusService _emailStatusService;
-        public EmailQrCodeJob(IEmailStatusService emailStatusService)
+        private readonly IGestaoUsuarioService _gestaoUsuarioService;
+        public GerirBloqueiosJob(IGestaoUsuarioService gestaoUsuarioService)
         {
-            _emailStatusService = emailStatusService;
+            _gestaoUsuarioService = gestaoUsuarioService;
         }
         #endregion
 
@@ -21,7 +21,7 @@ namespace Esfsg.Hangfire.Jobs
         {
             try
             {
-                await _emailStatusService.EnviarEmailQrCode();
+                await _gestaoUsuarioService.GerirBloqueiosUsuario();
             }
             catch (Exception)
             {

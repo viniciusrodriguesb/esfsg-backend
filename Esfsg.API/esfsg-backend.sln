@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esfsg.Infra.CrossCutting.Io
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esfsg.Infra.Data", "Esfsg.Infra.CrossCutting.Data\Esfsg.Infra.Data.csproj", "{071C06BF-7E9F-4410-BA0C-BF6787EBDA3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esfsg.Hangfire", "Esfsg.Hangfire\Esfsg.Hangfire.csproj", "{D98473B8-E6B8-44A7-8923-959DC8FCC01F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,8 +41,15 @@ Global
 		{071C06BF-7E9F-4410-BA0C-BF6787EBDA3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{071C06BF-7E9F-4410-BA0C-BF6787EBDA3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{071C06BF-7E9F-4410-BA0C-BF6787EBDA3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D98473B8-E6B8-44A7-8923-959DC8FCC01F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D98473B8-E6B8-44A7-8923-959DC8FCC01F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D98473B8-E6B8-44A7-8923-959DC8FCC01F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D98473B8-E6B8-44A7-8923-959DC8FCC01F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DDD6534C-FF21-4619-B45B-892756AFB2DF}
 	EndGlobalSection
 EndGlobal

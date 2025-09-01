@@ -11,15 +11,51 @@ namespace Esfsg.Hangfire.Configurations
             using var scope = services.CreateScope();
             var jobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
 
-            jobManager.AddOrUpdate<EmailQrCodeJob>(
-               "email-qrcode",
-               job => job.Execute(),
-               Cron.Yearly);
-
+            #region Emails
             jobManager.AddOrUpdate<EmailInscricaoConfirmadaJob>(
-               "email-inscricao-confirmada",
+              "email-inscricao-confirmada",
+              job => job.Execute(),
+                     "*/3 * * * *");
+
+            jobManager.AddOrUpdate<EmailQrCodePagamentoJob>(
+               "email-qrcode-pagamento",
                job => job.Execute(),
-               Cron.Yearly);
+                      "*/5 * * * *");
+
+            jobManager.AddOrUpdate<EmailQrCodeAcessoJob>(
+              "email-qrcode-acesso",
+              job => job.Execute(),
+                     "*/5 * * * *");
+
+            jobManager.AddOrUpdate<EmailCancelamentoJob>(
+               "email-cancelamento",
+               job => job.Execute(),
+                      "*/10 * * * *");
+
+            jobManager.AddOrUpdate<EmailReembolsoJob>(
+               "email-reembolso",
+               job => job.Execute(),
+                      "*/10 * * * *");
+            #endregion
+
+            #region Pagamento
+            jobManager.AddOrUpdate<GerarPagamentoJob>(
+                 "gerar-pagamento",
+                 job => job.Execute(),
+                        "*/5 * * * *");
+
+            jobManager.AddOrUpdate<AlteraStatusInscricaoPagamentoJob>(
+              "alterar-status-pagamento",
+              job => job.Execute(),
+                     "*/5 * * * *");
+            #endregion
+
+            #region Gestão Bloqueio
+            jobManager.AddOrUpdate<GerirBloqueiosJob>(
+                "gerir-bloqueios",
+                job => job.Execute(),
+                       "0 23 1 * *");
+            #endregion
 
         }
     }
