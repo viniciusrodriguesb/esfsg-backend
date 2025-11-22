@@ -17,8 +17,8 @@ namespace Esfsg.Application.Services
         public EmailService(ILogger<EmailService> logger, IConfiguration configuration)
         {
             _configuration = configuration;
-            password = _configuration["EmailSettings:FromPassword"] ?? throw new ArgumentException("Destinatário não encontrado");
-            user = _configuration["EmailSettings:FromAddress"] ?? throw new ArgumentException("Destinatário não encontrado");
+            password = _configuration["EmailSettings:FromPassword"] ?? throw new NotFoundException("Destinatário não encontrado");
+            user = _configuration["EmailSettings:FromAddress"] ?? throw new NotFoundException("Destinatário não encontrado");
             _logger = logger;
         }
         #endregion

@@ -30,45 +30,31 @@ namespace Esfsg.API.Controllers
         {
             const string key = "funcoes-igreja-key";
 
-            try
+            var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+
+            if (response is null || _env.IsDevelopment())
             {
-                var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+                response = await _funcoesService.ConsultarFuncoesIgreja();
 
-                if (response is null || _env.IsDevelopment())
-                {
-                    response = await _funcoesService.ConsultarFuncoesIgreja();
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null || !response.Any())
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
 
         [HttpGet("evento")]
         [SwaggerOperation(Summary = "Consulta todas as funções disponíveis no evento.")]
         public async Task<IActionResult> ConsultarFuncoesEvento(int IdEvento)
         {
-            try
-            {
-                var response = await _funcoesService.ConsultarFuncoesEvento(IdEvento);
+            var response = await _funcoesService.ConsultarFuncoesEvento(IdEvento);
 
-                if (response == null || !response.Any())
-                    return NotFound("Nenhum registro encontrado.");
+            if (response == null || !response.Any())
+                return NotFound("Nenhum registro encontrado.");
 
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(response);
         }
 
     }

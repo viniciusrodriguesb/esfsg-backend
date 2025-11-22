@@ -25,7 +25,7 @@ namespace Esfsg.Application.Services
         public async Task<UsuarioResponse?> RealizarInscricao(InscricaoRequest request)
         {
             if (string.IsNullOrEmpty(request.Cpf))
-                throw new ArgumentException("É necessário enviar o CPF para prosseguir com a inscrição.");
+                throw new BusinessException("É necessário enviar o CPF para prosseguir com a inscrição.");
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -87,14 +87,14 @@ namespace Esfsg.Application.Services
                 return;
 
             if (string.IsNullOrWhiteSpace(request.Igreja.Nome) || string.IsNullOrWhiteSpace(request.Igreja.Pastor))
-                throw new ArgumentException("O nome da igreja e pastor são obrigatório.");
+                throw new BusinessException("O nome da igreja e pastor são obrigatório.");
 
             var existeIgreja = await _context.IGREJA
                                              .AsNoTracking()
                                              .AnyAsync(x => EF.Functions.Like(x.Nome, request.Igreja.Nome));
 
             if (existeIgreja)
-                throw new ArgumentException("Não foi possivel adicionar igreja pois ela já existe.");
+                throw new BusinessException("Não foi possivel adicionar igreja pois ela já existe.");
 
             var pastor = await _context.PASTOR.FirstOrDefaultAsync(x => EF.Functions.Like(x.Nome, request.Igreja.Pastor));
 
@@ -131,7 +131,7 @@ namespace Esfsg.Application.Services
             var idadeInvalida = menores.Where(x => x.Idade > 7).Any();
 
             if (idadeInvalida)
-                throw new ArgumentException("Um ou mais menores adicionados contém idade maior que 7, com isso é necessário realizar inscrição separadamente");
+                throw new BusinessException("Um ou mais menores adicionados contém idade maior que 7, com isso é necessário realizar inscrição separadamente");
 
             var addMenores = menores.Select(x => new MENOR_INSCRICAO()
             {
@@ -151,14 +151,14 @@ namespace Esfsg.Application.Services
             {
                 InscricaoId = IdInscricao,
                 StatusId = (int)StatusEnum.ENVIADA,
-                DhInclusao = DateTime.Now,
+                DhInclusao = DateTime.UtcNow,
                 DhExclusao = null
             };
 
             await _context.INSCRICAO_STATUS.AddAsync(enviada);
             await _context.SaveChangesAsync();
 
-            enviada.DhExclusao = DateTime.Now;
+            enviada.DhExclusao = DateTime.UtcNow;
             _context.INSCRICAO_STATUS.Update(enviada);
             await _context.SaveChangesAsync();
 
@@ -166,7 +166,7 @@ namespace Esfsg.Application.Services
             {
                 InscricaoId = IdInscricao,
                 StatusId = (int)StatusEnum.AGUARDANDO_LIBERACAO,
-                DhInclusao = DateTime.Now,
+                DhInclusao = DateTime.UtcNow,
                 DhExclusao = null
             };
 
@@ -221,14 +221,14 @@ namespace Esfsg.Application.Services
                                                   .AnyAsync();
 
             if (verificaInscricao)
-                throw new ArgumentException("Usuário já cadastrado no evento selecionado");
+                throw new BusinessException("Usuário já cadastrado no evento selecionado");
         }
 
         private async Task<INSCRICAO> PersistirNovaInscricao(InscricaoRequest request, USUARIO usuario)
         {
             var inscricao = new INSCRICAO()
             {
-                DhInscricao = DateTime.Now,
+                DhInscricao = DateTime.UtcNow,
                 Periodo = request.Periodo,
                 Visita = request.Visita.Visita,
                 IdUsuario = usuario.Id,

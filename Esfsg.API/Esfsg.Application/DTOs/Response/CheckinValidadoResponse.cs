@@ -2,18 +2,18 @@
 {
     public class CheckinValidadoResponse
     {
-        public string NomeCompleto { get; set; }
-        public string Periodo { get; set; }
-        public string Grupo { get; set; }
-        public string Pulseira {  get; set; }
+        public string NomeCompleto { get; set; } = string.Empty;
+        public string Periodo { get; set; } = string.Empty;
+        public string Grupo { get; set; } = string.Empty;
+        public string Pulseira { get; set; } = string.Empty;
         public string? EtiquetaVisita { get; set; }
-        public List<DadosDependenteResponse> Dependente { get; set; }
+        public List<DadosDependenteResponse> Dependente { get; set; } = new();
     }
 
     public class DadosDependenteResponse
     {
-        public string Nome { get; set; }
-        public string Cor { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public string Cor { get; set; } = string.Empty;
     }
 
 }

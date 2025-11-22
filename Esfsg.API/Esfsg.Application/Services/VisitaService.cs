@@ -35,7 +35,7 @@ namespace Esfsg.Application.Services
                                     {
                                         Funcao = x.Funcao,
                                         NomeVisita = x.IdVisitaNavigation != null ? x.IdVisitaNavigation.Descricao : null,
-                                        Endereco = x.IdVisitaNavigation.EnderecoVisitado,
+                                        Endereco = x.IdVisitaNavigation != null ? x.IdVisitaNavigation.EnderecoVisitado : null,
                                         VagasCarro = x.Vagas,
                                         Carro = x.Carro,
                                         Alocado = x.IdVisita != null
@@ -76,7 +76,7 @@ namespace Esfsg.Application.Services
                 var jaAlocado = await _context.VISITA_PARTICIPANTE
                                               .AsNoTracking()
                                               .Include(i => i.IdInscricaoNavigation)
-                                                   .ThenInclude(u => u.IdUsuarioNavigation)
+                                                   .ThenInclude(u => u!.IdUsuarioNavigation)
                                               .FirstOrDefaultAsync(x => x.IdInscricao == alocacao.IdInscricao &&
                                                              x.IdVisita == alocacao.IdVisita);
 

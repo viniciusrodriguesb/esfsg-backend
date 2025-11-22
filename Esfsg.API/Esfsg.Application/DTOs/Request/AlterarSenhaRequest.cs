@@ -8,6 +8,6 @@ namespace Esfsg.Application.DTOs.Request
         public int IdUsuario { get; set; }
 
         [Required(ErrorMessage = "É preciso informar a nova senha do usuário")]
-        public string Senha { get; set; }
+        public string Senha { get; set; } = string.Empty;
     }
 }

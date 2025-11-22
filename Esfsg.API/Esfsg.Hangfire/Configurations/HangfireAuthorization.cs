@@ -70,7 +70,7 @@ namespace Esfsg.Hangfire.Configurations
             return false;
         }
 
-        private void Challenge(HttpContext context)
+        private static void Challenge(HttpContext context)
         {
             context.Response.StatusCode = 401;
             context.Response.Headers["WWW-Authenticate"] = "Basic realm=\"Hangfire Dashboard\"";

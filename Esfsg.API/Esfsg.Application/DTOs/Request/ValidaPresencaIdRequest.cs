@@ -2,7 +2,7 @@
 {
     public class ValidaPresencaIdRequest
     {
-        public List<int> Ids { get; set; }
+        public List<int> Ids { get; set; } = new List<int>();
         public bool Presenca {  get; set; }
     }
 }

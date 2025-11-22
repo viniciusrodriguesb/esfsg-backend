@@ -6,7 +6,7 @@ namespace Esfsg.Application.DTOs.Request
     {
         [Required(ErrorMessage = "O nome é obrigatório.")]
         [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O limite de inscrições integral é obrigatório.")]
         [Range(1, int.MaxValue, ErrorMessage = "O limite de inscrições integral deve ser maior que zero.")]
@@ -21,7 +21,7 @@ namespace Esfsg.Application.DTOs.Request
 
         [Required(ErrorMessage = "O link do grupo do WhatsApp é obrigatório.")]
         [Url(ErrorMessage = "O link do grupo do WhatsApp deve ser uma URL válida.")]
-        public string LinkGrupoWpp { get; set; }
+        public string LinkGrupoWpp { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O valor da inscrição integral é obrigatório.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "O valor da inscrição integral deve ser maior que zero.")]

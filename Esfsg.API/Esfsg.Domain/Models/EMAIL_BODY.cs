@@ -3,7 +3,7 @@
     public class EMAIL_BODY
     {
         public int Id { get; set; }
-        public string Body { get; set; }
+        public string Body { get; set; } = string.Empty;
         public int? IdStatus { get; set; }
 
         #region Navigations

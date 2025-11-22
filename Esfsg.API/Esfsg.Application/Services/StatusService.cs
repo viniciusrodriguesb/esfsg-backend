@@ -24,7 +24,7 @@ namespace Esfsg.Application.Services
                                           .AnyAsync(x => x.Id == IdInscricao);
 
             if (!inscricaoExiste)
-                throw new ArgumentException("Inscrição não encontrada");
+                throw new NotFoundException("Inscrição não encontrada");
 
             var statusAtual = await _context.INSCRICAO_STATUS.AsNoTracking()
                                                              .Where(x => x.InscricaoId == IdInscricao &&
@@ -38,13 +38,13 @@ namespace Esfsg.Application.Services
             var status = await _context.INSCRICAO_STATUS
                                        .Where(x => x.DhExclusao == null &&
                                                    x.InscricaoId == IdInscricao)
-                                       .ExecuteUpdateAsync(s => s.SetProperty(d => d.DhExclusao, DateTime.Now));
+                                       .ExecuteUpdateAsync(s => s.SetProperty(d => d.DhExclusao, DateTime.UtcNow));
 
             var novo = new INSCRICAO_STATUS()
             {
                 StatusId = (int)novoStatus,
                 InscricaoId = IdInscricao,
-                DhInclusao = DateTime.Now
+                DhInclusao = DateTime.UtcNow
             };
 
             await _context.INSCRICAO_STATUS.AddAsync(novo);

@@ -31,13 +31,13 @@ namespace Esfsg.Application.Services
                                    {
                                        NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
                                        Cpf = FormatoHelper.FormatarCpf(x.IdUsuarioNavigation.Cpf),
-                                       Telefone = FormatoHelper.FormatarTelefone(x.IdUsuarioNavigation.Telefone),
-                                       Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
-                                       Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                       Telefone = string.IsNullOrWhiteSpace(x.IdUsuarioNavigation.Telefone) ? string.Empty : FormatoHelper.FormatarTelefone(x.IdUsuarioNavigation.Telefone),
+                                       Classe = x.IdUsuarioNavigation.IdClasseNavigation!.Descricao,
+                                       Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation!.Nome,
                                        Periodo = x.Periodo,
                                        FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
                                        DhInscricao = x.DhInscricao.ToString("dd/MM/yyyy HH:mm:ss"),
-                                       StatusInscricao = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault(),
+                                       StatusInscricao = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault() ?? string.Empty,
                                        Presenca = x.CheckIns.Select(c => c.Presente).FirstOrDefault() ? "Presente" : "Ausente"
                                    }).ToListAsync();
 
@@ -46,7 +46,7 @@ namespace Esfsg.Application.Services
             {
                 ETipoRelatorio.EXCEL => ExcelHelper<RelatorioInscricaoResponse>.ExportarParaExcel(query, titulo),
                 ETipoRelatorio.PDF => PdfHelper<RelatorioInscricaoResponse>.ExportarParaPdf(query, titulo),
-                _ => throw new ArgumentException("Tipo de relatório não suportado."),
+                _ => throw new BusinessException("Tipo de relatório não suportado."),
             };
         }
 
@@ -69,13 +69,13 @@ namespace Esfsg.Application.Services
                                                    {
                                                        NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
                                                        Cpf = FormatoHelper.FormatarCpf(x.IdUsuarioNavigation.Cpf),
-                                                       Telefone = FormatoHelper.FormatarTelefone(x.IdUsuarioNavigation.Telefone),
-                                                       Classe = x.IdUsuarioNavigation.IdClasseNavigation.Descricao,
-                                                       Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation.Nome,
+                                                       Telefone = string.IsNullOrWhiteSpace(x.IdUsuarioNavigation.Telefone) ? string.Empty : FormatoHelper.FormatarTelefone(x.IdUsuarioNavigation.Telefone),
+                                                       Classe = x.IdUsuarioNavigation.IdClasseNavigation!.Descricao,
+                                                       Igreja = x.IdUsuarioNavigation.IdIgrejaNavigation!.Nome,
                                                        Periodo = x.Periodo,
                                                        FuncaoEvento = x.IdFuncaoEventoNavigation.Descricao,
                                                        DhInscricao = x.DhInscricao.ToString("dd/MM/yyyy HH:mm:ss"),
-                                                       StatusInscricao = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault(),
+                                                       StatusInscricao = x.InscricaoStatus.Where(x => x.DhExclusao == null).Select(s => s.StatusNavigation.Descricao).FirstOrDefault() ?? string.Empty,
                                                        Presenca = x.CheckIns.Select(c => c.Presente).FirstOrDefault() ? "Presente" : "Ausente"
                                                    }).ToListAsync();
 

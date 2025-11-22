@@ -5,11 +5,11 @@ namespace Esfsg.Application.DTOs.Request
     public class InscricaoRequest
     {
         [StringLength(14)]
-        public string Cpf { get; set; }
-        public string Periodo { get; set; }
+        public string Cpf { get; set; } = string.Empty;
+        public string Periodo { get; set; } = string.Empty;
         public int IdFuncaoEvento { get; set; }
         public int IdEvento { get; set; }
-        public VisitaInscricaoRequest Visita { get; set; }
+        public VisitaInscricaoRequest Visita { get; set; } = new VisitaInscricaoRequest();
         public UsuarioRequest? Usuario { get; set; }
         public List<MenorRequest>? InscricaoMenor { get; set; }
         public IgrejaInscricaoRequest? Igreja { get; set; }
@@ -24,14 +24,14 @@ namespace Esfsg.Application.DTOs.Request
     public class IgrejaInscricaoRequest
     {
         public int IdRegiao { get; set; }
-        public string Nome { get; set; }
-        public string Pastor { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public string Pastor { get; set; } = string.Empty;
     }
 
     public class MenorRequest
     {
         public int Idade { get; set; }
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
         public int? IdCondicaoMedica { get; set; }
     }
 }

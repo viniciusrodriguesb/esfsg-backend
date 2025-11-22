@@ -8,8 +8,8 @@
         public DateTime? DhExclusao { get; set; }
 
         #region Navigations
-        public INSCRICAO InscricaoNavigation { get; set; }
-        public STATUS StatusNavigation { get; set; } 
+        public INSCRICAO InscricaoNavigation { get; set; } = new INSCRICAO();
+        public STATUS StatusNavigation { get; set; } = new STATUS(); 
         #endregion
 
     }

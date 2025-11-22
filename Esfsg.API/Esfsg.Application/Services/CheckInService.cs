@@ -78,10 +78,10 @@ namespace Esfsg.Application.Services
                                           .Where(x => ids.Contains(x.Id))
                                           .Select(x => new CheckinValidadoResponse()
                                           {
-                                              NomeCompleto = x.IdInscricaoNavigation.IdUsuarioNavigation.NomeCompleto,
+                                              NomeCompleto = x.IdInscricaoNavigation!.IdUsuarioNavigation.NomeCompleto,
                                               Periodo = x.IdInscricaoNavigation.Periodo,
                                               Grupo = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Descricao,
-                                              Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor,
+                                              Pulseira = x.IdInscricaoNavigation.IdFuncaoEventoNavigation.Cor ?? string.Empty,
                                               EtiquetaVisita = x.IdInscricaoNavigation.VisitaParticipantes.Select(v => v.IdVisitaNavigation.CorVoluntario).FirstOrDefault(),
                                               Dependente = x.IdInscricaoNavigation.MenorInscricoes.Select(m => new DadosDependenteResponse()
                                               {

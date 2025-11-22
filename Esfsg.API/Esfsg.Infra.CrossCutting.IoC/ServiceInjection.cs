@@ -22,17 +22,13 @@ namespace Esfsg.Infra.CrossCutting.IoC
 
         public static IServiceCollection AddHangfireServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHttpClient();
-            services.AddMemoryCache();
-            services.AddHangfireServer();
-            QuestPDF.Settings.License = LicenseType.Community;
-
-            DatabaseConfiguration.ConfigureDatabase(services, configuration);
             DatabaseConfiguration.ConfigureDatabaseHangfire(services, configuration);
-            CORSConfiguration.ConfigureCORS(services);
-            ServicesConfiguration.ConfigureServices(services);
+            services.AddHangfireServer();
+
+            AddServices(services, configuration);
 
             return services;
         }
+
     }
 }

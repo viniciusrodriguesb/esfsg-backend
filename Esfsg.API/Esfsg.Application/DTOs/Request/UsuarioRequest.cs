@@ -8,7 +8,7 @@ namespace Esfsg.Application.DTOs.Request
         public string? NomeCompleto { get; set; }
 
         [StringLength(14)]
-        public string Cpf { get; set; }
+        public string Cpf { get; set; } = string.Empty;
 
         public string? Senha { get; set; }
 

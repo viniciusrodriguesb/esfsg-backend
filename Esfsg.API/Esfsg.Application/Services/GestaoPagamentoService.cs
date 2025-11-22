@@ -52,7 +52,7 @@ namespace Esfsg.Application.Services
                 return new ResultResponse<string>() { Sucesso = false, Mensagem = "Pagamento desta inscrição já foi realizado." };
             }
 
-            if (dadoPagamento != null && dadoPagamento.StatusRetornoApi != "approved" && dadoPagamento.DhExpiracao.Date > DateTime.Now.Date)
+            if (dadoPagamento != null && dadoPagamento.StatusRetornoApi != "approved" && dadoPagamento.DhExpiracao.Date > DateTime.UtcNow.Date)
             {
                 return new ResultResponse<string>() { Sucesso = false, Mensagem = "Ainda há um código pix em aberto para essa inscrição" };
             }

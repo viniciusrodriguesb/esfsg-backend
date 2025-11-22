@@ -29,71 +29,42 @@ namespace Esfsg.API.Controllers
         {
             const string key = "instrumentos-key";
 
-            try
+            var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+            if (response is null || _env.IsDevelopment())
             {
-                var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+                response = await _instrumentoService.ConsultarInstrumentos();
 
-                if (response is null || _env.IsDevelopment())
-                {
-                    response = await _instrumentoService.ConsultarInstrumentos();
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null || !response.Any())
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
 
         [HttpPost]
         [SwaggerOperation(Summary = "Inclui um novo instrumento no banco de dados.")]
         public async Task<IActionResult> IncluirInstrumento([FromBody] string Nome)
         {
-            try
-            {
-                await _instrumentoService.IncluirInstrumento(Nome);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _instrumentoService.IncluirInstrumento(Nome);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpDelete]
         [SwaggerOperation(Summary = "Exclui um instrumento no banco de dados.")]
         public async Task<IActionResult> ExcluirInstrumento([FromQuery] int Id)
         {
-            try
-            {
-                await _instrumentoService.ExcluirInstrumento(Id);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _instrumentoService.ExcluirInstrumento(Id);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpPut]
         [SwaggerOperation(Summary = "Edita um instrumento no banco de dados.")]
         public async Task<IActionResult> EditarInstrumento([FromQuery] int Id, [FromBody] string NovoNome)
         {
-            try
-            {
-                await _instrumentoService.EditarInstrumento(Id, NovoNome);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _instrumentoService.EditarInstrumento(Id, NovoNome);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
     }

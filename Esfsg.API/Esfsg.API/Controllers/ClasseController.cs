@@ -30,71 +30,43 @@ namespace Esfsg.API.Controllers
         {
             const string key = "classes-key";
 
-            try
+            var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+
+            if (response is null || _env.IsDevelopment())
             {
-                var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+                response = await _classeService.ConsultarClasses();
 
-                if (response is null || _env.IsDevelopment())
-                {
-                    response = await _classeService.ConsultarClasses();
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null || !response.Any())
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
 
         [HttpPost]
         [SwaggerOperation(Summary = "Inclui uma nova classe no banco de dados.")]
         public async Task<IActionResult> IncluirClasse([FromBody] string Nome)
         {
-            try
-            {
-                await _classeService.IncluirClasse(Nome);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _classeService.IncluirClasse(Nome);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpDelete]
         [SwaggerOperation(Summary = "Exclui uma classe no banco de dados.")]
         public async Task<IActionResult> ExcluirClasse([FromQuery] int Id)
         {
-            try
-            {
-                await _classeService.ExcluirClasse(Id);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _classeService.ExcluirClasse(Id);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpPut]
         [SwaggerOperation(Summary = "Edita uma classe no banco de dados.")]
         public async Task<IActionResult> EditarClasse([FromQuery] int Id, [FromBody] string NovoNome)
         {
-            try
-            {
-                await _classeService.EditarClasse(Id, NovoNome);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _classeService.EditarClasse(Id, NovoNome);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
     }

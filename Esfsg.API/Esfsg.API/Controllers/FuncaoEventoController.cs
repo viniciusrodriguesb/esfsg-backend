@@ -1,7 +1,5 @@
 ﻿using Esfsg.Application.DTOs.Request;
-using Esfsg.Application.DTOs.Response;
 using Esfsg.Application.Interfaces;
-using Esfsg.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -25,30 +23,16 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Consulta todas as funções do evento.")]
         public async Task<IActionResult> ConsultarFuncoesEventoAdministrativo()
         {
-            try
-            {
-                var response = await _funcoesService.ConsultarFuncoesEventoAdministrativo();
-                return response == null ? NotFound("Nenhum registro encontrado.") : Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var response = await _funcoesService.ConsultarFuncoesEventoAdministrativo();
+            return response == null ? NotFound("Nenhum registro encontrado.") : Ok(response);
         }
 
         [HttpPut]
         [SwaggerOperation(Summary = "Edita dados de uma função do evento.")]
         public async Task<IActionResult> ConsultarFuncoesEvento([FromBody] AlteraFuncaoEventoRequest request)
         {
-            try
-            {
-                var result = await _funcoesService.EditarFuncoesEvento(request);
-                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var result = await _funcoesService.EditarFuncoesEvento(request);
+            return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
     }
 }

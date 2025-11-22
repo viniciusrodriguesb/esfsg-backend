@@ -9,7 +9,7 @@ namespace Esfsg.Application.Helpers
         public static byte[] ExportarParaExcel(IEnumerable<T> dados, string titulo = "Relatório")
         {
             if (dados == null || !dados.Any())
-                throw new ArgumentNullException(nameof(dados));
+                throw new NotFoundException(nameof(dados));
 
             using var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add(titulo);

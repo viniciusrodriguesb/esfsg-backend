@@ -4,9 +4,9 @@ public partial class USUARIO
 {
     public int Id { get; set; }
 
-    public string NomeCompleto { get; set; }
+    public string NomeCompleto { get; set; } = string.Empty;
 
-    public string Cpf { get; set; }
+    public string Cpf { get; set; } = string.Empty;
 
     public string? Email { get; set; }
 
@@ -40,13 +40,13 @@ public partial class USUARIO
 
     public virtual ROLE_SISTEMA? IdTipoUsuarioNavigation { get; set; }
 
-    public virtual ICollection<INSCRICAO> Inscricaos { get; set; }   
+    public virtual ICollection<INSCRICAO> Inscricaos { get; set; } = new List<INSCRICAO>();   
 
-    public virtual ICollection<USUARIO_INSTRUMENTO> UsuarioInstrumentos { get; set; }
+    public virtual ICollection<USUARIO_INSTRUMENTO> UsuarioInstrumentos { get; set; } = new List<USUARIO_INSTRUMENTO>();
 
-    public ICollection<USUARIO_CONDICAO_MEDICA> UsuarioCondicoesMedicas { get; set; }
+    public ICollection<USUARIO_CONDICAO_MEDICA> UsuarioCondicoesMedicas { get; set; } = new List<USUARIO_CONDICAO_MEDICA>();
 
-    public virtual ICollection<USUARIO_FUNCAO_IGREJA> IdFuncaoIgrejas { get; set; }
+    public virtual ICollection<USUARIO_FUNCAO_IGREJA> IdFuncaoIgrejas { get; set; } = new List<USUARIO_FUNCAO_IGREJA>();
     #endregion
 
 }

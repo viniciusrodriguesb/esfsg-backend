@@ -24,32 +24,16 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Verifica a conexão com o banco de dados")]
         public async Task<IActionResult> CheckDatabase()
         {
-            try
-            {
-                var canConnect = await _dbContext.Database.CanConnectAsync();
-
-                return canConnect ? Ok() : StatusCode(500, "Erro ao conectar ao banco de dados.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var canConnect = await _dbContext.Database.CanConnectAsync();
+            return canConnect ? Ok() : StatusCode(500, "Erro ao conectar ao banco de dados.");
         }
 
         [HttpPost("email")]
         [SwaggerOperation(Summary = "Verifica a conexão com o servidor de email")]
         public async Task<IActionResult> CheckEmail()
         {
-            try
-            {
-                await _emailService.SendEmailAsync("vini240801@gmail.com", "teste subtitulo", "teste corpo");
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _emailService.SendEmailAsync("vini240801@gmail.com", "teste subtitulo", "teste corpo");
+            return Ok();
         }
 
     }

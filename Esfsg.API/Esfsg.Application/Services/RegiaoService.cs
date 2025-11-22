@@ -30,8 +30,8 @@ namespace Esfsg.Application.Services
 
         public async Task EditarRegiao(int Id, string NovoNome)
         {
-            var row = await _context.CLASSE.Where(x => x.Id == Id)
-                      .ExecuteUpdateAsync(s => s.SetProperty(p => p.Descricao, NovoNome));
+            var row = await _context.REGIAO.Where(x => x.Id == Id)
+                      .ExecuteUpdateAsync(s => s.SetProperty(p => p.Nome, NovoNome));
 
             if (row == 0)
                 throw new Exception("Erro ao atualizar a classe.");
@@ -46,12 +46,12 @@ namespace Esfsg.Application.Services
 
         public async Task IncluirRegiao(string Nome)
         {
-            var Classe = new CLASSE()
+            var regiao = new REGIAO()
             {
-                Descricao = Nome
+                Nome = Nome
             };
 
-            await _context.CLASSE.AddAsync(Classe);
+            await _context.REGIAO.AddAsync(regiao);
             await _context.SaveChangesAsync();
         }
     }

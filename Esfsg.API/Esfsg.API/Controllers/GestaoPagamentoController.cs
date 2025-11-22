@@ -24,61 +24,33 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Consulta inscrições pendentes de pagamento e pagas.")]
         public async Task<IActionResult> ObterDadosPagamentoInscricao([FromQuery] ConsultaGestaoPagamentoRequest request, [FromQuery] PaginacaoRequest paginacao)
         {
-            try
-            {
-                var result = await _gestaoPagamentoService.ObterDadosPagamentoInscricao(request, paginacao);
+            var result = await _gestaoPagamentoService.ObterDadosPagamentoInscricao(request, paginacao);
 
-                if (result == null || !result.Itens.Any())
-                    return NotFound("Nenhum registro encontrado.");
+            if (result == null || !result.Itens.Any())
+                return NotFound("Nenhum registro encontrado.");
 
-                return StatusCode(StatusCodes.Status200OK, result);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return StatusCode(StatusCodes.Status200OK, result);
         }
 
         [HttpPost("Pix/Gerar")]
         [SwaggerOperation(Summary = "Geração de novo código pix.")]
         public async Task<IActionResult> GerarNovoCodigoPix([FromBody] int IdInscricao)
         {
-            try
-            {
-                var result = await _gestaoPagamentoService.GerarNovoCodigoPix(IdInscricao);
-                return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            var result = await _gestaoPagamentoService.GerarNovoCodigoPix(IdInscricao);
+            return result.Sucesso ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
 
         [HttpPut("confirmacao-manual")]
         [SwaggerOperation(Summary = "Confirmação manual do pagamento da inscrição.")]
         public async Task<IActionResult> ConfirmarPagamento([FromBody] List<int> Ids)
         {
-            try
-            {
-                foreach (var id in Ids)
-                {
-                    await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, id);
-                }
 
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (ArgumentException ex)
+            foreach (var id in Ids)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+                await _statusService.AtualizarStatusInscricao(StatusEnum.PAGAMENTO_CONFIRMADO, id);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+
+            return StatusCode(StatusCodes.Status200OK);
         }
     }
 }

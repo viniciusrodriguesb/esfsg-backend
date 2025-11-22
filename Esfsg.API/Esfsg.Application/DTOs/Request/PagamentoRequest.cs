@@ -8,10 +8,10 @@ namespace Esfsg.Application.DTOs.Request
         public decimal Valor { get; set; }
 
         [Required]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string CPF { get; set; }
+        public string CPF { get; set; } = string.Empty;
 
         [Required]
         public int IdInscricao { get; set; }

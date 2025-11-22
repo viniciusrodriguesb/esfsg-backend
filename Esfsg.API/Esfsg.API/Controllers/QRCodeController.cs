@@ -27,26 +27,18 @@ namespace Esfsg.API.Controllers
         {
             string key = $"qrcode-acesso-{IdInscricao}";
 
-            try
+            var response = _memoryCacheService.Get<QRCodeResponse>(key);
+            if (response is null)
             {
-                var response = _memoryCacheService.Get<QRCodeResponse>(key);
+                response = await _qrCodeService.GerarQRCodeAcesso(IdInscricao);
 
-                if (response is null)
-                {
-                    response = await _qrCodeService.GerarQRCodeAcesso(IdInscricao);
+                if (response == null)
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null)
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
 
         [HttpGet("pagamento")]
@@ -55,30 +47,19 @@ namespace Esfsg.API.Controllers
         {
             string key = $"qrcode-pagamento-{IdInscricao}";
 
-            try
+            var response = _memoryCacheService.Get<QrCodePagamentoResponse>(key);
+            if (response is null)
             {
-                var response = _memoryCacheService.Get<QrCodePagamentoResponse>(key);
+                response = await _qrCodeService.ObterQrCodePagamento(IdInscricao);
 
-                if (response is null)
-                {
-                    response = await _qrCodeService.ObterQrCodePagamento(IdInscricao);
+                if (response == null)
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null)
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch(ArgumentException ex)
-            {
-                return StatusCode(400, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
+
     }
 }

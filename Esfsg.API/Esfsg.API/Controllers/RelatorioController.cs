@@ -23,54 +23,33 @@ namespace Esfsg.API.Controllers
         {
             string contentType;
             string nomeArquivo;
-            try
-            {
-                var arquivo = await _relatorioService.GerarRelatorioInscricoes(request);
-                switch (request.TipoRelatorio)
-                {
-                    case ETipoRelatorio.EXCEL:
-                        contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                        nomeArquivo = "Inscricoes.xlsx";
-                        break;
 
-                    case ETipoRelatorio.PDF:
-                        contentType = "application/pdf";
-                        nomeArquivo = "Inscricoes.pdf";
-                        break;
-
-                    default:
-                        return BadRequest("Tipo inválido. Use 'excel' ou 'pdf'.");
-                }
-
-                return File(arquivo, contentType, nomeArquivo);
-            }
-            catch (ArgumentException ex)
+            var arquivo = await _relatorioService.GerarRelatorioInscricoes(request);
+            switch (request.TipoRelatorio)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+                case ETipoRelatorio.EXCEL:
+                    contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    nomeArquivo = "Inscricoes.xlsx";
+                    break;
+
+                case ETipoRelatorio.PDF:
+                    contentType = "application/pdf";
+                    nomeArquivo = "Inscricoes.pdf";
+                    break;
+
+                default:
+                    return BadRequest("Tipo inválido. Use 'excel' ou 'pdf'.");
             }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+
+            return File(arquivo, contentType, nomeArquivo);
         }
 
         [HttpGet("funcoes")]
         public async Task<IActionResult> GerarRelatorioPorFuncao([FromQuery] int IdEvento)
         {
-            try
-            {
-                var resultadoZip = await _relatorioService.GerarRelatorioPorFuncao(IdEvento);
-                var nomeArquivo = $"Relatorios_Funcoes_{DateTime.Now:yyyyMMdd_HHmmss}.zip";
-                return File(resultadoZip, "application/zip", nomeArquivo);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            var resultadoZip = await _relatorioService.GerarRelatorioPorFuncao(IdEvento);
+            var nomeArquivo = $"Relatorios_Funcoes_{DateTime.UtcNow:yyyyMMdd_HHmmss}.zip";
+            return File(resultadoZip, "application/zip", nomeArquivo);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Esfsg.Application.Services
                                         .FirstOrDefaultAsync();
 
             if (checkin is null)
-                throw new ArgumentException("Inscrição no check-in não encontrada.");
+                throw new NotFoundException("Inscrição no check-in não encontrada.");
 
             return new QRCodeResponse()
             {
@@ -41,7 +41,7 @@ namespace Esfsg.Application.Services
             var dadosPagamento = await _context.PAGAMENTO
                                                .AsNoTracking()
                                                .Where(x => x.IdInscricao == IdInscricao &&
-                                                           x.DhExpiracao >= DateTime.Now)
+                                                           x.DhExpiracao >= DateTime.UtcNow)
                                                .Select(x => new QrCodePagamentoResponse()
                                                {
                                                    PixCopiaCola = x.CodigoPix,
@@ -51,11 +51,10 @@ namespace Esfsg.Application.Services
                                                .FirstOrDefaultAsync();
 
             if (dadosPagamento is null)
-                throw new ArgumentException("QrCode de pagamento ainda não foi gerado, aguarde um momento.");
+                throw new BusinessException("QrCode de pagamento ainda não foi gerado, aguarde um momento.");
 
             return dadosPagamento;
         }
-
 
     }
 }

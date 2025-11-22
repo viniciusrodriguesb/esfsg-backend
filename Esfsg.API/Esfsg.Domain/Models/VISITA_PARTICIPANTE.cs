@@ -15,9 +15,9 @@ public partial class VISITA_PARTICIPANTE
     public int? IdInscricao { get; set; }
 
     #region Navigations
-    public virtual INSCRICAO? IdInscricaoNavigation { get; set; }
+    public virtual INSCRICAO IdInscricaoNavigation { get; set; } = new INSCRICAO();
 
-    public virtual VISITA? IdVisitaNavigation { get; set; } 
+    public virtual VISITA IdVisitaNavigation { get; set; } = new VISITA();
     #endregion
 
 }

@@ -24,26 +24,19 @@ namespace Esfsg.API.Controllers
         {
             string key = $"dashboard-{IdEvento}-key";
 
-            try
+            var response = _memoryCacheService.Get<DashboardResponse>(key);
+
+            if (response is null)
             {
-                var response = _memoryCacheService.Get<DashboardResponse>(key);
+                response = await _dashboardService.ConsultarDadosDashboard(IdEvento);
 
-                if (response is null)
-                {
-                    response = await _dashboardService.ConsultarDadosDashboard(IdEvento);
+                if (response == null)
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null)
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(10));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(10));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
 
         [HttpGet("evento-proximo")]
@@ -51,26 +44,19 @@ namespace Esfsg.API.Controllers
         {
             const string key = "evento-proximo-key";
 
-            try
+            var response = _memoryCacheService.Get<EventoProximoResponse>(key);
+
+            if (response is null)
             {
-                var response = _memoryCacheService.Get<EventoProximoResponse>(key);
+                response = await _dashboardService.ConsultarEventoProximo(IdRegiao);
 
-                if (response is null)
-                {
-                    response = await _dashboardService.ConsultarEventoProximo(IdRegiao);
+                if (response == null)
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null)
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
     }
 }

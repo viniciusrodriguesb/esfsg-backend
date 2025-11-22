@@ -21,64 +21,37 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Consulta os pastores no banco de dados.")]
         public async Task<IActionResult> Consultar()
         {
-            try
-            {
-                var response = await _pastorService.Consultar();
 
-                if (response == null || !response.Any())
-                    return NotFound("Nenhum registro encontrado.");
+            var response = await _pastorService.Consultar();
+            if (response == null || !response.Any())
+                return NotFound("Nenhum registro encontrado.");
 
-                return StatusCode(StatusCodes.Status200OK, response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return StatusCode(StatusCodes.Status200OK, response);
         }
 
         [HttpPost]
         [SwaggerOperation(Summary = "Inclui um pastor no banco de dados.")]
         public async Task<IActionResult> Incluir([FromBody] string NovoNome)
         {
-            try
-            {
-                await _pastorService.Incluir(NovoNome);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            await _pastorService.Incluir(NovoNome);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpDelete]
         [SwaggerOperation(Summary = "Exclui um pastor no banco de dados.")]
         public async Task<IActionResult> Excluir(int Id)
         {
-            try
-            {
-                await _pastorService.Excluir(Id);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            await _pastorService.Excluir(Id);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpPut]
         [SwaggerOperation(Summary = "Edita um pastor no banco de dados.")]
         public async Task<IActionResult> Editar([FromQuery] int Id, [FromBody] string NovoNome)
         {
-            try
-            {
-                await _pastorService.Editar(Id, NovoNome);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            await _pastorService.Editar(Id, NovoNome);
+            return StatusCode(StatusCodes.Status200OK);
         }
+
     }
 }

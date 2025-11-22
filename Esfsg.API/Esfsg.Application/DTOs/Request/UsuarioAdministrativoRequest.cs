@@ -9,6 +9,6 @@ namespace Esfsg.Application.DTOs.Request
         public string CPF { get; set; }
 
         [Required(ErrorMessage = "Para acessar o administrativo é necessário inserir a senha.")]
-        public string Senha { get; set; }
+        public string Senha { get; set; } = string.Empty;
     }
 }

@@ -47,7 +47,7 @@ namespace Esfsg.Application.Services
                                         IdInscricao = x.Id,
                                         Valor = x.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase) ? x.IdEventoNavigation.ValorIntegral : x.IdEventoNavigation.ValorParcial,
                                         CPF = x.IdUsuarioNavigation.Cpf,
-                                        Email = x.IdUsuarioNavigation.Email
+                                        Email = x.IdUsuarioNavigation.Email ?? string.Empty
                                     }).ToListAsync();
 
             foreach (var inscricao in inscricoes)
@@ -73,11 +73,11 @@ namespace Esfsg.Application.Services
                                         IdInscricao = x.Id,
                                         Valor = x.Periodo.Equals("Integral", StringComparison.OrdinalIgnoreCase) ? x.IdEventoNavigation.ValorIntegral : x.IdEventoNavigation.ValorParcial,
                                         CPF = x.IdUsuarioNavigation.Cpf,
-                                        Email = x.IdUsuarioNavigation.Email
+                                        Email = x.IdUsuarioNavigation.Email ?? string.Empty
                                     }).FirstOrDefaultAsync();
 
             if (inscricao == null)
-                throw new ArgumentException("Número de inscrição não encontrado.");
+                throw new NotFoundException("Número de inscrição não encontrado.");
 
             await CriarPagamentoPixAsync(inscricao);
         }
@@ -94,7 +94,7 @@ namespace Esfsg.Application.Services
             foreach (var inscricao in inscricoes)
             {
                 var pagamento = inscricao.Pagamentos.Where(x => x.IdInscricao == inscricao.Id &&
-                                                                x.DhExpiracao >= DateTime.Now)
+                                                                x.DhExpiracao >= DateTime.UtcNow)
                                                     .FirstOrDefault();
 
                 if (pagamento == null)
@@ -139,7 +139,7 @@ namespace Esfsg.Application.Services
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://api.mercadopago.com/v1/payments");
 
-            PreencherContentHeaders(request, json);
+            PreencherContentHeaders(request, json, dadosPagamento.IdInscricao);
 
             HttpResponseMessage response;
             string responseContent;
@@ -184,8 +184,9 @@ namespace Esfsg.Application.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao atualizar informações da inscrição {InscricaoId}", inscricao.Id);
                 await transaction.RollbackAsync();
             }
         }
@@ -199,7 +200,7 @@ namespace Esfsg.Application.Services
             return await _context.PAGAMENTO
                                  .AsNoTracking()
                                  .AnyAsync(x => x.IdInscricao == IdInscricao &&
-                                                x.DhExpiracao >= DateTime.Now);
+                                                x.DhExpiracao >= DateTime.UtcNow);
         }
 
         private PagamentoPixResponse PreencherObjetoDadosPagamento(string? responseContent)
@@ -255,11 +256,14 @@ namespace Esfsg.Application.Services
             return json;
         }
 
-        private void PreencherContentHeaders(HttpRequestMessage? request, string? json)
+        private void PreencherContentHeaders(HttpRequestMessage? request, string? json, int? inscricaoId)
         {
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["token_pagamento"]);
-            request.Headers.Add("X-Idempotency-Key", $"idempotency_{Guid.NewGuid():N}");
+
+            var key = inscricaoId.HasValue ? $"inscricao_{inscricaoId.Value}" : $"idempotency_{Guid.NewGuid():N}";
+            request.Headers.Remove("X-Idempotency-Key");
+            request.Headers.Add("X-Idempotency-Key", key);
         }
 
         private async Task PersistirDadosPagamento(int InscricaoId, PagamentoRequest dadosPagamento, PagamentoPixResponse retornoAPI, string? responseContent)
@@ -276,8 +280,8 @@ namespace Esfsg.Application.Services
                     QrCodeBase64 = retornoAPI.QrCode,
                     StatusRetornoApi = retornoAPI.Status,
                     DhExpiracao = retornoAPI.DataExpiracao,
-                    MensagemResposta = responseContent,
-                    DhInclusao = DateTime.Now
+                    MensagemResposta = responseContent ?? string.Empty,
+                    DhInclusao = DateTime.UtcNow
                 };
 
                 await _context.PAGAMENTO.AddAsync(pagamento);

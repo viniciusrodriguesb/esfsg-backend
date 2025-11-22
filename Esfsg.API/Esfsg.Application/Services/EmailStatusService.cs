@@ -207,7 +207,7 @@ namespace Esfsg.Application.Services
         {
             return await _context.PAGAMENTO.AsNoTracking()
                                            .Where(x => x.IdInscricao == IdInscricao &&
-                                                       x.DhExpiracao >= DateTime.Now)
+                                                       x.DhExpiracao >= DateTime.UtcNow)
                                            .Select(x => new QrCodePagamentoResponse()
                                            {
                                                PixCopiaCola = x.CodigoPix,
@@ -217,28 +217,23 @@ namespace Esfsg.Application.Services
         }
         private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao, bool enviado)
         {
-            var logExistente = await _context.EMAIL_LOG.FirstOrDefaultAsync(x => x.IdInscricao == IdInscricao && x.IdStatus == (int)status);
+            var rows = await _context.EMAIL_LOG
+                                     .Where(x => x.IdInscricao == IdInscricao && x.IdStatus == (int)status)
+                                     .ExecuteUpdateAsync(s => s.SetProperty(p => p.Enviado, enviado)
+                                                                .SetProperty(p => p.DhEnvio, DateTime.UtcNow));
 
-            if (logExistente != null)
+            if (rows > 0)
+                return;
+
+            var novoLog = new EMAIL_LOG()
             {
-                logExistente.Enviado = enviado;
-                logExistente.DhEnvio = DateTime.Now;
+                IdInscricao = IdInscricao,
+                IdStatus = (int)status,
+                Enviado = enviado,
+                DhEnvio = DateTime.UtcNow
+            };
 
-                _context.EMAIL_LOG.Update(logExistente);
-            }
-            else
-            {
-                var novoLog = new EMAIL_LOG()
-                {
-                    IdInscricao = IdInscricao,
-                    IdStatus = (int)status,
-                    Enviado = enviado,
-                    DhEnvio = DateTime.Now
-                };
-
-                await _context.EMAIL_LOG.AddAsync(novoLog);
-            }
-
+            await _context.EMAIL_LOG.AddAsync(novoLog);
             await _context.SaveChangesAsync();
         }
 

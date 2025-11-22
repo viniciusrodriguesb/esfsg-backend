@@ -10,7 +10,7 @@ namespace Esfsg.Application.Helpers
         public static byte[] ExportarParaPdf(IEnumerable<T> dados, string titulo = "Relatório")
         {
             if (dados == null || !dados.Any())
-                throw new ArgumentNullException(nameof(dados));
+                throw new NotFoundException(nameof(dados));
 
             var propriedades = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 

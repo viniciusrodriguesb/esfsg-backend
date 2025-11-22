@@ -25,30 +25,16 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Consulta inscrições pendentes de liberação, permitidas para o CPF logado visualizar.")]
         public async Task<IActionResult> ConsultarInscricoesParaLiberacao([FromQuery] InscricoesPendentesRequest request, [FromQuery] PaginacaoRequest Paginacao)
         {
-            try
-            {
-                var result = await _gestaoInscricaoService.ConsultarInscricoesParaLiberacao(request, Paginacao);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            var result = await _gestaoInscricaoService.ConsultarInscricoesParaLiberacao(request, Paginacao);
+            return Ok(result);
         }
 
         [HttpGet]
         [SwaggerOperation(Summary = "Consulta com filtro de todas as pessoas inscritas.")]
         public async Task<IActionResult> ConsultarInscricoes([FromQuery] FiltroGestaoInscricaoRequest Filtro, [FromQuery] PaginacaoRequest Paginacao)
         {
-            try
-            {
-                var result = await _gestaoInscricaoService.ConsultarInscricoes(Filtro, Paginacao);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            var result = await _gestaoInscricaoService.ConsultarInscricoes(Filtro, Paginacao);
+            return Ok(result);
         }
 
         [HttpPost("aprovar")]
@@ -58,23 +44,12 @@ namespace Esfsg.API.Controllers
             if (Ids == null || !Ids.Any())
                 return StatusCode(StatusCodes.Status400BadRequest, "Nenhuma inscrição foi informada para aprovação.");
 
-            try
+            foreach (var id in Ids)
             {
-                foreach (var id in Ids)
-                {
-                    await _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id);
-                }
+                await _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id);
+            }
 
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpPost("cancelar")]
@@ -84,25 +59,12 @@ namespace Esfsg.API.Controllers
             if (Ids == null || !Ids.Any())
                 return StatusCode(StatusCodes.Status400BadRequest, "Nenhuma inscrição foi informada para aprovação.");
 
-            try
+            foreach (var id in Ids)
             {
-                foreach (var id in Ids)
-                {
-                    await _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, id);
-                }
+                await _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, id);
+            }
 
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (ArgumentException ex)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return StatusCode(StatusCodes.Status200OK);
         }
-
-
     }
 }

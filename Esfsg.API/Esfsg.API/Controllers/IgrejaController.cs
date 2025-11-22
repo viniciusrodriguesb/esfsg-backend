@@ -30,71 +30,42 @@ namespace Esfsg.API.Controllers
         {
             const string key = "igrejas-key";
 
-            try
+            var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+            if (response is null || _env.IsDevelopment())
             {
-                var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+                response = await _igrejaService.ConsultarIgrejas();
 
-                if (response is null || _env.IsDevelopment())
-                {
-                    response = await _igrejaService.ConsultarIgrejas();
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null || !response.Any())
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
 
         [HttpPost]
         [SwaggerOperation(Summary = "Inclui uma nova igreja no banco de dados.")]
         public async Task<IActionResult> IncluirIgreja([FromBody] IgrejaRequest request)
         {
-            try
-            {
-                await _igrejaService.IncluirIgreja(request);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _igrejaService.IncluirIgreja(request);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpDelete]
         [SwaggerOperation(Summary = "Exclui uma igreja no banco de dados.")]
         public async Task<IActionResult> ExcluirIgreja([FromQuery] int Id)
         {
-            try
-            {
-                await _igrejaService.ExcluirIgreja(Id);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _igrejaService.ExcluirIgreja(Id);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpPut]
         [SwaggerOperation(Summary = "Edita uma igreja no banco de dados.")]
         public async Task<IActionResult> EditarIgreja([FromQuery] int Id, [FromBody] string NovoNome)
         {
-            try
-            {
-                await _igrejaService.EditarIgreja(Id, NovoNome);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _igrejaService.EditarIgreja(Id, NovoNome);
+            return StatusCode(StatusCodes.Status200OK);
         }
     }
 }

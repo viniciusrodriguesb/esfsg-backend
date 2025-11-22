@@ -30,71 +30,43 @@ namespace Esfsg.API.Controllers
         {
             const string key = "condicoes-medicas-key";
 
-            try
+            var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+
+            if (response is null || _env.IsDevelopment())
             {
-                var response = _memoryCacheService.Get<List<TabelaDominioResponse>>(key);
+                response = await _condicaoMedicaService.ConsultarCondicoesMedicas();
 
-                if (response is null || _env.IsDevelopment())
-                {
-                    response = await _condicaoMedicaService.ConsultarCondicoesMedicas();
+                if (response == null || !response.Any())
+                    return NotFound("Nenhum registro encontrado.");
 
-                    if (response == null || !response.Any())
-                        return NotFound("Nenhum registro encontrado.");
-
-                    _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
-                }
-
-                return Ok(response);
+                _memoryCacheService.Set(key, response, TimeSpan.FromMinutes(60));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(response);
         }
 
         [HttpPost]
         [SwaggerOperation(Summary = "Inclui uma nova condição médica no banco de dados.")]
         public async Task<IActionResult> IncluirCondicaoMedica([FromBody] string Nome)
         {
-            try
-            {
-                await _condicaoMedicaService.IncluirCondicaoMedica(Nome);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _condicaoMedicaService.IncluirCondicaoMedica(Nome);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpDelete]
         [SwaggerOperation(Summary = "Exclui uma condição médica no banco de dados.")]
         public async Task<IActionResult> ExcluirCondicaoMedica([FromQuery] int Id)
         {
-            try
-            {
-                await _condicaoMedicaService.ExcluirCondicaoMedica(Id);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _condicaoMedicaService.ExcluirCondicaoMedica(Id);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [HttpPut]
         [SwaggerOperation(Summary = "Edita uma condição médica no banco de dados.")]
         public async Task<IActionResult> EditarCondicaoMedica([FromQuery] int Id, [FromBody] string NovoNome)
         {
-            try
-            {
-                await _condicaoMedicaService.EditarCondicaoMedica(Id, NovoNome);
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _condicaoMedicaService.EditarCondicaoMedica(Id, NovoNome);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
     }

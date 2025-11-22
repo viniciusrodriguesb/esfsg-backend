@@ -14,7 +14,7 @@ namespace Esfsg.Infra.CrossCutting.IoC
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Swagger Documentação Web API",
-                    Contact = new OpenApiContact() { Name = "Esfsg", Email = "suporte@esfrsg.com" }
+                    Contact = new OpenApiContact() { Name = "ESFRSG", Email = "suporte@esfrsg.com" }
                 });
                 //c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 //{

@@ -70,7 +70,7 @@ namespace Esfsg.Application.Services
                 };
             }
 
-            if (usuario.IdTipoUsuario == (int)TipoUsuarioEnum.PARTICIPANTE)
+            if (usuario.IdTipoUsuario == (int)TipoUsuarioEnum.PARTICIPANTE || string.IsNullOrWhiteSpace(usuario.Senha))
             {
                 return new ResultResponse<UsuarioAdministrativoResponse>()
                 {
@@ -122,14 +122,14 @@ namespace Esfsg.Application.Services
 
                 var usuario = new USUARIO()
                 {
-                    NomeCompleto = request.NomeCompleto,
+                    NomeCompleto = request.NomeCompleto ?? string.Empty,
                     Cpf = request.Cpf,
                     Email = request.Email,
                     Telefone = request.Telefone,
                     Pcd = request.Pcd,
                     Senha = senhaCriptografada,
                     Dons = request.Dons,
-                    DhInscricao = DateTime.Now,
+                    DhInscricao = DateTime.UtcNow,
                     IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
                     IdIgreja = request.IdIgreja,
                     Nascimento = request.Nascimento,
