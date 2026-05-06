@@ -114,7 +114,7 @@ namespace Esfsg.Application.Services
         public async Task GerirBloqueiosUsuario()
         {
             var inscricoes = await _context.INSCRICAO
-                                           .Where(x => x.IdEventoNavigation.DhEvento < DateTime.UtcNow)
+                                           .Where(x => x.IdEventoNavigation.DhEvento < DateTime.Now)
                                            .Include(i => i.IdUsuarioNavigation)
                                            .Include(i => i.CheckIns)
                                            .ToListAsync();
@@ -145,7 +145,7 @@ namespace Esfsg.Application.Services
 
                     if (dadosUsuario.DhExclusao == null)
                     {
-                        dadosUsuario.DhExclusao = DateTime.UtcNow;
+                        dadosUsuario.DhExclusao = DateTime.Now;
                         dadosUsuario.MotivoExclusao = "Participante não compareceu no último evento.";
                         houveAlteracao = true;
                     }

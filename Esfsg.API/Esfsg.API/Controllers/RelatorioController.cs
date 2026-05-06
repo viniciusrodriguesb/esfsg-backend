@@ -48,7 +48,7 @@ namespace Esfsg.API.Controllers
         public async Task<IActionResult> GerarRelatorioPorFuncao([FromQuery] int IdEvento)
         {
             var resultadoZip = await _relatorioService.GerarRelatorioPorFuncao(IdEvento);
-            var nomeArquivo = $"Relatorios_Funcoes_{DateTime.UtcNow:yyyyMMdd_HHmmss}.zip";
+            var nomeArquivo = $"Relatorios_Funcoes_{DateTime.Now:yyyyMMdd_HHmmss}.zip";
             return File(resultadoZip, "application/zip", nomeArquivo);
         }
     }

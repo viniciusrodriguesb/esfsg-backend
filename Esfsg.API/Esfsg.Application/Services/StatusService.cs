@@ -38,13 +38,13 @@ namespace Esfsg.Application.Services
             var status = await _context.INSCRICAO_STATUS
                                        .Where(x => x.DhExclusao == null &&
                                                    x.InscricaoId == IdInscricao)
-                                       .ExecuteUpdateAsync(s => s.SetProperty(d => d.DhExclusao, DateTime.UtcNow));
+                                       .ExecuteUpdateAsync(s => s.SetProperty(d => d.DhExclusao, DateTime.Now));
 
             var novo = new INSCRICAO_STATUS()
             {
                 StatusId = (int)novoStatus,
                 InscricaoId = IdInscricao,
-                DhInclusao = DateTime.UtcNow
+                DhInclusao = DateTime.Now
             };
 
             await _context.INSCRICAO_STATUS.AddAsync(novo);

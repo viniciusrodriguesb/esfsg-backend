@@ -129,7 +129,7 @@ namespace Esfsg.Application.Services
                     Pcd = request.Pcd,
                     Senha = senhaCriptografada,
                     Dons = request.Dons,
-                    DhInscricao = DateTime.UtcNow,
+                    DhInscricao = DateTime.Now,
                     IdTipoUsuario = (int)TipoUsuarioEnum.PARTICIPANTE,
                     IdIgreja = request.IdIgreja,
                     Nascimento = request.Nascimento,

@@ -33,7 +33,7 @@ namespace Esfsg.Application.Services
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.hostinger.com",
+                    Host = "smtp.gmail.com",
                     Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,

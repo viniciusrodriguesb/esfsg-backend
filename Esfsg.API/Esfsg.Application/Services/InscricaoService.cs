@@ -151,14 +151,14 @@ namespace Esfsg.Application.Services
             {
                 InscricaoId = IdInscricao,
                 StatusId = (int)StatusEnum.ENVIADA,
-                DhInclusao = DateTime.UtcNow,
+                DhInclusao = DateTime.Now,
                 DhExclusao = null
             };
 
             await _context.INSCRICAO_STATUS.AddAsync(enviada);
             await _context.SaveChangesAsync();
 
-            enviada.DhExclusao = DateTime.UtcNow;
+            enviada.DhExclusao = DateTime.Now;
             _context.INSCRICAO_STATUS.Update(enviada);
             await _context.SaveChangesAsync();
 
@@ -166,7 +166,7 @@ namespace Esfsg.Application.Services
             {
                 InscricaoId = IdInscricao,
                 StatusId = (int)StatusEnum.AGUARDANDO_LIBERACAO,
-                DhInclusao = DateTime.UtcNow,
+                DhInclusao = DateTime.Now,
                 DhExclusao = null
             };
 

@@ -94,7 +94,7 @@ namespace Esfsg.Application.Services
             foreach (var inscricao in inscricoes)
             {
                 var pagamento = inscricao.Pagamentos.Where(x => x.IdInscricao == inscricao.Id &&
-                                                                x.DhExpiracao >= DateTime.UtcNow)
+                                                                x.DhExpiracao >= DateTime.Now)
                                                     .FirstOrDefault();
 
                 if (pagamento == null)
@@ -200,7 +200,7 @@ namespace Esfsg.Application.Services
             return await _context.PAGAMENTO
                                  .AsNoTracking()
                                  .AnyAsync(x => x.IdInscricao == IdInscricao &&
-                                                x.DhExpiracao >= DateTime.UtcNow);
+                                                x.DhExpiracao >= DateTime.Now);
         }
 
         private PagamentoPixResponse PreencherObjetoDadosPagamento(string? responseContent)
@@ -248,7 +248,7 @@ namespace Esfsg.Application.Services
                     }
                 },
                 description = "Pagamento Inscrição EsF",
-                date_of_expiration = DateTime.UtcNow.AddHours(240).ToString("yyyy-MM-ddTHH:mm:ss.fffzzz")
+                date_of_expiration = DateTime.Now.AddHours(240).ToString("yyyy-MM-ddTHH:mm:ss.fffzzz")
             };
 
             var json = JsonSerializer.Serialize(body);
@@ -281,7 +281,7 @@ namespace Esfsg.Application.Services
                     StatusRetornoApi = retornoAPI.Status,
                     DhExpiracao = retornoAPI.DataExpiracao,
                     MensagemResposta = responseContent ?? string.Empty,
-                    DhInclusao = DateTime.UtcNow
+                    DhInclusao = DateTime.Now
                 };
 
                 await _context.PAGAMENTO.AddAsync(pagamento);
