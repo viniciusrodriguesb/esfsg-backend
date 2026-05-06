@@ -4,6 +4,7 @@ using Esfsg.Application.Interfaces;
 using Esfsg.Domain.Models;
 using Esfsg.Infra.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Esfsg.Application.Services
 {
@@ -11,12 +12,14 @@ namespace Esfsg.Application.Services
     {
 
         #region Construtor
-        private readonly DbContextBase _context;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IEmailService _emailService;
-        public EmailStatusService(DbContextBase context, IEmailService emailService)
+        private readonly DbContextBase _context;
+        public EmailStatusService(IServiceScopeFactory serviceScopeFactory, IEmailService emailService, DbContextBase context)
         {
-            _context = context;
+            _serviceScopeFactory = serviceScopeFactory;
             _emailService = emailService;
+            _context = context;
         }
         #endregion
 
@@ -28,32 +31,34 @@ namespace Esfsg.Application.Services
 
             var stringBody = await ObterBodyEmail(StatusEnum.ENVIADA);
 
-            foreach (var usuario in dadosUsuarios)
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
+
+            await Parallel.ForEachAsync(dadosUsuarios, options, async (usuario, ct) =>
             {
-                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.ENVIADA, usuario);
+                await using var scope = _serviceScopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<DbContextBase>();
+
+                var emailJaEnviado = await ValidarEnvioEmailStatus(context, StatusEnum.ENVIADA, usuario);
 
                 if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
-                    continue;
+                    return;
 
-                var map = new Dictionary<string, string>()
+                var body = SubstituirAtributos(stringBody, new Dictionary<string, string>
                 {
-                    {"{nome}", usuario.NomeCompleto },
-                    {"{evento}", usuario.Evento }
-                };
-
-                var body = SubstituirAtributos(stringBody, map);
+                    { "{nome}", usuario.NomeCompleto },
+                    { "{evento}", usuario.Evento }
+                });
 
                 try
                 {
                     await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
-                    await GravarLogEnvioEmail(StatusEnum.ENVIADA, usuario.IdInscricao, true);
+                    await GravarLogEnvioEmail(context, StatusEnum.ENVIADA, usuario.IdInscricao, true);
                 }
                 catch (Exception)
                 {
-                    await GravarLogEnvioEmail(StatusEnum.ENVIADA, usuario.IdInscricao, false);
+                    await GravarLogEnvioEmail(context, StatusEnum.ENVIADA, usuario.IdInscricao, false);
                 }
-
-            }
+            });
         }
 
         public async Task EnviarEmailQrCodePagamento()
@@ -64,14 +69,19 @@ namespace Esfsg.Application.Services
 
             var stringBody = await ObterBodyEmail(StatusEnum.AGUARDANDO_PAGAMENTO);
 
-            foreach (var usuario in dadosUsuarios)
-            {
-                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.AGUARDANDO_PAGAMENTO, usuario);
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
 
-                var qrCodePagamento = await ObterQrCodePagamento(usuario.IdInscricao);
+            await Parallel.ForEachAsync(dadosUsuarios, options, async (usuario, ct) =>
+            {
+                await using var scope = _serviceScopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<DbContextBase>();
+
+                var emailJaEnviado = await ValidarEnvioEmailStatus(context, StatusEnum.AGUARDANDO_PAGAMENTO, usuario);
+
+                var qrCodePagamento = await ObterQrCodePagamento(context, usuario.IdInscricao);
 
                 if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario) || qrCodePagamento == null)
-                    continue;
+                    return;
 
                 var map = new Dictionary<string, string>()
                 {
@@ -86,14 +96,14 @@ namespace Esfsg.Application.Services
                 try
                 {
                     await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
-                    await GravarLogEnvioEmail(StatusEnum.AGUARDANDO_PAGAMENTO, usuario.IdInscricao, true);
+                    await GravarLogEnvioEmail(context, StatusEnum.AGUARDANDO_PAGAMENTO, usuario.IdInscricao, true);
                 }
                 catch (Exception)
                 {
-                    await GravarLogEnvioEmail(StatusEnum.AGUARDANDO_PAGAMENTO, usuario.IdInscricao, false);
+                    await GravarLogEnvioEmail(context, StatusEnum.AGUARDANDO_PAGAMENTO, usuario.IdInscricao, false);
                 }
 
-            }
+            });
         }
 
         public async Task EnviarEmailQrCodeAcesso()
@@ -103,12 +113,17 @@ namespace Esfsg.Application.Services
 
             var stringBody = await ObterBodyEmail(StatusEnum.PAGAMENTO_CONFIRMADO);
 
-            foreach (var usuario in dadosUsuarios)
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
+
+            await Parallel.ForEachAsync(dadosUsuarios, options, async (usuario, ct) =>
             {
-                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.PAGAMENTO_CONFIRMADO, usuario);
+                await using var scope = _serviceScopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<DbContextBase>();
+
+                var emailJaEnviado = await ValidarEnvioEmailStatus(context, StatusEnum.PAGAMENTO_CONFIRMADO, usuario);
 
                 if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
-                    continue;
+                    return;
 
                 var map = new Dictionary<string, string>()
                 {
@@ -121,14 +136,14 @@ namespace Esfsg.Application.Services
                 try
                 {
                     await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
-                    await GravarLogEnvioEmail(StatusEnum.PAGAMENTO_CONFIRMADO, usuario.IdInscricao, true);
+                    await GravarLogEnvioEmail(context, StatusEnum.PAGAMENTO_CONFIRMADO, usuario.IdInscricao, true);
                 }
                 catch (Exception)
                 {
-                    await GravarLogEnvioEmail(StatusEnum.PAGAMENTO_CONFIRMADO, usuario.IdInscricao, false);
+                    await GravarLogEnvioEmail(context, StatusEnum.PAGAMENTO_CONFIRMADO, usuario.IdInscricao, false);
                 }
 
-            }
+            });
         }
 
         public async Task EnviarEmailCancelamentoInscricao()
@@ -138,12 +153,17 @@ namespace Esfsg.Application.Services
 
             var stringBody = await ObterBodyEmail(StatusEnum.CANCELADA);
 
-            foreach (var usuario in dadosUsuarios)
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
+
+            await Parallel.ForEachAsync(dadosUsuarios, options, async (usuario, ct) =>
             {
-                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.CANCELADA, usuario);
+                await using var scope = _serviceScopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<DbContextBase>();
+
+                var emailJaEnviado = await ValidarEnvioEmailStatus(context, StatusEnum.CANCELADA, usuario);
 
                 if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
-                    continue;
+                    return;
 
                 var map = new Dictionary<string, string>()
                 {
@@ -156,14 +176,14 @@ namespace Esfsg.Application.Services
                 try
                 {
                     await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
-                    await GravarLogEnvioEmail(StatusEnum.CANCELADA, usuario.IdInscricao, true);
+                    await GravarLogEnvioEmail(context, StatusEnum.CANCELADA, usuario.IdInscricao, true);
                 }
                 catch (Exception)
                 {
-                    await GravarLogEnvioEmail(StatusEnum.CANCELADA, usuario.IdInscricao, false);
+                    await GravarLogEnvioEmail(context, StatusEnum.CANCELADA, usuario.IdInscricao, false);
                 }
 
-            }
+            });
         }
 
         public async Task EnviarEmailReembolso()
@@ -173,12 +193,17 @@ namespace Esfsg.Application.Services
 
             var stringBody = await ObterBodyEmail(StatusEnum.REEMBOLSO_SOLICITADO);
 
-            foreach (var usuario in dadosUsuarios)
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
+
+            await Parallel.ForEachAsync(dadosUsuarios, options, async (usuario, ct) =>
             {
-                var emailJaEnviado = await ValidarEnvioEmailStatus(StatusEnum.REEMBOLSO_SOLICITADO, usuario);
+                await using var scope = _serviceScopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<DbContextBase>();
+
+                var emailJaEnviado = await ValidarEnvioEmailStatus(context, StatusEnum.REEMBOLSO_SOLICITADO, usuario);
 
                 if (emailJaEnviado || string.IsNullOrWhiteSpace(usuario.EmailUsuario))
-                    continue;
+                    return;
 
                 var map = new Dictionary<string, string>()
                 {
@@ -191,23 +216,23 @@ namespace Esfsg.Application.Services
                 try
                 {
                     await _emailService.SendEmailAsync(usuario.EmailUsuario, subtitulo, body);
-                    await GravarLogEnvioEmail(StatusEnum.REEMBOLSO_SOLICITADO, usuario.IdInscricao, true);
+                    await GravarLogEnvioEmail(context, StatusEnum.REEMBOLSO_SOLICITADO, usuario.IdInscricao, true);
                 }
                 catch (Exception)
                 {
-                    await GravarLogEnvioEmail(StatusEnum.REEMBOLSO_SOLICITADO, usuario.IdInscricao, false);
+                    await GravarLogEnvioEmail(context, StatusEnum.REEMBOLSO_SOLICITADO, usuario.IdInscricao, false);
                 }
 
-            }
+            });
         }
 
         #region Métodos Privados
 
-        private async Task<QrCodePagamentoResponse?> ObterQrCodePagamento(int IdInscricao)
+        private async Task<QrCodePagamentoResponse?> ObterQrCodePagamento(DbContextBase context, int IdInscricao)
         {
-            return await _context.PAGAMENTO.AsNoTracking()
+            return await context.PAGAMENTO.AsNoTracking()
                                            .Where(x => x.IdInscricao == IdInscricao &&
-                                                       x.DhExpiracao >= DateTime.UtcNow)
+                                                       x.DhExpiracao >= DateTime.Now)
                                            .Select(x => new QrCodePagamentoResponse()
                                            {
                                                PixCopiaCola = x.CodigoPix,
@@ -215,11 +240,11 @@ namespace Esfsg.Application.Services
                                                DataExpiracao = x.DhExpiracao.ToString("dd/MM/yyyy")
                                            }).FirstOrDefaultAsync();
         }
-        private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao, bool enviado)
+        private async Task GravarLogEnvioEmail(DbContextBase context, StatusEnum status, int IdInscricao, bool enviado)
         {
             var agora = DateTime.Now;
 
-            var rows = await _context.EMAIL_LOG
+            var rows = await context.EMAIL_LOG
                 .Where(x => x.IdInscricao == IdInscricao && x.IdStatus == (int)status)
                 .ExecuteUpdateAsync(s => s.SetProperty(p => p.Enviado, enviado)
                                           .SetProperty(p => p.DhEnvio, agora));
@@ -235,16 +260,16 @@ namespace Esfsg.Application.Services
                 DhEnvio = DateTime.Now
             };
 
-            await _context.EMAIL_LOG.AddAsync(novoLog);
-            await _context.SaveChangesAsync();
+            await context.EMAIL_LOG.AddAsync(novoLog);
+            await context.SaveChangesAsync();
         }
 
-        private async Task<bool> ValidarEnvioEmailStatus(StatusEnum status, DadosInscricaoEmailResponse usuario)
+        private async Task<bool> ValidarEnvioEmailStatus(DbContextBase context, StatusEnum status, DadosInscricaoEmailResponse usuario)
         {
-            var emailJaEnviado = await _context.EMAIL_LOG.AsNoTracking()
-                                                .AnyAsync(x => x.IdInscricao == usuario.IdInscricao &&
-                                                               x.IdStatus == (int)status &&
-                                                               x.Enviado);
+            var emailJaEnviado = await context.EMAIL_LOG.AsNoTracking()
+                                                        .AnyAsync(x => x.IdInscricao == usuario.IdInscricao &&
+                                                                       x.IdStatus == (int)status &&
+                                                                       x.Enviado);
 
             return emailJaEnviado;
         }
@@ -257,11 +282,10 @@ namespace Esfsg.Application.Services
                                                IdInscricao = x.Id,
                                                NomeCompleto = x.IdUsuarioNavigation.NomeCompleto,
                                                EmailUsuario = x.IdUsuarioNavigation.Email,
-                                               Evento = x.IdEventoNavigation.Nome,
-                                               IdsStatusInscricao = x.InscricaoStatus.Select(x => x.StatusId).ToList()
+                                               Evento = x.IdEventoNavigation.Nome
                                            }).ToListAsync();
         }
-        private async Task<string> ObterBodyEmail(StatusEnum status)
+        private async Task<string?> ObterBodyEmail(StatusEnum status)
         {
             return await _context.EMAIL_BODY.AsNoTracking()
                                             .Where(x => x.IdStatus == (int)status)
