@@ -217,10 +217,12 @@ namespace Esfsg.Application.Services
         }
         private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao, bool enviado)
         {
+            var agora = DateTime.UtcNow;
+
             var rows = await _context.EMAIL_LOG
-                                     .Where(x => x.IdInscricao == IdInscricao && x.IdStatus == (int)status)
-                                     .ExecuteUpdateAsync(s => s.SetProperty(p => p.Enviado, enviado)
-                                                                .SetProperty(p => p.DhEnvio, DateTime.UtcNow));
+                .Where(x => x.IdInscricao == IdInscricao && x.IdStatus == (int)status)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.Enviado, enviado)
+                                          .SetProperty(p => p.DhEnvio, agora));
 
             if (rows > 0)
                 return;

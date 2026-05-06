@@ -28,7 +28,13 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddHangfire(options =>
             {
                 options.UseConsole()
-                       .UsePostgreSqlStorage(connectionString);
+                       .UsePostgreSqlStorage(connectionString, new PostgreSqlStorageOptions
+                       {
+                           PrepareSchemaIfNecessary = true,
+                           QueuePollInterval = TimeSpan.FromSeconds(15),
+                           InvisibilityTimeout = TimeSpan.FromMinutes(5),
+                           DistributedLockTimeout = TimeSpan.FromMinutes(2)
+                       });
             });
         }
 
