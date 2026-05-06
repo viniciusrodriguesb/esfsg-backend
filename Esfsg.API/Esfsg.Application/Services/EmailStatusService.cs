@@ -217,7 +217,7 @@ namespace Esfsg.Application.Services
         }
         private async Task GravarLogEnvioEmail(StatusEnum status, int IdInscricao, bool enviado)
         {
-            var agora = DateTime.UtcNow;
+            var agora = DateTime.Now;
 
             var rows = await _context.EMAIL_LOG
                 .Where(x => x.IdInscricao == IdInscricao && x.IdStatus == (int)status)
@@ -232,7 +232,7 @@ namespace Esfsg.Application.Services
                 IdInscricao = IdInscricao,
                 IdStatus = (int)status,
                 Enviado = enviado,
-                DhEnvio = DateTime.UtcNow
+                DhEnvio = DateTime.Now
             };
 
             await _context.EMAIL_LOG.AddAsync(novoLog);
