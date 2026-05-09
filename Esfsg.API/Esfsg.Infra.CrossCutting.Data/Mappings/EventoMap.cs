@@ -12,7 +12,7 @@ namespace Esfsg.Infra.Data.Mappings
             builder.ToTable("evento");
 
             builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.DhEvento).HasColumnType("timestamp without time zone").HasColumnName("dh_evento");
+            builder.Property(e => e.DhEvento).HasColumnName("dh_evento");
             builder.Property(e => e.IdIgrejaEvento).HasColumnName("id_igreja_evento");
             builder.Property(e => e.IdIgrejaVigilia).HasColumnName("id_igreja_vigilia");
             builder.Property(e => e.LimiteIntegral).HasColumnName("limite_integral");
