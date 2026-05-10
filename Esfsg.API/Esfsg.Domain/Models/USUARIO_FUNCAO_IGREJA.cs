@@ -6,8 +6,8 @@
         public int FuncaoIgrejaId { get; set; }
 
         #region Navigations
-        public USUARIO UsuarioNavigation { get; set; } = new USUARIO();
-        public FUNCAO_IGREJA FuncaoIgrejaNavigation { get; set; } = new FUNCAO_IGREJA(); 
+        public USUARIO UsuarioNavigation { get; set; } = null!;
+        public FUNCAO_IGREJA FuncaoIgrejaNavigation { get; set; } = null!;
         #endregion
 
     }

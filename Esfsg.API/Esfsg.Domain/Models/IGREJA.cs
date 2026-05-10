@@ -16,8 +16,8 @@ public partial class IGREJA
     public virtual ICollection<EVENTO> EventoIdIgrejaEventoNavigations { get; set; } = new List<EVENTO>();
     public virtual ICollection<EVENTO> EventoIdIgrejaVigiliaNavigations { get; set; } = new List<EVENTO>();
     public virtual ICollection<USUARIO> Usuarios { get; set; } = new List<USUARIO>();
-    public virtual PASTOR PastorNavigation { get; set; } = new PASTOR();
-    public virtual REGIAO RegiaoNavigation { get; set; } = new REGIAO();
+    public virtual PASTOR PastorNavigation { get; set; } = null!;
+    public virtual REGIAO RegiaoNavigation { get; set; } = null!;
 
     #endregion
 

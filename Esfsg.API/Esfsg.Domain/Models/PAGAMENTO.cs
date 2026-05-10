@@ -14,7 +14,7 @@ public partial class PAGAMENTO
 
 
     #region Navigations
-    public virtual INSCRICAO InscricaoNavigation { get; set; } = new INSCRICAO();  
+    public virtual INSCRICAO InscricaoNavigation { get; set; } = null!;
     #endregion
 
 }

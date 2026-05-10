@@ -27,12 +27,12 @@ namespace Esfsg.Application.Services
             if (string.IsNullOrEmpty(request.Cpf))
                 throw new BusinessException("É necessário enviar o CPF para prosseguir com a inscrição.");
 
+            await PersistirIgrejaInexistente(request);
+
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
-            {
-                await PersistirIgrejaInexistente(request);
-
+            {              
                 var usuario = await ValidarUsuario(request.Usuario, request.Cpf);
 
                 await ValidarInscricao(request, usuario);
@@ -152,15 +152,8 @@ namespace Esfsg.Application.Services
                 InscricaoId = IdInscricao,
                 StatusId = (int)StatusEnum.ENVIADA,
                 DhInclusao = DateTime.Now,
-                DhExclusao = null
+                DhExclusao = DateTime.Now
             };
-
-            await _context.INSCRICAO_STATUS.AddAsync(enviada);
-            await _context.SaveChangesAsync();
-
-            enviada.DhExclusao = DateTime.Now;
-            _context.INSCRICAO_STATUS.Update(enviada);
-            await _context.SaveChangesAsync();
 
             var liberacao = new INSCRICAO_STATUS()
             {
@@ -170,8 +163,7 @@ namespace Esfsg.Application.Services
                 DhExclusao = null
             };
 
-            await _context.INSCRICAO_STATUS.AddAsync(liberacao);
-            await _context.SaveChangesAsync();
+            await _context.INSCRICAO_STATUS.AddRangeAsync(enviada, liberacao);
         }
 
         private async Task PersistirVisitaParticipante(int IdInscricao, VisitaInscricaoRequest request)

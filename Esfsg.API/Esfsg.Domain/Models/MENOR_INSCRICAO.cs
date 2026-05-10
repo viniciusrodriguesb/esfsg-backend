@@ -10,8 +10,8 @@
 
         #region Navigations
 
-        public INSCRICAO InscricaoNavigation { get; set; } = new INSCRICAO();
-        public CONDICAO_MEDICA CondicaoMedicaNavigation { get; set; } = new CONDICAO_MEDICA();
+        public INSCRICAO InscricaoNavigation { get; set; } = null!;
+        public CONDICAO_MEDICA CondicaoMedicaNavigation { get; set; } = null!;
 
         #endregion
 

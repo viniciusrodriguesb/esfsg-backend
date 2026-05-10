@@ -19,9 +19,9 @@ public partial class INSCRICAO
 
     #region Navigations
 
-    public virtual EVENTO IdEventoNavigation { get; set; } = new EVENTO();
-    public virtual FUNCAO_EVENTO IdFuncaoEventoNavigation { get; set; } = new FUNCAO_EVENTO();
-    public virtual USUARIO IdUsuarioNavigation { get; set; } = new USUARIO();
+    public virtual EVENTO? IdEventoNavigation { get; set; } 
+    public virtual FUNCAO_EVENTO? IdFuncaoEventoNavigation { get; set; }
+    public virtual USUARIO? IdUsuarioNavigation { get; set; } 
     public virtual ICollection<CHECK_IN> CheckIns { get; set; } = new List<CHECK_IN>();
     public virtual ICollection<INSCRICAO_STATUS> InscricaoStatus { get; set; } = new List<INSCRICAO_STATUS>();
     public virtual ICollection<VISITA_PARTICIPANTE> VisitaParticipantes { get; set; } = new List<VISITA_PARTICIPANTE>();
