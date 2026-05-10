@@ -32,8 +32,8 @@ namespace Esfsg.Application.Services
                                            CPF = x.Cpf,
                                            Email = x.Email,
                                            Telefone = x.Telefone,
-                                           Nascimento = x.Nascimento.ToString("dd/MM/yyyy"),
-                                           Pcd = x.Pcd,
+                                           Nascimento = x.Nascimento,
+                                           Pcd = x.Pcd ?? "N/A",
                                            PossuiDons = x.Dons,
                                            UsuarioBloqueado = x.DhExclusao != null,
                                            TipoUsuario = new TabelaDominioResponse()
@@ -139,7 +139,7 @@ namespace Esfsg.Application.Services
                 await _context.USUARIO.AddAsync(usuario);
                 await _context.SaveChangesAsync();
 
-                if (request.CondicoesMedicas is not null)
+                if (request.CondicoesMedicas is not null || request.CondicoesMedicas?.Count > 0)
                 {
                     var condicoes = request.CondicoesMedicas.Select(item => new USUARIO_CONDICAO_MEDICA
                     {
@@ -150,7 +150,7 @@ namespace Esfsg.Application.Services
                     await _context.USUARIO_CONDICAO_MEDICA.AddRangeAsync(condicoes);
                 }
 
-                if (request.Instrumentos is not null)
+                if (request.Instrumentos is not null || request.Instrumentos?.Count > 0)
                 {
                     var instrumentos = request.Instrumentos.Select(item => new USUARIO_INSTRUMENTO
                     {
@@ -161,7 +161,7 @@ namespace Esfsg.Application.Services
                     await _context.USUARIO_INSTRUMENTO.AddRangeAsync(instrumentos);
                 }
 
-                if (request.FuncoesIgreja is not null)
+                if (request.FuncoesIgreja is not null || request.FuncoesIgreja?.Count > 0)
                 {
                     var funcoes = request.FuncoesIgreja.Select(item => new USUARIO_FUNCAO_IGREJA
                     {
@@ -182,7 +182,7 @@ namespace Esfsg.Application.Services
             }
         }
 
-        
+
 
         public async Task<ResultResponse<UsuarioEditadoResponse>> AlterarUsuario(AlterarUsuarioRequest request)
         {
@@ -224,7 +224,7 @@ namespace Esfsg.Application.Services
             if (request.IdClasse.HasValue)
                 usuario.IdClasse = request.IdClasse.Value;
 
-            await _context.SaveChangesAsync();           
+            await _context.SaveChangesAsync();
 
             return new ResultResponse<UsuarioEditadoResponse>
             {

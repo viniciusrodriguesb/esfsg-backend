@@ -2,19 +2,19 @@
 {
     public class DashboardResponse
     {
-        public DadosInscritos Inscritos { get; set; }
-        public DadosInscritosPeriodo InscritosPeriodo { get; set; }
-        public DadosVisita InscritosVisita { get; set; }
-        public DadosPagamento Arrecadacao { get; set; }
+        public DadosInscritos Inscritos { get; set; } = new DadosInscritos();
+        public DadosInscritosPeriodo InscritosPeriodo { get; set; } = new DadosInscritosPeriodo();
+        public DadosVisita InscritosVisita { get; set; } = new DadosVisita();
+        public DadosPagamento Arrecadacao { get; set; } = new DadosPagamento();
     }
 
     public class DadosInscritos
     {
-        public DadosQuantitativo Confirmados { get; set; }
-        public DadosQuantitativo AguardandoLiberacao { get; set; }
-        public DadosQuantitativo Pendentes { get; set; }
-        public DadosQuantitativo Cancelados { get; set; }
-        public DadosQuantitativo ReembolsoSolicitado { get; set; }
+        public DadosQuantitativo Confirmados { get; set; } = new DadosQuantitativo();
+        public DadosQuantitativo AguardandoLiberacao { get; set; } = new DadosQuantitativo();
+        public DadosQuantitativo Pendentes { get; set; } = new DadosQuantitativo();
+        public DadosQuantitativo Cancelados { get; set; } = new DadosQuantitativo();
+        public DadosQuantitativo ReembolsoSolicitado { get; set; } = new DadosQuantitativo();
     }
 
     public class DadosInscritosPeriodo
@@ -41,9 +41,9 @@
 
     public class DadosPagamento
     {
-        public string Total { get; set; }
-        public string ValorArrecadadoIntegral { get; set; }
-        public string ValorArrecadadoParcial { get; set; }
+        public string Total { get; set; } = string.Empty;
+        public string ValorArrecadadoIntegral { get; set; } = string.Empty;
+        public string ValorArrecadadoParcial { get; set; } = string.Empty;
     }
 
 }

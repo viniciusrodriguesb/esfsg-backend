@@ -39,48 +39,39 @@ namespace Esfsg.Application.Services
 
         public async Task<List<TabelaDominioResponse>> ConsultarPeriodos(int IdEvento)
         {
+            var evento = await _context.EVENTO
+                                       .AsNoTracking()
+                                       .Where(x => x.Id == IdEvento)
+                                       .Select(x => new
+                                       {
+                                           x.LimiteIntegral,
+                                           x.LimiteParcial
+                                       }).FirstOrDefaultAsync();
+
+            if (evento == null)
+                return new List<TabelaDominioResponse>();
+
             var inscritosPorPeriodo = await _context.INSCRICAO
-                .AsNoTracking()
-                .Where(x => x.IdEvento == IdEvento &&
-                            (x.Periodo.ToLower() == "integral" || x.Periodo.ToLower() == "tarde"))
-                .GroupBy(x => new { x.IdEventoNavigation.LimiteIntegral, x.IdEventoNavigation.LimiteParcial })
-                .Select(g => new
-                {
-                    LimiteIntegral = g.Key.LimiteIntegral,
-                    LimiteParcial = g.Key.LimiteParcial,
-                    QuantidadeIntegral = g.Count(x => x.Periodo.ToLower() == "integral"),
-                    QuantidadeParcial = g.Count(x => x.Periodo.ToLower() == "tarde")
-                }).FirstOrDefaultAsync();
+                                        .AsNoTracking()
+                                        .Where(x => x.IdEvento == IdEvento &&
+                                                    (x.Periodo.ToLower() == "integral" || x.Periodo.ToLower() == "tarde"))
+                                        .GroupBy(x => 1)
+                                        .Select(g => new
+                                        {
+                                            QuantidadeIntegral = g.Count(x => x.Periodo.ToLower() == "integral"),
+                                            QuantidadeParcial = g.Count(x => x.Periodo.ToLower() == "tarde")
+                                        }).FirstOrDefaultAsync();
 
-            var result = new List<TabelaDominioResponse>()
-            {
-                new TabelaDominioResponse()
-                {
-                     Id = 1,
-                     Descricao = "Integral"
-                },
-                new TabelaDominioResponse()
-                {
-                    Id = 2,
-                    Descricao = "Tarde"
-                }
-            };
+            var quantidadeIntegral = inscritosPorPeriodo?.QuantidadeIntegral ?? 0;
+            var quantidadeParcial = inscritosPorPeriodo?.QuantidadeParcial ?? 0;
 
-            if (inscritosPorPeriodo == null) return result;
+            var result = new List<TabelaDominioResponse>();
 
-            if (inscritosPorPeriodo.QuantidadeIntegral >= inscritosPorPeriodo.LimiteIntegral)
-            {
-                var item = result.FirstOrDefault(x => x.Descricao == "Integral");
-                if (item != null)
-                    result.Remove(item);
-            }
+            if (evento.LimiteIntegral > 0 && quantidadeIntegral < evento.LimiteIntegral)
+                result.Add(new TabelaDominioResponse { Id = 1, Descricao = "Integral" });
 
-            if (inscritosPorPeriodo.QuantidadeParcial >= inscritosPorPeriodo.LimiteParcial)
-            {
-                var item = result.FirstOrDefault(x => x.Descricao == "Tarde");
-                if (item != null)
-                    result.Remove(item);
-            }
+            if (evento.LimiteParcial > 0 && quantidadeParcial < evento.LimiteParcial)
+                result.Add(new TabelaDominioResponse { Id = 2, Descricao = "Tarde" });
 
             return result;
         }

@@ -1,8 +1,13 @@
-﻿namespace Esfsg.Application.DTOs.Request
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Esfsg.Application.DTOs.Request
 {
     public class InscricaoEventoResquest
     {
-        public int IdEvento {  get; set; }
-        public int IdUsuario {  get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "IdEvento deve ser um valor positivo")]
+        public int IdEvento { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "IdUsuario deve ser um valor positivo")]
+        public int IdUsuario { get; set; }
     }
 }

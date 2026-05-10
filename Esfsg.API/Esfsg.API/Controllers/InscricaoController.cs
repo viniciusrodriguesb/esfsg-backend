@@ -1,4 +1,5 @@
-﻿using Esfsg.Application.DTOs.Request;
+﻿using Esfsg.Application;
+using Esfsg.Application.DTOs.Request;
 using Esfsg.Application.Enums;
 using Esfsg.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -27,29 +28,87 @@ namespace Esfsg.API.Controllers
 
         [HttpGet]
         [SwaggerOperation(Summary = "Consulta da inscrição do usuário no evento.")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ConsultarInscricao([FromQuery] InscricaoEventoResquest request)
         {
-            var result = await _inscricaoService.ConsultarInscricao(request);
-            if (result == null)
-                return NotFound("Nenhum registro encontrado.");
+            if (!ModelState.IsValid)
+                return BadRequest(new { mensagem = "Dados de entrada inválidos", erros = ModelState.Values.SelectMany(v => v.Errors) });
 
-            return StatusCode(StatusCodes.Status200OK, result);
+            if (request.IdUsuario <= 0 || request.IdEvento <= 0)
+                return BadRequest(new { mensagem = "IdUsuario e IdEvento devem ser valores positivos" });
+
+            try
+            {
+                var result = await _inscricaoService.ConsultarInscricao(request);
+                if (result == null)
+                    return NotFound(new { mensagem = "Nenhuma inscrição encontrada para os parâmetros informados" });
+
+                return Ok(result);
+            }
+            catch (BusinessException ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    new { mensagem = "Erro ao consultar inscrição", erro = ex.Message });
+            }
         }
 
         [HttpPost]
         [SwaggerOperation(Summary = "Realização da inscrição no evento solicitado.")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RealizarInscricao([FromBody] InscricaoRequest request)
         {
-            var result = await _inscricaoService.RealizarInscricao(request);
-            return StatusCode(StatusCodes.Status200OK, result);
+            if (!ModelState.IsValid)
+                return BadRequest(new { mensagem = "Dados de entrada inválidos", erros = ModelState.Values.SelectMany(v => v.Errors) });
+
+            try
+            {
+                var result = await _inscricaoService.RealizarInscricao(request);
+                return Ok(new { mensagem = "Inscrição realizada com sucesso", dados = result });
+            }
+            catch (BusinessException ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    new { mensagem = "Erro ao realizar inscrição", erro = ex.Message });
+            }
         }
 
-        [HttpPut("cancelar")]
+        [HttpPut("cancelar/{id}")]
         [SwaggerOperation(Summary = "Cancelamento da inscrição no evento solicitado.")]
-        public async Task<IActionResult> CancelarInscricao(int Id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CancelarInscricao([FromRoute] int id)
         {
-            await _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, Id);
-            return StatusCode(StatusCodes.Status200OK);
+            if (id <= 0)
+                return BadRequest(new { mensagem = "ID da inscrição deve ser um valor positivo" });
+
+            try
+            {
+                await _statusService.AtualizarStatusInscricao(StatusEnum.CANCELADA, id);
+                return Ok(new { mensagem = "Inscrição cancelada com sucesso" });
+            }
+            catch (BusinessException ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    new { mensagem = "Erro ao cancelar inscrição", erro = ex.Message });
+            }
         }
 
     }
