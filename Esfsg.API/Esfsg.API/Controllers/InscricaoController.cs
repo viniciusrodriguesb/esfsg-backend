@@ -71,7 +71,7 @@ namespace Esfsg.API.Controllers
             try
             {
                 var result = await _inscricaoService.RealizarInscricao(request);
-                return Ok(new { mensagem = "Inscrição realizada com sucesso", dados = result });
+                return Ok(result);
             }
             catch (BusinessException ex)
             {
