@@ -16,8 +16,17 @@ namespace Esfsg.Infra.CrossCutting.IoC
             var connectionString = configuration.GetConnectionString("databaseConnection");
 
             services.AddDbContext<DbContextBase>(options =>
-                options.UseNpgsql(connectionString)
-                );
+            {
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorCodesToAdd: null
+                    );
+                    npgsqlOptions.CommandTimeout(30);
+                });
+            });
         }
 
         public static void ConfigureDatabaseHangfire(IServiceCollection services, IConfiguration configuration)
@@ -28,13 +37,18 @@ namespace Esfsg.Infra.CrossCutting.IoC
             services.AddHangfire(options =>
             {
                 options.UseConsole()
-                       .UsePostgreSqlStorage(connectionString, new PostgreSqlStorageOptions
-                       {
-                           PrepareSchemaIfNecessary = true,
-                           QueuePollInterval = TimeSpan.FromSeconds(15),
-                           InvisibilityTimeout = TimeSpan.FromMinutes(5),
-                           DistributedLockTimeout = TimeSpan.FromMinutes(2)
-                       });
+                        .UsePostgreSqlStorage(o =>
+                        {
+                            o.UseNpgsqlConnection(connectionString);
+                        },
+                        new PostgreSqlStorageOptions
+                        {
+                            PrepareSchemaIfNecessary = true,
+                            QueuePollInterval = TimeSpan.FromSeconds(30),
+                            InvisibilityTimeout = TimeSpan.FromMinutes(30),
+                            DistributedLockTimeout = TimeSpan.FromMinutes(10),
+                            JobExpirationCheckInterval = TimeSpan.FromHours(1)
+                        });
             });
         }
 

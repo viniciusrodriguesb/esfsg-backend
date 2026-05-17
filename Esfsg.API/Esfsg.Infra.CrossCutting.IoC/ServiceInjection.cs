@@ -23,7 +23,10 @@ namespace Esfsg.Infra.CrossCutting.IoC
         public static IServiceCollection AddHangfireServices(this IServiceCollection services, IConfiguration configuration)
         {
             DatabaseConfiguration.ConfigureDatabaseHangfire(services, configuration);
-            services.AddHangfireServer();
+            services.AddHangfireServer(opt =>
+            {
+                opt.ShutdownTimeout = TimeSpan.FromMinutes(2);
+            });
 
             AddServices(services, configuration);
 

@@ -45,6 +45,7 @@ namespace Esfsg.Application.Services
         {
             var dadoPagamento = await _context.PAGAMENTO.AsNoTracking()
                                                         .Where(x => x.IdInscricao == IdInscricao)
+                                                        .Select(x => new { x.StatusRetornoApi, x.DhExpiracao })
                                                         .FirstOrDefaultAsync();
 
             if (dadoPagamento != null && dadoPagamento.StatusRetornoApi == "approved")
