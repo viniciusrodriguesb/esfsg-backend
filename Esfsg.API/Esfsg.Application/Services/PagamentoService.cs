@@ -261,7 +261,10 @@ namespace Esfsg.Application.Services
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["token_pagamento"]);
 
-            var key = inscricaoId.HasValue ? $"inscricao_{inscricaoId.Value}" : $"idempotency_{Guid.NewGuid():N}";
+            var key = inscricaoId.HasValue
+                      ? $"inscricao_{inscricaoId.Value}_{DateTime.Now:yyyyMMddHHmmssfff}"
+                      : $"idempotency_{Guid.NewGuid():N}";
+
             request.Headers.Remove("X-Idempotency-Key");
             request.Headers.Add("X-Idempotency-Key", key);
         }
