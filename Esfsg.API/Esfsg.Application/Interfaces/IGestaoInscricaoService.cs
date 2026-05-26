@@ -7,5 +7,6 @@ namespace Esfsg.Application.Interfaces
     {
         Task<PaginacaoResponse<InscricaoParaLiberacaoResponse>> ConsultarInscricoesParaLiberacao(InscricoesPendentesRequest request, PaginacaoRequest paginacao);
         Task<PaginacaoResponse<GestaoInscricaoResponse>> ConsultarInscricoes(FiltroGestaoInscricaoRequest filtro, PaginacaoRequest paginacao);
+        Task AprovarInscricoes(List<int> inscricoes);
     }
 }

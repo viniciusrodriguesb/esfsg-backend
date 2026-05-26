@@ -13,12 +13,15 @@ namespace Esfsg.Application.Services
     {
 
         #region Construtor
-        private readonly IUsuarioService _usuarioService;
+        private readonly IStatusService _statusService;
+        private readonly IPagamentoService _pagamentoService;
         private readonly DbContextBase _context;
-        public GestaoInscricaoService(DbContextBase context, IUsuarioService usuarioService)
+        public GestaoInscricaoService(DbContextBase context, IStatusService statusService, IPagamentoService pagamentoService)
         {
-            _usuarioService = usuarioService;
             _context = context;
+            _statusService = statusService;
+            _pagamentoService = pagamentoService;
+            _statusService = statusService;
         }
         #endregion
 
@@ -93,6 +96,35 @@ namespace Esfsg.Application.Services
             return resultadoPaginado;
         }
 
+        public async Task AprovarInscricoes(List<int> inscricoes)
+        {
+            if (inscricoes == null || !inscricoes.Any())
+                throw new NotFoundException("Nenhuma inscrição selecionada para aprovação.");
+
+            var inscricoesUnicas = inscricoes.Distinct().ToList();
+
+            var erros = new List<string>();
+
+            foreach (var idInscricao in inscricoesUnicas)
+            {
+                try
+                {
+                    await _statusService.AtualizarStatusInscricao(
+                        StatusEnum.AGUARDANDO_PAGAMENTO,
+                        idInscricao);
+
+                    await _pagamentoService.GerarPagamentoPixPorInscricaoAsync(idInscricao);
+                }
+                catch (Exception ex)
+                {
+                    erros.Add($"Inscrição {idInscricao}: {ex.Message}");
+                }
+            }
+
+            if (erros.Any())
+                throw new InvalidOperationException($"Algumas inscrições não foram processadas: {string.Join(" | ", erros)}");
+
+        }
 
         private static int ValidarIdadeParticipante(DateTime nascimento)
         {

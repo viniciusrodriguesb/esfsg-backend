@@ -42,12 +42,12 @@ namespace Esfsg.Hangfire.Configurations
             jobManager.AddOrUpdate<GerarPagamentoJob>(
                  "gerar-pagamento",
                  job => job.Execute(),
-                        "*/5 * * * *");
+                        "*/15 * * * *");
 
             jobManager.AddOrUpdate<AlteraStatusInscricaoPagamentoJob>(
               "alterar-status-pagamento",
               job => job.Execute(),
-                     "*/5 * * * *");
+                     "*/30 * * * *");
             #endregion
 
             #region Gestão Bloqueio

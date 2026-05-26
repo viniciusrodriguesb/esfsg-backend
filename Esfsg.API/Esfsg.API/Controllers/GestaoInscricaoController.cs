@@ -41,14 +41,7 @@ namespace Esfsg.API.Controllers
         [SwaggerOperation(Summary = "Liberação das inscrições para participação do evento.")]
         public async Task<IActionResult> AprovarInscricao([FromBody] List<int> Ids)
         {
-            if (Ids == null || !Ids.Any())
-                return StatusCode(StatusCodes.Status400BadRequest, "Nenhuma inscrição foi informada para aprovação.");
-
-            foreach (var id in Ids)
-            {
-                await _statusService.AtualizarStatusInscricao(StatusEnum.AGUARDANDO_PAGAMENTO, id);
-            }
-
+            await _gestaoInscricaoService.AprovarInscricoes(Ids);
             return StatusCode(StatusCodes.Status200OK);
         }
 

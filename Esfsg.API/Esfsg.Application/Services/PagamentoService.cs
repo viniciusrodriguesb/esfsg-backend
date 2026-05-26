@@ -36,6 +36,60 @@ namespace Esfsg.Application.Services
         }
         #endregion
 
+        public async Task AtualizarPagamentoPorWebhook(string idTransacao)
+        {
+            if (string.IsNullOrWhiteSpace(idTransacao))
+                return;
+
+            var pagamento = await _context.PAGAMENTO
+                                          .Include(x => x.InscricaoNavigation)
+                                          .FirstOrDefaultAsync(x => x.IdTransacao == idTransacao);
+
+            if (pagamento == null)
+            {
+                _logger.LogWarning(
+                    "Webhook Mercado Pago recebido para transação {IdTransacao}, mas pagamento não foi encontrado na base.",
+                    idTransacao);
+
+                return;
+            }
+
+            var statusApi = await VerificarStatusPagamentoApiAsync(idTransacao);
+
+            if (string.IsNullOrWhiteSpace(statusApi))
+            {
+                _logger.LogWarning(
+                    "Não foi possível consultar status da transação {IdTransacao} no Mercado Pago.",
+                    idTransacao);
+
+                return;
+            }
+
+            if (string.Equals(pagamento.StatusRetornoApi, statusApi, StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogInformation(
+                    "Pagamento {IdTransacao} já está com status {Status}. Nenhuma alteração necessária.",
+                    idTransacao,
+                    statusApi);
+
+                return;
+            }
+
+            var inscricao = pagamento.InscricaoNavigation;
+
+            if (inscricao == null)
+            {
+                _logger.LogWarning(
+                    "Pagamento {IdTransacao} encontrado, mas inscrição relacionada não foi carregada.",
+                    idTransacao);
+
+                return;
+            }
+
+            await AtualizarInformacoesInscricao(statusApi, pagamento, inscricao);
+        }
+
+
         public async Task BuscarInscricoesParaPagamento()
         {
             var inscricoes = await _context.INSCRICAO
@@ -61,7 +115,7 @@ namespace Esfsg.Application.Services
             }
         }
 
-        public async Task BuscarInscricaoPagamentoPorId(int IdInscricao)
+        public async Task GerarPagamentoPixPorInscricaoAsync(int IdInscricao)
         {
             var inscricao = await _context.INSCRICAO
                                     .AsNoTracking()
@@ -78,6 +132,11 @@ namespace Esfsg.Application.Services
 
             if (inscricao == null)
                 throw new NotFoundException("Número de inscrição não encontrado.");
+
+            var existePagamentoValido = await VerificarRegistroInserido(inscricao.IdInscricao);
+
+            if (existePagamentoValido)
+                return;
 
             await CriarPagamentoPixAsync(inscricao);
         }

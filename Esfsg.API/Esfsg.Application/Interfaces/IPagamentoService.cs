@@ -4,6 +4,7 @@
     {
         Task AlterarStatusInscricao();
         Task BuscarInscricoesParaPagamento();
-        Task BuscarInscricaoPagamentoPorId(int IdInscricao);
+        Task GerarPagamentoPixPorInscricaoAsync(int IdInscricao);
+        Task AtualizarPagamentoPorWebhook(string idTransacao);
     }
 }
