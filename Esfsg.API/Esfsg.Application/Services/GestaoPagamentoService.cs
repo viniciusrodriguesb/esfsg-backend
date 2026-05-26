@@ -60,7 +60,7 @@ namespace Esfsg.Application.Services
 
             try
             {
-                await _pagamentoService.BuscarInscricaoPagamentoPorId(IdInscricao);
+                await _pagamentoService.GerarPagamentoPixPorInscricaoAsync(IdInscricao);
                 return new ResultResponse<string>() { Sucesso = true, Mensagem = "Código Pix gerado com sucesso." };
             }
             catch (Exception)
