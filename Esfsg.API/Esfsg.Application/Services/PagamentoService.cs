@@ -258,8 +258,7 @@ namespace Esfsg.Application.Services
         {
             return await _context.PAGAMENTO
                                  .AsNoTracking()
-                                 .AnyAsync(x => x.IdInscricao == IdInscricao &&
-                                                x.DhExpiracao >= DateTime.Now);
+                                 .AnyAsync(x => x.IdInscricao == IdInscricao);
         }
 
         private PagamentoPixResponse PreencherObjetoDadosPagamento(string? responseContent)
